@@ -129,15 +129,21 @@ public class PlayerComponent : MonoBehaviour
         if (_data.CarriedObject != null)
         {
             if (_data.CarriedObject.IsHeavy)
-                _data.ActionState = PlayerActionState.Carrying;
+            {
+                _data.Speed = 60;
+                _data.ActionState = PlayerActionState.Grabbing;
+            }
             else
                 _data.ActionState = PlayerActionState.Holding;
         }
         else
+        {
             _data.ActionState = PlayerActionState.Default;
+            _data.Speed = 100;
+        }
 
         // Update the animator parameters
-        if(_animator.GetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME) != (int)_data.ActionState)
+        if (_animator.GetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME) != (int)_data.ActionState)
         {
             _animator.SetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME, (int)_data.ActionState);
             updateAnimation = true;

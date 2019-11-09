@@ -8,5 +8,5 @@ public enum PlayerActionState
 {
     Default = 0,
     Holding = 1,
-    Carrying = 2
+    Grabbing = 2
 }
