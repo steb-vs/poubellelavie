@@ -5,8 +5,10 @@ using UnityEngine;
 public class NPCBehaviour : MonoBehaviour
 {
     private BoxCollider2D _boxCollider;
+    private Animator _animatorNPC;
 
     private GlobalState _globalState;
+    private ActionState _actionState;
     public DrunkState drunkType;
 
     public float prctUntilDrunk;
@@ -18,10 +20,12 @@ public class NPCBehaviour : MonoBehaviour
     void Start()
     {
         _boxCollider = GetComponent<BoxCollider2D>();
+        _animatorNPC = GetComponent<Animator>();
 
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
         _globalState = GlobalState.NEED_DRINKING;
+        _actionState = ActionState.IDLE;
 
         prctUntilDrunk = 0; // Over 100 (100%), the NPC becomes drunk
         incrDrunkOverTime = 20.5F; // How much the NPC gets drunk each seconds
@@ -63,6 +67,12 @@ public class NPCBehaviour : MonoBehaviour
                 print("Actual global state value: " + _globalState);
                 break;
         }
+
+        // Set variables for the state machine
+        _animatorNPC.SetBool("isWalking", _actionState == ActionState.WALKING);
+        _animatorNPC.SetBool("isDrunk", _globalState == GlobalState.FINE);
+        _animatorNPC.SetBool("isTrash", _globalState == GlobalState.DRUNK);
+        _animatorNPC.SetInteger("drunkState", (int) drunkType);
     }
 
     // Called when NPC's _globalState is DRUNK
