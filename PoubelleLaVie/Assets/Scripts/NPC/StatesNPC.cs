@@ -17,5 +17,5 @@ enum GlobalState
 enum ActionState
 {
     IDLE,
-    WALKING,
+    WALKING
 }

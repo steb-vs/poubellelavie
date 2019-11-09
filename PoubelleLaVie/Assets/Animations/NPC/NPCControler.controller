@@ -108,7 +108,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Idle 0
+  m_Name: Idle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -202,7 +202,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: isDrinking
+    m_ConditionEvent: isDrunk
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -5066115118292926456}
@@ -496,7 +496,7 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 510, y: 130, z: 0}
+  m_AnyStatePosition: {x: 510, y: 140, z: 0}
   m_EntryPosition: {x: 910, y: 0, z: 0}
   m_ExitPosition: {x: 1540, y: 100, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}

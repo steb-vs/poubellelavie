@@ -16,8 +16,6 @@ public class NPCBehaviour : MonoBehaviour
 
     public float incrCopsBarOverTime;
 
-    private bool isWaling;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -27,13 +25,12 @@ public class NPCBehaviour : MonoBehaviour
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
         _globalState = GlobalState.NEED_DRINKING;
+        _actionState = ActionState.IDLE;
 
         prctUntilDrunk = 0; // Over 100 (100%), the NPC becomes drunk
         incrDrunkOverTime = 20.5F; // How much the NPC gets drunk each seconds
 
         incrCopsBarOverTime = 5.8F; // How much the NPC fill the cops bar each seconds
-
-        isWaling = false;
     }
 
     // Update is called once per frame
