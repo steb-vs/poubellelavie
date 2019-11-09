@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 public class CreateNodesFromTilemaps : MonoBehaviour {
 	//did some stuff to the actions in npc so they can get closer to the Nodes without the glitchyness
@@ -9,6 +10,10 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 	public Grid gridBase;
 	public Tilemap floor;//floor of world
 	public List<Tilemap> obstacleLayers; //all layers that contain objects to navigate around
+
+	[FormerlySerializedAs("Fridges")] public Tilemap fridges;
+	public Tilemap entries;
+	
 	public GameObject nodePrefab;
 
 	//these are the bounds of where we are searching in the world for tiles, have to use world coords to check for tiles in the tile map
@@ -61,8 +66,11 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 				} else {
 					//if we do we go through the obstacle layers and check if there is also a tile at those coords if so we set founObstacle to true
 					bool foundObstacle = false;
+					bool foundFridge = false;
+					bool foundEntries = false;
+					var pos = new Vector3Int(x, y, 0);
 					foreach (Tilemap t in obstacleLayers) {
-						TileBase tb2 = t.GetTile (new Vector3Int (x, y, 0));
+						TileBase tb2 = t.GetTile (pos);
 
 						if (tb2 == null) {
 
@@ -82,6 +90,20 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 								}
 							}
 						}
+					}
+
+					TileBase fridge = fridges.GetTile(pos);
+					if (fridge)
+					{
+						foundObstacle = true;
+						foundFridge = true;
+					}
+
+					TileBase entry = entries.GetTile(pos);
+					if (entry)
+					{
+						foundObstacle = true;
+						foundEntries = true;
 					}
 
 					if (foundObstacle == false) {
@@ -107,6 +129,11 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 						foundTileOnLastPass = true;
 						unsortedNodes.Add (node);
 						node.name = "UNWALKABLE NODE " + gridX.ToString () + " : " + gridY.ToString ();
+						if (foundFridge)
+						{
+							Debug.Log("Coucou");
+							PathfinderHelper.Pathfinder.fridges.Add(wt);
+						}
 
 
 					}
@@ -139,8 +166,8 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 		}
 
 		//assign neighbours to nodes
-		for (int x = 0; x < gridBoundX; x++) { //go through the 2d array and assign the neighbours of each node
-			for (int y = 0; y < gridBoundY; y++) {
+		for (int x = 0; x < gridBoundX + 1; x++) { //go through the 2d array and assign the neighbours of each node
+			for (int y = 0; y < gridBoundY + 1; y++) {
 				if (nodes [x, y] == null) { //check if the coords in the array contain a node
 
 				}
@@ -187,10 +214,10 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 		//needs the width & height to work out if a tile is not on the edge, also needs to check if the nodes is null due to the accounting for odd shapes
 
 
-		if (x > 0 && x < width-1) {
+		if (x > 0 && x < width) {
 			//can get tiles on both left and right of the tile
 
-			if (y > 0 && y < height - 1) {
+			if (y > 0 && y < height) {
 				//top and bottom
 				if (nodes [x + 1, y] == null) {
 
@@ -276,7 +303,7 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 
 					}
 				}
-			} else if (y == height - 1) {
+			} else if (y == height) {
 				//just bottom
 				if (nodes [x, y - 1] == null) {
 
@@ -317,7 +344,7 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 
 		} else if (x == 0) {
 			//can't get tile on left
-			if (y > 0 && y < height - 1) {
+			if (y > 0 && y < height) {
 				//top and bottom
 			
 				if (nodes [x + 1, y] == null) {
@@ -377,7 +404,7 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 
 					}
 				}
-			} else if (y == height - 1) {
+			} else if (y == height ) {
 				//just bottom
 				if (nodes [x + 1, y] == null) {
 
@@ -401,9 +428,9 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 					}
 				}
 			}
-		} else if (x == width-1) {
+		} else if (x == width) {
 			//can't get tile on right
-			if (y > 0 && y < height - 1) {
+			if (y > 0 && y < height) {
 				//top and bottom
 				if (nodes [x - 1, y] == null) {
 
@@ -465,7 +492,7 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 
 					}
 				}
-			} else if (y == height - 1) {
+			} else if (y == height) {
 				//just bottom
 				if (nodes [x - 1, y] == null) {
 
