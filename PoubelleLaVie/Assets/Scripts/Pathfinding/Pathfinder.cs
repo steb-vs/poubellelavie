@@ -59,6 +59,9 @@ public class Pathfinder : MonoBehaviour
     {
         WorldTile goalNode = (from node in _listedNodes where (node.gridX == end.x && node.gridY == end.y) select node)
             .First();
+        
+        Debug.Log($"{start.x} - {start.y}");
+        
         WorldTile startNode =
             (from node in _listedNodes where (node.gridX == start.x && node.gridY == start.y) select node).First();
 
