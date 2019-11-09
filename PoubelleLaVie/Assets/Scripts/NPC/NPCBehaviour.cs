@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class NPCBehaviour : MonoBehaviour
 {
+    private BoxCollider2D _boxCollider;
+
     private GlobalState _globalState;
     public DrunkState drunkType;
 
@@ -15,6 +17,8 @@ public class NPCBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _boxCollider = GetComponent<BoxCollider2D>();
+
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
         _globalState = GlobalState.NEED_DRINKING;
@@ -41,10 +45,14 @@ public class NPCBehaviour : MonoBehaviour
                 print("I NEED DRINKING");
                 _globalState = GlobalState.FINE;
                 break;
-            case GlobalState.FINE: // Increments the drunk bar
-                prctUntilDrunk += incrDrunkOverTime * Time.deltaTime;
+            case GlobalState.FINE:
+                _boxCollider.enabled = false;
+
+                // Increments the drunk bar
+                prctUntilDrunk += incrDrunkOverTime * Time.deltaTime * GameHelper.GM.timeScale;
                 if (prctUntilDrunk >= 100)
                     _globalState = GlobalState.DRUNK;
+
                 print("CURRENT DRINK BAR: " + prctUntilDrunk);
                 break;
             case GlobalState.DRUNK:
@@ -63,7 +71,7 @@ public class NPCBehaviour : MonoBehaviour
         switch (drunkType)
         {
             case DrunkState.DANCER:
-                GameHelper.GM.AddPrctUntilCops(incrCopsBarOverTime * Time.deltaTime);
+                GameHelper.GM.AddPrctUntilCops(incrCopsBarOverTime * Time.deltaTime * GameHelper.GM.timeScale);
                 break;
             case DrunkState.LOVER:
                 break;

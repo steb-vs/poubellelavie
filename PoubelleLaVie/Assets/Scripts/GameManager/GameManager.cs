@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private float _prctUntilCops;
+    private float _prctCopsBar;
+
+    public float decrCopsBarOverTime;
+    public float timeScale;
 
     // When instiated, this object is stored in the GameHelper
     private void Awake()
@@ -15,26 +18,32 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _prctUntilCops = 0;
+        _prctCopsBar = 0;
+        decrCopsBarOverTime = 3F;
+        timeScale = 1;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (_prctUntilCops >= 100)
+        float decrCopsBar = decrCopsBarOverTime * Time.deltaTime * timeScale;
+        if (_prctCopsBar >= 100)
         {
             // End game
             return;
         }
+
+        // Decrement automatically the cops bar
+        _prctCopsBar = (decrCopsBar < 0) ? 0 : decrCopsBar;
     }
 
     public void AddPrctUntilCops(float toAdd)
     {
-        _prctUntilCops += toAdd;
+        _prctCopsBar += toAdd;
     }
 
     public float GetPrctUntilCops()
     {
-        return _prctUntilCops;
+        return _prctCopsBar;
     }
 }
