@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 public enum PlayerMoveState
 {
-    Idle,
-    Moving
+    Idle = 0,
+    Run = 1
 }

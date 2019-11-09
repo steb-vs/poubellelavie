@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class PlayerComponent : MonoBehaviour
 {
+    public GameObject playerSprite;
+
     private PlayerData _data;
 
     private Rigidbody2D _body;
@@ -13,6 +15,8 @@ public class PlayerComponent : MonoBehaviour
     private Animator _animator;
 
     private HashSet<IUsable> _closeObjects;
+
+    private Animation _animation;
 
     /// <summary>
     /// Sets the player data.
@@ -27,7 +31,7 @@ public class PlayerComponent : MonoBehaviour
     private void Start()
     {
         _body = GetComponent<Rigidbody2D>();
-        _animator = GetComponent<Animator>();
+        _animator = playerSprite.GetComponent<Animator>();
         _data = PlayerData.Default;
         _closeObjects = new HashSet<IUsable>();
     }
@@ -107,12 +111,17 @@ public class PlayerComponent : MonoBehaviour
     /// </summary>
     private void Move()
     {
+        bool updateAnimation = false;
+
         // Add force to the rigid body
         _body.AddForce(_data.Direction * _data.Speed);
 
+        if(_data.Direction.magnitude > 0.01f)
+            playerSprite.transform.localRotation = Quaternion.FromToRotation(Vector2.up, _data.Direction.normalized);
+
         // Update the move state
-        if (_body.velocity.magnitude > 0.01f)
-            _data.MoveState = PlayerMoveState.Moving;
+        if (_body.velocity.magnitude > 0.1f)
+            _data.MoveState = PlayerMoveState.Run;
         else
             _data.MoveState = PlayerMoveState.Idle;
 
@@ -120,16 +129,40 @@ public class PlayerComponent : MonoBehaviour
         if (_data.CarriedObject != null)
         {
             if (_data.CarriedObject.IsHeavy)
-                _data.ActionState = PlayerActionState.Carrying;
+            {
+                _data.Speed = 60;
+                _data.ActionState = PlayerActionState.Grabbing;
+            }
             else
                 _data.ActionState = PlayerActionState.Holding;
         }
         else
-            _data.ActionState = PlayerActionState.None;
+        {
+            _data.ActionState = PlayerActionState.Default;
+            _data.Speed = 100;
+        }
 
         // Update the animator parameters
-        _animator.SetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME, (int)_data.ActionState);
-        _animator.SetInteger(PlayerHelper.ANIMATOR_MOVE_PARAM_NAME, (int)_data.MoveState);
+        if (_animator.GetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME) != (int)_data.ActionState)
+        {
+            _animator.SetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME, (int)_data.ActionState);
+            updateAnimation = true;
+        }
+
+        if (_animator.GetInteger(PlayerHelper.ANIMATOR_MOVE_PARAM_NAME) != (int)_data.MoveState)
+        {
+            _animator.SetInteger(PlayerHelper.ANIMATOR_MOVE_PARAM_NAME, (int)_data.MoveState);
+            updateAnimation = true;
+        }
+
+        if(updateAnimation)
+        {
+            string newAnimationName = _data.ActionState.ToString() + _data.MoveState.ToString();
+            _animator.StopPlayback();
+            _animator.Play(newAnimationName);
+        }
+
+        _animator.speed = 0.25f + (_body.velocity.magnitude / 6.0f);
 
         _data.Position = transform.position;
     }

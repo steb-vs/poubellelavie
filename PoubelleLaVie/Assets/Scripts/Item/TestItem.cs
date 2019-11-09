@@ -9,11 +9,13 @@ public class TestItem : MonoBehaviour, IUsable
 {
     public Vector3 Position => transform.position;
 
-    public bool IsHeavy => false;
+    public bool IsHeavy => true;
 
     public void Drop(GameObject sender)
     {
         transform.parent = null;
+        gameObject.SetActive(true);
+
         Debug.Log("Drop");
     }
 
@@ -21,6 +23,7 @@ public class TestItem : MonoBehaviour, IUsable
     {
         transform.parent = sender.transform;
         transform.localPosition = Vector3.zero;
+        gameObject.SetActive(false);
         Debug.Log("Take");
     }
 

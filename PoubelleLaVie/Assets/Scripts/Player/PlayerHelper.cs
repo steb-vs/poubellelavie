@@ -15,4 +15,6 @@ public static class PlayerHelper
     /// THe animator parameter name for the action state.
     /// </summary>
     public const string ANIMATOR_ACTION_PARAM_NAME = "Action";
+
+    public const string ANIMATOR_UPDATE_PARAM_NAME = "Update";
 }
