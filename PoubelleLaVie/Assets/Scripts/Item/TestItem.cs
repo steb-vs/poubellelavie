@@ -9,7 +9,7 @@ public class TestItem : MonoBehaviour, IUsable
 {
     public Vector3 Position => transform.position;
 
-    public bool IsHeavy => false;
+    public bool IsHeavy => true;
 
     public void Drop(GameObject sender)
     {
