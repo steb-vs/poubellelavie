@@ -6,20 +6,25 @@ using System.Linq;
 
 public class Pathfinder : MonoBehaviour
 {
-    public void Update()
+    [HideInInspector] public List<WorldTile> fridges;
+
+    private void OnDrawGizmos()
     {
-        if (Input.GetKeyUp("k"))
-        {
-            GetPath(new Vector2Int(0, 0), new Vector2Int(8, 5));
-        }
+        Gizmos.DrawCube(Vector3.zero, Vector3.one);
+    }
+
+    private void Awake()
+    {
+        PathfinderHelper.Pathfinder = this;
     }
 
     public void SetNodes(GameObject[,] nodes, int gridBoundX, int gridBoundY)
     {
-        Debug.Log("COucou");
-        _nodes = new WorldTile[gridBoundX, gridBoundY];
+        _nodes = new WorldTile[gridBoundX + 1, gridBoundY + 1];
         _listedNodes = new List<WorldTile>();
-        for (int x = 0; x < gridBoundX; ++x)
+        Debug.Log(gridBoundX);
+        Debug.Log(gridBoundY);
+        for (int x = 0; x <= gridBoundX; ++x)
         {
             for (int y = 0; y < gridBoundY; ++y)
             {
@@ -37,7 +42,7 @@ public class Pathfinder : MonoBehaviour
         _gridBoundY = gridBoundY;
     }
 
-    public WorldTile GetBestNode(List<WorldTile> list)
+    private WorldTile GetBestNode(List<WorldTile> list)
     {
         WorldTile bestTile = list[0];
 
@@ -50,19 +55,96 @@ public class Pathfinder : MonoBehaviour
         return bestTile;
     }
 
-    public float ManhattanDistance(WorldTile l, WorldTile r)
+    public List<WorldTile> GetPath2(Vector2Int start, Vector2Int end)
     {
-        return (r.gridX - l.gridX) + (r.gridY - l.gridY);
+        WorldTile goalNode = (from node in _listedNodes where (node.gridX == end.x && node.gridY == end.y) select node)
+            .First();
+        WorldTile startNode =
+            (from node in _listedNodes where (node.gridX == start.x && node.gridY == start.y) select node).First();
+
+        var openList = new List<WorldTile>();
+        var closedList = new List<WorldTile>();
+
+        int g = 0;
+
+        openList.Add(startNode);
+
+        foreach (var listedNode in _listedNodes)
+        {
+            listedNode.parent = null;
+            listedNode.gCost = 1;
+            listedNode.hCost = 0;
+        }
+
+        while (openList.Count > 0)
+        {
+            var lowest = openList.Min(l => l.fCost);
+            var current = openList.First(l => l.fCost == lowest);
+
+
+            closedList.Add(current);
+            openList.Remove(current);
+
+            if (closedList.FirstOrDefault(l => l.gridX == goalNode.gridX && l.gridY == goalNode.gridY) != null)
+            {
+                var path = new List<WorldTile>();
+                while (current.parent)
+                {
+                    path.Add(current);
+                    current = current.parent;
+                }
+
+                path.Reverse();
+                return path;
+            }
+
+            var adjacentSquares = GetWalkableAdjacentSquares(current);
+            g++;
+
+            foreach (var adjacentSquare in adjacentSquares)
+            {
+                if (closedList.FirstOrDefault(l => l.gridX == adjacentSquare.gridX
+                                                   && l.gridY == adjacentSquare.gridY) != null)
+                    continue;
+
+                // if it's not in the open list...
+                if (openList.FirstOrDefault(l => l.gridX == adjacentSquare.gridX
+                                                 && l.gridY == adjacentSquare.gridY) == null)
+                {
+                    // compute its score, set the parent
+                    adjacentSquare.gCost = g;
+                    adjacentSquare.hCost = ManhattanDistance(adjacentSquare, goalNode);
+                    adjacentSquare.parent = current;
+
+                    // and add it to the open list
+                    openList.Insert(0, adjacentSquare);
+                }
+                else
+                {
+                    // test if using the current G score makes the adjacent square's F score
+                    // lower, if yes update the parent because it means it's a better path
+                    if (g + adjacentSquare.hCost < adjacentSquare.fCost)
+                    {
+                        adjacentSquare.gCost = g;
+                        adjacentSquare.parent = current;
+                    }
+                }
+            }
+        }
+
+        Debug.Log("????");
+        return null;
     }
 
-    private List<WorldTile> _path = new List<WorldTile>();
-
-    private void OnDrawGizmos()
+    List<WorldTile> GetWalkableAdjacentSquares(WorldTile current)
     {
-        foreach (var worldTile in _path)
-        {
-            Gizmos.DrawCube(worldTile.transform.position, Vector3.one / 3);
-        }
+        return current.myNeighbours.FindAll(n => n.walkable == true);
+    }
+
+
+    public float ManhattanDistance(WorldTile l, WorldTile r)
+    {
+        return Mathf.Abs(r.gridX - l.gridX) + Mathf.Abs(r.gridY - l.gridY);
     }
 
     public List<WorldTile> GetPath(Vector2Int start, Vector2Int end)
@@ -75,7 +157,17 @@ public class Pathfinder : MonoBehaviour
         var open = new List<WorldTile>();
         var closed = new List<WorldTile>();
 
+        Debug.Log($"AA : {_listedNodes.Count}");
+        foreach (var listedNode in _listedNodes)
+        {
+            listedNode.parent = null;
+            listedNode.gCost = 1;
+            listedNode.hCost = 0;
+        }
+
         open.Add(startNode);
+
+        int tries = 0;
 
         while (open.Count > 0)
         {
@@ -83,14 +175,18 @@ public class Pathfinder : MonoBehaviour
 
             if (node == goalNode)
             {
-                _path.Clear();
-                while (node.parent)
+                List<WorldTile> foundPath = new List<WorldTile>();
+                foundPath.Clear();
+                while (node.parent && tries < 20)
                 {
-                    _path.Add(node);
+                    tries++;
+                    foundPath.Add(node);
                     node = node.parent;
                 }
 
-                break;
+                foundPath.Reverse();
+
+                return foundPath;
             }
 
             open.Remove(node);
@@ -98,7 +194,12 @@ public class Pathfinder : MonoBehaviour
 
             foreach (var nodeMyNeighbour in node.myNeighbours)
             {
-                if (nodeMyNeighbour.walkable == false) continue;
+                if (nodeMyNeighbour.walkable == false)
+                {
+                    closed.Add(nodeMyNeighbour);
+                    continue;
+                }
+
                 float gScore = node.gCost + 1;
                 float hScore = ManhattanDistance(nodeMyNeighbour, goalNode);
                 float fScore = gScore + hScore;
@@ -120,12 +221,21 @@ public class Pathfinder : MonoBehaviour
                 }
             }
         }
-
         return null;
+    }
+
+    public int getGridBoundX
+    {
+        get { return _gridBoundX; }
+    }
+
+    public int getGridBoundY
+    {
+        get { return _gridBoundY; }
     }
 
     private WorldTile[,] _nodes;
     private int _gridBoundX;
     private int _gridBoundY;
-    private List<WorldTile> _listedNodes;
+    public List<WorldTile> _listedNodes;
 }
