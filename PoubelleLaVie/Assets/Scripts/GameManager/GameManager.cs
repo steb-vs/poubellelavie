@@ -35,6 +35,10 @@ public class GameManager : MonoBehaviour
 
         // Decrement automatically the cops bar
         _prctCopsBar = (decrCopsBar < 0) ? 0 : decrCopsBar;
+
+        // Setting / Unsetting pause ?
+        if (Input.GetButtonDown(InputHelper.PAUSE))
+            timeScale = 1 - timeScale;
     }
 
     public void AddPrctUntilCops(float toAdd)

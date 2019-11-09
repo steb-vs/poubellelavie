@@ -25,4 +25,9 @@ public static class InputHelper
     /// Use.
     /// </summary>
     public const string USE = "Use";
+
+    /// <summary>
+    /// Pause.
+    /// </summary>
+    public const string PAUSE = "Pause";
 }
