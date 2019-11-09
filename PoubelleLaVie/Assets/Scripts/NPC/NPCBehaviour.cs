@@ -73,7 +73,6 @@ public class NPCBehaviour : MonoBehaviour
 
         // Set variables for the state machine
         _animatorNPC.SetBool("isWalking", _actionState == ActionState.WALKING);
-        _animatorNPC.SetBool("isDrinking", _actionState == ActionState.DRINKING);
         _animatorNPC.SetBool("isDrunk", _globalState == GlobalState.FINE);
         _animatorNPC.SetBool("isTrash", _globalState == GlobalState.DRUNK);
         _animatorNPC.SetInteger("drunkState", (int) drunkType);

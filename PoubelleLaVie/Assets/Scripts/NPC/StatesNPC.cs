@@ -18,5 +18,4 @@ enum ActionState
 {
     IDLE,
     WALKING,
-    DRINKING
 }
