@@ -198,7 +198,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         int x = (int)transform.position.x;
         int y = (int)transform.position.y;
 
-        var list = PathfinderHelper.Pathfinder._listedNodes.FindAll(n => n.walkable && (((n.gridX - x) + (n.gridY - y)) < 5));
+        var list = PathfinderHelper.Pathfinder._listedNodes.FindAll(n => n.walkable && ((Mathf.Abs(n.gridX - x) + Mathf.Abs(n.gridY - y)) < 5));
         WorldTile destination =
             list[Random.Range(0, list.Count)];
 
