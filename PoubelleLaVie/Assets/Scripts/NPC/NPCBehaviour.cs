@@ -9,6 +9,7 @@ public class NPCBehaviour : MonoBehaviour
 {
     private BoxCollider2D _boxCollider;
     private Animator _animatorNPC;
+    private SpriteRenderer _spriteRenderer;
 
     private GlobalState _globalState;
     private ActionState _actionState;
@@ -20,12 +21,14 @@ public class NPCBehaviour : MonoBehaviour
     public float incrCopsBarOverTime = 5.8f;
 
     public GameObject bottle;
+    public GameObject puke;
 
     // Start is called before the first frame update
     void Start()
     {
         _boxCollider = GetComponent<BoxCollider2D>();
         _animatorNPC = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
 
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
@@ -33,6 +36,8 @@ public class NPCBehaviour : MonoBehaviour
         _actionState = ActionState.IDLE;
 
         prctUntilDrunk = 0; // Over 100 (100%), the NPC becomes drunk
+        _animatorNPC.SetBool("isDrunk", false);
+        _animatorNPC.SetBool("isTrash", false);
     }
 
     private void OnDrawGizmos()
@@ -49,6 +54,7 @@ public class NPCBehaviour : MonoBehaviour
     void GotBeer()
     {
         _globalState = GlobalState.FINE;
+        _animatorNPC.SetBool("isDrunk", true);
         timer = -1;
     }
 
@@ -56,8 +62,24 @@ public class NPCBehaviour : MonoBehaviour
     {
         gotDestination = false;
         timer = 1.5f;
+        _animatorNPC.SetBool("isWalking", false);
     }
 
+    void GoToPlayer()
+    {
+        var playerPos = GameHelper.GM.player.transform.position;
+        _path = PathfinderHelper.Pathfinder.GetPath2(
+            new Vector2Int((int) transform.position.x, (int) transform.position.y),
+            new Vector2Int((int)playerPos.x, (int)playerPos.y));
+
+        if (_path != null && _path.Count > 0)
+        {
+            gotDestination = true;
+            _gotPath = true;
+            _animatorNPC.SetBool("isWalking", true);
+        }
+    }
+    
     void GetRandomDestination()
     {
         int rndX = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundX);
@@ -75,6 +97,7 @@ public class NPCBehaviour : MonoBehaviour
         {
             gotDestination = true;
             _gotPath = true;
+            _animatorNPC.SetBool("isWalking", true);
         }
     }
 
@@ -92,8 +115,6 @@ public class NPCBehaviour : MonoBehaviour
         switch (_globalState)
         {
             case GlobalState.NEED_DRINKING:
-//                print("I NEED DRINKING");
-                // _globalState = GlobalState.FINE;
                 if (_gotPath == false)
                 {
                     var fridge = PathfinderHelper.Pathfinder.fridges[0];
@@ -101,13 +122,19 @@ public class NPCBehaviour : MonoBehaviour
                         new Vector2Int((int) transform.position.x, (int) transform.position.y),
                         new Vector2Int(fridge.gridX, fridge.gridY - 1));
                     if (_path != null && _path.Count > 0)
+                    {
+                        _animatorNPC.SetBool("isWalking", true);
+
+
                         _gotPath = true;
+                    }
+
                     callBack = GotBeer;
                 }
 
                 break;
             case GlobalState.FINE:
-                _boxCollider.enabled = false;
+//                _boxCollider.enabled = false;
 
                 // Increments the drunk bar
                 prctUntilDrunk += incrDrunkOverTime * Time.deltaTime * GameHelper.GM.timeScale;
@@ -133,26 +160,8 @@ public class NPCBehaviour : MonoBehaviour
                 break;
             case GlobalState.DRUNK:
                 HandleDrunk();
-
-                if (timer <= 0.0f && gotDestination == false && _gotPath == false)
-                {
-                    GetRandomDestination();
-                    if (drunkType == DrunkState.PUKER)
-                    {
-                        if (lastTile.walkable)
-                        {
-                            var bottle_ = GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
-                            lastTile.walkable = false;
-                            bottle_.GetComponent<Garbage>().worldTile = lastTile;
-       
-                        }
-                    }
-                }
-
-                if (!_gotPath)
-                {
-                    timer -= Time.deltaTime;
-                }
+                
+  
 
                 break;
             default:
@@ -160,6 +169,9 @@ public class NPCBehaviour : MonoBehaviour
                 print("Actual global state value: " + _globalState);
                 break;
         }
+
+        // Set variables for the state machine
+
 
         if (_gotPath)
         {
@@ -190,9 +202,32 @@ public class NPCBehaviour : MonoBehaviour
 
                     distX = nextPos.gridX - transform.position.x;
                     distY = nextPos.gridY - transform.position.y;
+
+                    
+                    var rot = transform.rotation;
+                    if (distX < -0.1f)
+                    {
+                        rot.z = 90;
+                    }
+                    else if (distX > 0.1f)
+                    {
+                        rot.z = 270;
+                    }
+                    else if (distY > 0.1f)
+                    {
+                        rot.z = 0;
+                    }
+                    else if (distY < -0.1f)
+                    {
+                        rot.z = 180;
+                    }
+                    
+                    transform.rotation = Quaternion.Euler(rot.x, rot.y, rot.z);   //rot;
+                    
                     distWalkedX = 0;
                     distWalkedY = 0;
                     nextPos.walkable = false;
+                    _actionState = ActionState.IDLE;
                 }
                 else
                 {
@@ -202,7 +237,9 @@ public class NPCBehaviour : MonoBehaviour
                     distWalkedX += toWalkX;
                     distWalkedY += toWalkY;
 
-                    transform.Translate(toWalkX, toWalkY, 0);
+                    transform.position += new Vector3(toWalkX, toWalkY, 0);
+//                    transform.Translate(toWalkX, toWalkY, 0);
+                    _actionState = ActionState.WALKING;
 
 
                     if (Mathf.Abs(distX) - Mathf.Abs(distWalkedX) <= 0 &&
@@ -218,26 +255,35 @@ public class NPCBehaviour : MonoBehaviour
             }
         }
 
-        // Set variables for the state machine
-        _animatorNPC.SetBool("isWalking", _actionState == ActionState.WALKING);
-        _animatorNPC.SetBool("isDrunk", _globalState == GlobalState.FINE);
-        _animatorNPC.SetBool("isTrash", _globalState == GlobalState.DRUNK);
+//        _animatorNPC.SetBool("isWalking", _actionState == ActionState.WALKING);
+//        _animatorNPC.SetBool("isDrunk", _globalState == GlobalState.FINE);
+//        _animatorNPC.SetBool("isTrash", _globalState == GlobalState.DRUNK);
         _animatorNPC.SetInteger("drunkState", (int) drunkType);
     }
 
     private void getDrunk()
     {
+        _animatorNPC.SetBool("isTrash", true);
+
         switch (drunkType)
         {
             case DrunkState.DANCER:
-                callBack = GotToDestination;
-                speed /= 2;
+                _animatorNPC.SetBool("isWalking", false);
+
+//                callBack = GotToDestination;
+                _actionState = ActionState.IDLE;
+                callBack = null;
+//                speed /= 2;
                 break;
             case DrunkState.LOVER:
+                callBack = GotToDestination;
+                _actionState = ActionState.IDLE;
+                gotDestination = false;
                 break;
             case DrunkState.PUKER:
                 callBack = GotToDestination;
-
+                _actionState = ActionState.IDLE;
+                gotDestination = false;
                 speed *= 2;
                 break;
             default:
@@ -250,10 +296,33 @@ public class NPCBehaviour : MonoBehaviour
     // Called when NPC's _globalState is DRUNK
     private void HandleDrunk()
     {
+        if (timer <= 0.0f && gotDestination == false && _gotPath == false)
+        {
+            if (drunkType == DrunkState.PUKER)
+            {
+                GetRandomDestination();
+                if (lastTile.walkable)
+                {
+                    SpawnRandomGarbage();
+                }
+            }
+            else if (drunkType == DrunkState.LOVER)
+            {
+                GoToPlayer();
+            }
+        }
+
+        if (!_gotPath)
+        {
+            timer -= Time.deltaTime;
+        }
+        
         switch (drunkType)
         {
             case DrunkState.DANCER:
                 GameHelper.GM.AddPrctUntilCops(incrCopsBarOverTime * Time.deltaTime * GameHelper.GM.timeScale);
+                _animatorNPC.SetBool("isWalking", false);
+
                 break;
             case DrunkState.LOVER:
                 break;
@@ -264,6 +333,27 @@ public class NPCBehaviour : MonoBehaviour
                 print("Actual drunk state value:" + drunkType);
                 break;
         }
+    }
+
+    private void SpawnRandomGarbage()
+    {
+        int chooseGarbageType = Random.Range(0, 1);
+        GameObject garbage_;
+        Sprite[] sprites;
+        if (chooseGarbageType == 0) // Bottle
+        {
+            garbage_ = GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
+           
+        }
+        else // Puke
+        {
+            garbage_ = GameObject.Instantiate(puke, transform.position, Quaternion.identity) as GameObject;
+        }
+
+        lastTile.walkable = false;
+        garbage_.GetComponent<Garbage>().worldTile = lastTile;
+        sprites = garbage_.GetComponent<Garbage>().sprites;
+        _spriteRenderer.sprite = sprites[Random.Range(0, sprites.Length-1)];
     }
 
     /*

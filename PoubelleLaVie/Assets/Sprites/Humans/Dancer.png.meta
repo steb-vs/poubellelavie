@@ -3,17 +3,17 @@ guid: 6bd48e2b798d13d499fd8563b41f2de8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2220361805789193965
-    second: drunk-dancer_0
+      213: 3510212729379067470
+    second: Dancer_0
   - first:
-      213: -7269895756045388453
-    second: drunk-dancer_1
+      213: -5373368839339871829
+    second: Dancer_1
   - first:
-      213: 6919488462712038414
-    second: drunk-dancer_2
+      213: 8190718812242933254
+    second: Dancer_2
   - first:
-      213: 4130212790848740083
-    second: drunk-dancer_3
+      213: 4211338535587991211
+    second: Dancer_3
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -94,11 +94,47 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: drunk-dancer_0
+      name: Dancer_0
       rect:
         serializedVersion: 2
         x: 0
@@ -112,14 +148,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d6facb3208100814eaff5ea821a6334e
-      internalID: 2220361805789193965
+      spriteID: 47b83421c9bbe47469eba26fe29892b3
+      internalID: 3510212729379067470
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: drunk-dancer_1
+      name: Dancer_1
       rect:
         serializedVersion: 2
         x: 16
@@ -133,14 +169,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1b0ace0a5e6135348a2a9ebc77a6be33
-      internalID: -7269895756045388453
+      spriteID: 56f11cd3444cc463dac20baee2382771
+      internalID: -5373368839339871829
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: drunk-dancer_2
+      name: Dancer_2
       rect:
         serializedVersion: 2
         x: 32
@@ -154,14 +190,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 07c8a8f6c9945764399567224a02bcb4
-      internalID: 6919488462712038414
+      spriteID: 9b0ee64e3254e47a3b540a4225ebb820
+      internalID: 8190718812242933254
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: drunk-dancer_3
+      name: Dancer_3
       rect:
         serializedVersion: 2
         x: 48
@@ -175,8 +211,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0e116e9ff5897c7438fbad4b610c14cf
-      internalID: 4130212790848740083
+      spriteID: 71d990e802480473895be72b038d6fad
+      internalID: 4211338535587991211
       vertices: []
       indices: 
       edges: []

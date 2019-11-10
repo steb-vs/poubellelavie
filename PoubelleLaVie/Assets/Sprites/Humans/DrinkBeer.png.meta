@@ -3,11 +3,11 @@ guid: 07e7d145bf066644c975724ae34cf646
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -959404064732787210
-    second: npc-drink_0
+      213: -7902814443866486886
+    second: DrinkBeer_0
   - first:
-      213: 4015116004151948187
-    second: npc-drink_1
+      213: -4471496989453758832
+    second: DrinkBeer_1
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -88,11 +88,47 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: npc-drink_0
+      name: DrinkBeer_0
       rect:
         serializedVersion: 2
         x: 0
@@ -106,14 +142,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 900a6215ce1bba84f91b4ec1aebb33e4
-      internalID: -959404064732787210
+      spriteID: 6b5beacb7334f46a79bd0a9958f6e940
+      internalID: -7902814443866486886
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: npc-drink_1
+      name: DrinkBeer_1
       rect:
         serializedVersion: 2
         x: 16
@@ -127,8 +163,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 926790a892e730042a14aafd1b37befb
-      internalID: 4015116004151948187
+      spriteID: e7a64c41522004fe79c947f646f968fd
+      internalID: -4471496989453758832
       vertices: []
       indices: 
       edges: []

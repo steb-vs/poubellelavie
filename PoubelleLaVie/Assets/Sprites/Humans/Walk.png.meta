@@ -3,29 +3,29 @@ guid: dec830f7786359b43a1a140f336fab2a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2646192290654873474
-    second: npc-walk_0
+      213: 4035959289877228764
+    second: Walk_0
   - first:
-      213: 7082968695373906057
-    second: npc-walk_1
+      213: -982904232830982447
+    second: Walk_1
   - first:
-      213: 3831594601843098174
-    second: npc-walk_2
+      213: -350908408369970039
+    second: Walk_2
   - first:
-      213: 6695802465209706897
-    second: npc-walk_3
+      213: -5409570386352685021
+    second: Walk_3
   - first:
-      213: 4938001974126903971
-    second: npc-walk_4
+      213: 1553940418269799609
+    second: Walk_4
   - first:
-      213: 3435930361123163572
-    second: npc-walk_5
+      213: 2416434504916517810
+    second: Walk_5
   - first:
-      213: 1565514363929220408
-    second: npc-walk_6
+      213: -6428935122508569504
+    second: Walk_6
   - first:
-      213: 1490783853858226661
-    second: npc-walk_7
+      213: 7144598999076838305
+    second: Walk_7
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -106,11 +106,47 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: npc-walk_0
+      name: Walk_0
       rect:
         serializedVersion: 2
         x: 0
@@ -124,14 +160,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 54faa6cb4ff7e1c4e88c9e21eb0fc318
-      internalID: -2646192290654873474
+      spriteID: 539b81854270844ec912557f8e3e2bfa
+      internalID: 4035959289877228764
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: npc-walk_1
+      name: Walk_1
       rect:
         serializedVersion: 2
         x: 16
@@ -145,14 +181,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0d1268d7e18395f45b10b86e3305cf82
-      internalID: 7082968695373906057
+      spriteID: bde253c11101641bcb8e848fa3d682cc
+      internalID: -982904232830982447
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: npc-walk_2
+      name: Walk_2
       rect:
         serializedVersion: 2
         x: 32
@@ -166,14 +202,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cdd790a2fd85d9e40b4350a88f155dae
-      internalID: 3831594601843098174
+      spriteID: 3d7ee2c8bbd734658af76097221ee59a
+      internalID: -350908408369970039
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: npc-walk_3
+      name: Walk_3
       rect:
         serializedVersion: 2
         x: 48
@@ -187,14 +223,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cbaf71875f16ab54fa3ae870cf15251d
-      internalID: 6695802465209706897
+      spriteID: 9ef1774f84efc47e8bd9d5427928534d
+      internalID: -5409570386352685021
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: npc-walk_4
+      name: Walk_4
       rect:
         serializedVersion: 2
         x: 64
@@ -208,14 +244,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d3fbe76f46041b240a78bd09894be85b
-      internalID: 4938001974126903971
+      spriteID: f90a24cb45570437f8e688beee0404a6
+      internalID: 1553940418269799609
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: npc-walk_5
+      name: Walk_5
       rect:
         serializedVersion: 2
         x: 80
@@ -229,14 +265,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 189f452c180df604eb91283c2cc66ff2
-      internalID: 3435930361123163572
+      spriteID: f616b1405ff174e11a310e9bd320e0aa
+      internalID: 2416434504916517810
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: npc-walk_6
+      name: Walk_6
       rect:
         serializedVersion: 2
         x: 96
@@ -250,14 +286,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c9583d50cadd4004986a52d1aaa5b432
-      internalID: 1565514363929220408
+      spriteID: baa837f507e7b4f3eb9960167fd2e769
+      internalID: -6428935122508569504
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: npc-walk_7
+      name: Walk_7
       rect:
         serializedVersion: 2
         x: 112
@@ -271,8 +307,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 46d77a9465787564cb4375ee2d0ebe32
-      internalID: 1490783853858226661
+      spriteID: 1e51ef756d9824775bdcaccf11fb4e27
+      internalID: 7144598999076838305
       vertices: []
       indices: 
       edges: []

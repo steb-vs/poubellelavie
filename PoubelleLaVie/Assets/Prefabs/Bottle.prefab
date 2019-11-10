@@ -47,7 +47,6 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -72,7 +71,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -6361271296530862326, guid: 91708ac1211a048b79bb023660b80944,
+  m_Sprite: {fileID: 8950614447118804490, guid: fc67313e77d6243b9b82e961ad615567,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -97,6 +96,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worldTile: {fileID: 0}
+  sprites:
+  - {fileID: 8950614447118804490, guid: fc67313e77d6243b9b82e961ad615567, type: 3}
+  - {fileID: -318705727588341218, guid: fc67313e77d6243b9b82e961ad615567, type: 3}
+  - {fileID: 2285715771881611942, guid: fc67313e77d6243b9b82e961ad615567, type: 3}
+  - {fileID: 7724787816996410853, guid: fc67313e77d6243b9b82e961ad615567, type: 3}
 --- !u!61 &-6933773474881253725
 BoxCollider2D:
   m_ObjectHideFlags: 0

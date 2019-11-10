@@ -43,7 +43,7 @@ public class PlayerData
         Speed = 100,
         Position = new Vector2(0, 0),
         MoveState = PlayerMoveState.Idle,
-        ActionState = PlayerActionState.None,
+        ActionState = PlayerActionState.Default,
         CarriedObject = null
     };
 }
