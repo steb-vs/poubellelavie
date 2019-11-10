@@ -39,6 +39,9 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     private bool gotDestination = false;
     private WorldTile lastTile = null;
 
+    private SpriteRenderer _renderer;
+    private Collider2D _collider;
+    
     #endregion
 
     #region Public methods
@@ -74,6 +77,9 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         _gotPath = false;
         timer = 0;
         nextPos = null;
+
+        _renderer.enabled = false;
+        _collider.enabled = false;
     }
 
     /// <summary>
@@ -81,7 +87,17 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     /// </summary>
     public void ToTheGround()
     {
+        if (GameHelper.GM.playerComponent.closeToWindow &&
+            _globalState.HasFlag(GlobalState.DRUNK))
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        
         _globalState ^= GlobalState.BEING_CARRIED;
+        _renderer.enabled = true;
+        _collider.enabled = true;
+
     }
 
     #endregion
@@ -102,6 +118,9 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         prctUntilDrunk = 0; // Over 100 (100%), the NPC becomes drunk
         _animatorNPC.SetBool("isDrunk", false);
         _animatorNPC.SetBool("isTrash", false);
+
+        _renderer = GetComponent<SpriteRenderer>();
+        _collider = GetComponent<Collider2D>();
     }
 
     private void OnDrawGizmos()
