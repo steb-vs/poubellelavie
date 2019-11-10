@@ -393,7 +393,12 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 // Make the player lose more and more
                 GameHelper.GM.AddPrctUntilCops(incrCopsBarOverTime * Time.deltaTime * GameHelper.GM.timeScale);
 
-                GetRandomDestination(); // Walk randomly
+                if (timer <= 0.0F && gotDestination == false && _gotPath == false)
+                {
+                    GetRandomDestination();
+                    callBack = GotToDestination;
+                }
+
                 break;
             case DrunkState.LOVER:
                 if (_path == null || _gotPath == false)
