@@ -122,8 +122,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         _animatorNPC = GetComponent<Animator>();
 
         Random rnd = new Random();
-        drunkType = DrunkState.PUKER;
-//        drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
+        drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
 
         _globalState = GlobalState.NEED_DRINKING;
         _actionState = ActionState.IDLE;
