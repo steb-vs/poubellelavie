@@ -29,7 +29,7 @@ public class NPCBehaviour : MonoBehaviour
 
         Random rnd = new Random();
 //        drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
-        drunkType = DrunkState.PUKER;
+        drunkType = DrunkState.LOVER;
         _globalState = GlobalState.NEED_DRINKING;
         _actionState = ActionState.IDLE;
 
@@ -63,6 +63,21 @@ public class NPCBehaviour : MonoBehaviour
         _animatorNPC.SetBool("isWalking", false);
     }
 
+    void GoToPlayer()
+    {
+        var playerPos = GameHelper.GM.player.transform.position;
+        _path = PathfinderHelper.Pathfinder.GetPath2(
+            new Vector2Int((int) transform.position.x, (int) transform.position.y),
+            new Vector2Int((int)playerPos.x, (int)playerPos.y));
+
+        if (_path != null && _path.Count > 0)
+        {
+            gotDestination = true;
+            _gotPath = true;
+            _animatorNPC.SetBool("isWalking", true);
+        }
+    }
+    
     void GetRandomDestination()
     {
         int rndX = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundX);
@@ -259,6 +274,9 @@ public class NPCBehaviour : MonoBehaviour
 //                speed /= 2;
                 break;
             case DrunkState.LOVER:
+                callBack = GotToDestination;
+                _actionState = ActionState.IDLE;
+                gotDestination = false;
                 break;
             case DrunkState.PUKER:
                 callBack = GotToDestination;
@@ -279,9 +297,9 @@ public class NPCBehaviour : MonoBehaviour
         Debug.Log($"{timer} - {gotDestination} - {_gotPath}");
         if (timer <= 0.0f && gotDestination == false && _gotPath == false)
         {
-            GetRandomDestination();
             if (drunkType == DrunkState.PUKER)
             {
+                GetRandomDestination();
                 if (lastTile.walkable)
                 {
                     var bottle_ =
@@ -289,6 +307,10 @@ public class NPCBehaviour : MonoBehaviour
                     lastTile.walkable = false;
                     bottle_.GetComponent<Garbage>().worldTile = lastTile;
                 }
+            }
+            else if (drunkType == DrunkState.LOVER)
+            {
+                GoToPlayer();
             }
         }
 

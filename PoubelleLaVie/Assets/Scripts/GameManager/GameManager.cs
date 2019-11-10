@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour
 
     public float decrCopsBarOverTime;
     public float timeScale;
-
+    [HideInInspector]public GameObject player;
+    
     // When instiated, this object is stored in the GameHelper
     private void Awake()
     {

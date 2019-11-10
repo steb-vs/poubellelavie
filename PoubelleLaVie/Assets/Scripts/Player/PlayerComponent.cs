@@ -34,6 +34,7 @@ public class PlayerComponent : MonoBehaviour
         _animator = playerSprite.GetComponent<Animator>();
         _data = PlayerData.Default;
         _closeObjects = new HashSet<IUsable>();
+        GameHelper.GM.player = this.gameObject;
     }
 
     private void Update()
