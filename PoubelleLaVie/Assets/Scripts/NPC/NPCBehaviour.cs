@@ -84,7 +84,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         timer = 0;
         nextPos = null;
 
-        _renderer.enabled = false;
+        //_renderer.enabled = false;
         _collider.enabled = false;
     }
 
