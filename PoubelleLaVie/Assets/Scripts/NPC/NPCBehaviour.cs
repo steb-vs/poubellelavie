@@ -9,7 +9,6 @@ public class NPCBehaviour : MonoBehaviour
 {
     private BoxCollider2D _boxCollider;
     private Animator _animatorNPC;
-    private SpriteRenderer _spriteRenderer;
 
     private GlobalState _globalState;
     private ActionState _actionState;
@@ -28,7 +27,6 @@ public class NPCBehaviour : MonoBehaviour
     {
         _boxCollider = GetComponent<BoxCollider2D>();
         _animatorNPC = GetComponent<Animator>();
-        _spriteRenderer = GetComponent<SpriteRenderer>();
 
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
@@ -337,9 +335,8 @@ public class NPCBehaviour : MonoBehaviour
 
     private void SpawnRandomGarbage()
     {
-        int chooseGarbageType = Random.Range(0, 1);
+        int chooseGarbageType = Random.Range(0, 2);
         GameObject garbage_;
-        Sprite[] sprites;
         if (chooseGarbageType == 0) // Bottle
         {
             garbage_ = GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
@@ -352,8 +349,6 @@ public class NPCBehaviour : MonoBehaviour
 
         lastTile.walkable = false;
         garbage_.GetComponent<Garbage>().worldTile = lastTile;
-        sprites = garbage_.GetComponent<Garbage>().sprites;
-        _spriteRenderer.sprite = sprites[Random.Range(0, sprites.Length-1)];
     }
 
     /*
