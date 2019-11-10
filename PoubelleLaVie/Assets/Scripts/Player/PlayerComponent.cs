@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerComponent : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class PlayerComponent : MonoBehaviour
     private ISpeedModifier _speedModObj;
 
     [HideInInspector] public bool closeToWindow = false;
+
+    public Image trashImage;
+    public Sprite[] trashImages;
 
     /// <summary>
     /// Sets the player data.
