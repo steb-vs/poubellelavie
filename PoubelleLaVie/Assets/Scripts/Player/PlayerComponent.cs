@@ -15,6 +15,8 @@ public class PlayerComponent : MonoBehaviour
     private IUsable _carriedObject;
     private ISpeedModifier _speedModObj;
 
+    [HideInInspector] public bool closeToWindow = false;
+
     /// <summary>
     /// Sets the player data.
     /// </summary>
@@ -32,8 +34,11 @@ public class PlayerComponent : MonoBehaviour
         _data = PlayerData.Default;
         _closeObjects = new HashSet<IUsable>();
 
-        if(GameHelper.GM != null)
+        if (GameHelper.GM != null)
+        {
             GameHelper.GM.player = this.gameObject;
+            GameHelper.GM.playerComponent = this;
+        }
     }
 
     private void Update()
