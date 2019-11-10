@@ -385,7 +385,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
                 break;
             case DrunkState.LOVER:
-                if (_gotPath && _path.Count != 0) // Check if the LOVER is going to the right tile (not too far away from the player)
+                if (_gotPath && _path != null && _path.Count != 0) // Check if the LOVER is going to the right tile (not too far away from the player)
                 {
                     float targetX, targetY;
                     targetX = _path[_path.Count - 1].transform.position.x;
