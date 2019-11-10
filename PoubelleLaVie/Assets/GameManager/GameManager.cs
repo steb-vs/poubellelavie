@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     public Image trashImage;
     public Sprite[] trashImages;
     public GameObject thrownTrash;
+
+    public float score;
     
     // When instiated, this object is stored in the GameHelper
     private void Awake()
@@ -30,13 +32,13 @@ public class GameManager : MonoBehaviour
         _prctCopsBar = 0;
         decrCopsBarOverTime = 3F;
         timeScale = 1;
+        score = 1;
     }
 
     // Update is called once per frame
     void Update()
     {
         float decrCopsBar = decrCopsBarOverTime * Time.deltaTime * timeScale;
-        _prctCopsBar -= decrCopsBar;
         if (_prctCopsBar >= 100)
         {
             // End game
@@ -46,6 +48,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Decrement automatically the cops bar
+        _prctCopsBar -= decrCopsBar;
         _prctCopsBar = (_prctCopsBar < 0) ? 0 : _prctCopsBar;
 
         // Setting / Unsetting pause ?
@@ -61,6 +64,8 @@ public class GameManager : MonoBehaviour
             trashImage.sprite =
                 trashImages[(playerComponent.grabbedObjects * (trashImages.Length - 1)) / playerComponent.maxGrabbedObjects];
         }
+
+        score += (float) Time.deltaTime * 3.5F * timeScale;
     }
 
     public void AddPrctUntilCops(float toAdd)
