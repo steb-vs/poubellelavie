@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.UI;
+using TMPro;
 using UnityEngine.SceneManagement;
 
-public class GameOverUI : MonoBehaviour
+public class MainMenuUI : MonoBehaviour
 {
     public GameObject container;
 
@@ -14,7 +14,9 @@ public class GameOverUI : MonoBehaviour
 
     public int index = 0;
     public string controller = "Horizontal";
-    
+
+    public Image fadeToBlackPanel;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,7 +35,7 @@ public class GameOverUI : MonoBehaviour
         float axis = Input.GetAxis(controller);
         if (controller == InputHelper.VERTICAL)
             axis = -axis;
-        
+
         if (axis > 0.1f && _tricked == false)
         {
             _tricked = true;
@@ -41,7 +43,7 @@ public class GameOverUI : MonoBehaviour
             ++index;
             if (index >= _choices.Count)
                 index = 0;
-        } 
+        }
         else if (axis < -0.1f && _tricked == false)
         {
             _tricked = true;
@@ -56,20 +58,40 @@ public class GameOverUI : MonoBehaviour
         }
 
         _choices[index].text = $"> {_choicesSave[index]}";
-        
-        if (Input.GetButtonUp(InputHelper.TAKE_N_DROP)  ||
-            Input.GetKeyDown(KeyCode.Return))
+
+        if ((Input.GetButtonUp(InputHelper.TAKE_N_DROP) ||
+            Input.GetKeyDown(KeyCode.Return)) &&
+            fading == false)
         {
             switch (index)
             {
                 case 0:
-                    SceneManager.LoadScene("Game");
+                    //SceneManager.LoadScene("Game");
                     break;
                 case 1:
-                    SceneManager.LoadScene("MainMenu");
+                    fading = true;
+                    StartCoroutine(fadeToBlack());
+                    break;
+                case 2:
+                    Application.Quit();
                     break;
             }
         }
+    }
+
+    private bool fading = false;
+
+    IEnumerator fadeToBlack()
+    {
+        while (fadeToBlackPanel.color.a < 1)
+        {
+            var color = fadeToBlackPanel.color;
+            color.a += Time.deltaTime;
+            fadeToBlackPanel.color = color;
+            yield return new WaitForEndOfFrame();
+        }
+        SceneManager.LoadScene("Game");
+        yield return null;
     }
 
     private bool _tricked = false;
