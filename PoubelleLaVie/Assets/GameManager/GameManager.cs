@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
         _prctCopsBar = 0;
         decrCopsBarOverTime = 3F;
         timeScale = 1;
-        score = 1;
+        score = 0;
     }
 
     // Update is called once per frame
@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
                 trashImages[(playerComponent.grabbedObjects * (trashImages.Length - 1)) / playerComponent.maxGrabbedObjects];
         }
 
-        score += (float) Time.deltaTime * 3.5F * timeScale;
+        score += Time.deltaTime * 3.5F * timeScale;
     }
 
     public void AddPrctUntilCops(float toAdd)
