@@ -5,24 +5,89 @@ using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
-public class NPCBehaviour : MonoBehaviour
+public class NPCBehaviour : MonoBehaviour, IUsable
 {
-    private BoxCollider2D _boxCollider;
-    private Animator _animatorNPC;
+    #region Public fields
 
-    private GlobalState _globalState;
-    private ActionState _actionState;
     public DrunkState drunkType;
-
     public float prctUntilDrunk;
     public float incrDrunkOverTime = 1.0F;
-
     public float incrCopsBarOverTime = 5.8f;
-
+    public Vector3 Position => transform.position;
+    public bool IsHeavy => true;
     public GameObject bottle;
 
-    // Start is called before the first frame update
-    void Start()
+    #endregion
+
+    #region Private fields
+
+    private UnityAction callBack;
+    private bool _gotPath = false;
+    private List<WorldTile> _path;
+    private WorldTile nextPos = null;
+    private float distX = 0;
+    private float distY = 0;
+    private float distWalkedX;
+    private float distWalkedY;
+    private float speed = 0.5f;
+    private float timer = 5;
+    private bool gotDestination = false;
+    private WorldTile lastTile = null;
+    private BoxCollider2D _boxCollider;
+    private Animator _animatorNPC;
+    private GlobalState _globalState;
+    private ActionState _actionState;
+
+    #endregion
+
+    #region Public methods
+
+    /// <summary>
+    /// Add to the NPC the state of 'BEING_CARRIED'.
+    /// Doesn't change the inner state.
+    /// </summary>
+    public void ToCarried()
+    {
+        _globalState |= GlobalState.BEING_CARRIED;
+
+        _path.Clear();
+        _path = null;
+
+        _gotPath = false;
+        timer = 0;
+        nextPos = null;
+    }
+
+    /// <summary>
+    /// Retire to the NPC the state of 'BEING_CARRIED'.
+    /// </summary>
+    public void ToTheGround()
+    {
+        _globalState ^= GlobalState.BEING_CARRIED;
+    }
+
+    public void Use(GameObject sender)
+    {
+    }
+
+    public void Take(GameObject sender)
+    {
+        transform.parent = sender.transform;
+        transform.localPosition = Vector3.zero;
+        ToCarried();
+    }
+
+    public void Drop(GameObject sender)
+    {
+        transform.parent = null;
+        ToTheGround();
+    }
+
+    #endregion
+
+    #region Privates methods
+
+    private void Start()
     {
         _boxCollider = GetComponent<BoxCollider2D>();
         _animatorNPC = GetComponent<Animator>();
@@ -48,21 +113,21 @@ public class NPCBehaviour : MonoBehaviour
         }
     }
 
-    void GotBeer()
+    private void GotBeer()
     {
         _globalState = GlobalState.FINE;
         _animatorNPC.SetBool("isDrunk", true);
         timer = -1;
     }
 
-    void GotToDestination()
+    private void GotToDestination()
     {
         gotDestination = false;
         timer = 1.5f;
         _animatorNPC.SetBool("isWalking", false);
     }
 
-    void GoToPlayer()
+    private void GoToPlayer()
     {
         var playerPos = GameHelper.GM.player.transform.position;
         _path = PathfinderHelper.Pathfinder.GetPath2(
@@ -77,7 +142,7 @@ public class NPCBehaviour : MonoBehaviour
         }
     }
     
-    void GetRandomDestination()
+    private void GetRandomDestination()
     {
         int rndX = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundX);
         int rndY = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundY);
@@ -98,8 +163,7 @@ public class NPCBehaviour : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (_globalState.HasFlag(GlobalState.BEING_CARRIED))
         {
@@ -138,7 +202,7 @@ public class NPCBehaviour : MonoBehaviour
                 if (prctUntilDrunk >= 100)
                 {
                     _globalState = GlobalState.DRUNK;
-                    getDrunk();
+                    GetDrunk();
                 }
 
 //                Debug.Log(timer);
@@ -258,7 +322,7 @@ public class NPCBehaviour : MonoBehaviour
         _animatorNPC.SetInteger("drunkState", (int) drunkType);
     }
 
-    private void getDrunk()
+    private void GetDrunk()
     {
         _animatorNPC.SetBool("isTrash", true);
 
@@ -290,7 +354,9 @@ public class NPCBehaviour : MonoBehaviour
         }
     }
 
-    // Called when NPC's _globalState is DRUNK
+    /// <summary>
+    /// Called when NPC's _globalState is DRUNK
+    /// </summary>
     private void HandleDrunk()
     {
         if (timer <= 0.0f && gotDestination == false && _gotPath == false)
@@ -335,42 +401,5 @@ public class NPCBehaviour : MonoBehaviour
         }
     }
 
-    /*
-     * Add to the NPC the state of 'BEING_CARRIED'.
-     * Doesn't change the inner state.
-     */
-    public void ToCarried()
-    {
-        _globalState |= GlobalState.BEING_CARRIED;
-
-        _path.Clear();
-        _path = null;
-
-        _gotPath = false;
-        timer = 0;
-        nextPos = null;
-    }
-
-    /*
-     * Retire to the NPC the state of 'BEING_CARRIED'.
-     */
-    public void ToTheGround()
-    {
-        _globalState ^= GlobalState.BEING_CARRIED;
-    }
-
-    private UnityAction callBack;
-
-    private bool _gotPath = false;
-    private List<WorldTile> _path;
-    private WorldTile nextPos = null;
-    private float distX = 0;
-    private float distY = 0;
-    private float distWalkedX;
-    private float distWalkedY;
-    private float speed = 0.5f;
-
-    private float timer = 5;
-    private bool gotDestination = false;
-    private WorldTile lastTile = null;
+    #endregion
 }
