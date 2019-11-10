@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     public float timeScale;
     [HideInInspector]public GameObject player;
     [HideInInspector] public PlayerComponent playerComponent;
+
+    public GameObject canvasGameOver;
     
     // When instiated, this object is stored in the GameHelper
     private void Awake()
@@ -29,15 +31,17 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         float decrCopsBar = decrCopsBarOverTime * Time.deltaTime * timeScale;
+        _prctCopsBar -= decrCopsBar;
         if (_prctCopsBar >= 100)
         {
             // End game
             timeScale = 0;
+            canvasGameOver.SetActive(true);
             return;
         }
 
         // Decrement automatically the cops bar
-        _prctCopsBar = (decrCopsBar < 0) ? 0 : decrCopsBar;
+        _prctCopsBar = (_prctCopsBar < 0) ? 0 : _prctCopsBar;
 
         // Setting / Unsetting pause ?
         if (Input.GetButtonDown(InputHelper.PAUSE))
