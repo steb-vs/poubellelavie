@@ -30,6 +30,7 @@ public class NPCBehaviour : MonoBehaviour
 
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
+
         _globalState = GlobalState.NEED_DRINKING;
         _actionState = ActionState.IDLE;
 
@@ -132,8 +133,6 @@ public class NPCBehaviour : MonoBehaviour
 
                 break;
             case GlobalState.FINE:
-//                _boxCollider.enabled = false;
-
                 // Increments the drunk bar
                 prctUntilDrunk += incrDrunkOverTime * Time.deltaTime * GameHelper.GM.timeScale;
                 if (prctUntilDrunk >= 100)
@@ -253,9 +252,6 @@ public class NPCBehaviour : MonoBehaviour
             }
         }
 
-//        _animatorNPC.SetBool("isWalking", _actionState == ActionState.WALKING);
-//        _animatorNPC.SetBool("isDrunk", _globalState == GlobalState.FINE);
-//        _animatorNPC.SetBool("isTrash", _globalState == GlobalState.DRUNK);
         _animatorNPC.SetInteger("drunkState", (int) drunkType);
     }
 
@@ -312,7 +308,7 @@ public class NPCBehaviour : MonoBehaviour
 
         if (!_gotPath)
         {
-            timer -= Time.deltaTime;
+            timer -= Time.deltaTime * GameHelper.GM.timeScale;
         }
         
         switch (drunkType)
@@ -323,6 +319,14 @@ public class NPCBehaviour : MonoBehaviour
 
                 break;
             case DrunkState.LOVER:
+                if (_gotPath && _path.Count != 0) // Check if the LOVER is going to the right tile (not too far away from the player)
+                {
+                    float targetX, targetY;
+                    targetX = _path[_path.Count - 1].transform.position.x;
+                    targetY = _path[_path.Count - 1].transform.position.y;
+                    if (DistanceBetweenPlayer(targetX, targetY) > 2)
+                        GoToPlayer(); // Current target tile is too far away from the player
+                }
                 break;
             case DrunkState.PUKER:
                 break;
@@ -373,6 +377,17 @@ public class NPCBehaviour : MonoBehaviour
     public void ToTheGround()
     {
         _globalState ^= GlobalState.BEING_CARRIED;
+    }
+
+    private float DistanceBetweenPlayer(float caseX, float caseY)
+    {
+        var playerPos = GameHelper.GM.player.transform.position;
+        float res;
+
+        res =  Math.Abs(caseX - playerPos.x);
+        res += Math.Abs(caseY - playerPos.y);
+
+        return res;
     }
 
     private UnityAction callBack;
