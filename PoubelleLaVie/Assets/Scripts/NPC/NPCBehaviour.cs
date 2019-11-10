@@ -36,6 +36,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     private float distWalkedY;
     private float speed = 0.5f;
     private float timer = 5;
+    private uint numberDrinksPending;
     private bool gotDestination = false;
     private WorldTile lastTile = null;
 
@@ -143,6 +144,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     {
         _globalState = GlobalState.FINE;
         _animatorNPC.SetBool("isDrunk", true);
+        numberDrinksPending = (uint) Random.Range(2, 5); // Between 2 and 4 times to drink before becoming drunk
         timer = -1;
     }
 
@@ -220,41 +222,38 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
                 break;
             case GlobalState.FINE:
-                // Increments the drunk bar
-                prctUntilDrunk += incrDrunkOverTime * Time.deltaTime * GameHelper.GM.timeScale;
-                if (prctUntilDrunk >= 100)
+                // Check if NPC is drunk
+                if (numberDrinksPending == 0)
                 {
                     _globalState = GlobalState.DRUNK;
                     getDrunk();
                 }
 
 //                Debug.Log(timer);
+                // The NPC just ended the drink action
                 if (timer <= 0.0f && gotDestination == false && _gotPath == false)
                 {
                     GetRandomDestination();
                     callBack = GotToDestination;
+                    numberDrinksPending -= 1;
                 }
 
+                // NPC is drinking
                 if (!_gotPath)
                 {
-                    timer -= Time.deltaTime;
+                    timer -= Time.deltaTime * GameHelper.GM.timeScale;
                 }
 
 //                print("CURRENT DRINK BAR: " + prctUntilDrunk);
                 break;
             case GlobalState.DRUNK:
                 HandleDrunk();
-
-
                 break;
             default:
                 print("Unexpected global state of an NPC !");
                 print("Actual global state value: " + _globalState);
                 break;
         }
-
-        // Set variables for the state machine
-
 
         if (_gotPath)
         {
