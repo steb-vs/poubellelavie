@@ -4716,6 +4716,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -9477,6 +9478,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -14238,6 +14240,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -14337,6 +14340,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -14386,9 +14390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   drunkType: 0
-  prctUntilDrunk: 0
-  incrDrunkOverTime: 25
-  incrCopsBarOverTime: 25
+  incrCopsBarOverTime: 5
   bottle: {fileID: 4531288790792463214, guid: c430be30375a549dd867a1419aec6acf, type: 3}
   puke: {fileID: 7222868899319371002, guid: 693b45607cf2adc45a8d19a42e021979, type: 3}
 --- !u!95 &1311561958075530535
