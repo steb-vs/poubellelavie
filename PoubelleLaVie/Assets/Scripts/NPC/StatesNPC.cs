@@ -13,9 +13,3 @@ enum GlobalState
     DRUNK = 4,
     BEING_CARRIED = 8 // When the player is taking care of this NPC
 }
-
-enum ActionState 
-{ 
-    IDLE, 
-    WALKING 
-}
