@@ -6,8 +6,8 @@ using System.Linq;
 
 public class Pathfinder : MonoBehaviour
 {
-    [HideInInspector] public List<WorldTile> fridges;
-    [HideInInspector] public List<WorldTile> entries;
+    [HideInInspector] public List<WorldTile> fridges = new  List<WorldTile>();
+    [HideInInspector] public List<WorldTile> entries = new List<WorldTile>();
 
     private void OnDrawGizmos()
     {
@@ -16,6 +16,7 @@ public class Pathfinder : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("coucou");
         PathfinderHelper.Pathfinder = this;
     }
 

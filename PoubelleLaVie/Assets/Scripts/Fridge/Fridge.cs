@@ -11,6 +11,7 @@ public class Fridge : MonoBehaviour
     private void Start()
     {
         f = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        f.sprite = fridge[0];
     }
 
     private void OnTriggerEnter2D(Collider2D other)

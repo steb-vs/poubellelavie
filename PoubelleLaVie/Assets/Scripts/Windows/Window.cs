@@ -15,6 +15,9 @@ public class Window : MonoBehaviour
     {
         l = transform.GetChild(0).GetComponent<SpriteRenderer>();
         r = transform.GetChild(1).GetComponent<SpriteRenderer>();
+        l.sprite = leftWindow[0];
+        r.sprite = rightWindow[0];
+        
     }
 
     private void OnTriggerEnter2D(Collider2D other)

@@ -60,7 +60,7 @@ public class GameOverUI : MonoBehaviour
             switch (index)
             {
                 case 0:
-                    SceneManager.LoadScene("IA_Bonjour");
+                    SceneManager.LoadScene("Game");
                     break;
                 case 1:
                     SceneManager.LoadScene("MainMenu");
