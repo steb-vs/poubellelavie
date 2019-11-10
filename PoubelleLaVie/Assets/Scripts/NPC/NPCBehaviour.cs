@@ -95,15 +95,28 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         _collider.enabled = false;
     }
 
+    private IEnumerator fall()
+    {
+        while (transform.localScale.x > 0)
+        {
+            var coef = Time.deltaTime;
+            transform.localScale -= new Vector3(coef, coef, coef);
+            yield return new WaitForEndOfFrame();
+        }
+        yield return null;
+    }
+    
     /// <summary>
     /// Retire to the NPC the state of 'BEING_CARRIED'.
     /// </summary>
     public void ToTheGround()
     {
-        if (GameHelper.GM.playerComponent.closeToWindow &&
+        if (GameHelper.GM.playerComponent.closeWindow &&
             _globalState.HasFlag(GlobalState.DRUNK))
         {
-            Destroy(this.gameObject);
+            transform.position += GameHelper.GM.playerComponent.closeWindow.transform.up * 2;
+            StartCoroutine(fall());
+            Destroy(this.gameObject, 1);
             return;
         }
 

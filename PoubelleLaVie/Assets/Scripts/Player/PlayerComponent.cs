@@ -16,7 +16,7 @@ public class PlayerComponent : MonoBehaviour
     private IUsable _carriedObject;
     private ISpeedModifier _speedModObj;
 
-    [HideInInspector] public bool closeToWindow = false;
+    [HideInInspector] public Window closeWindow = null;
 
     [HideInInspector] public int grabbedObjects = 0;
     public int maxGrabbedObjects = 10;
@@ -74,9 +74,13 @@ public class PlayerComponent : MonoBehaviour
                     _carriedObject = null;
             }
             
-            else if (grabbedObjects > 0 && closeToWindow)
+            else if (grabbedObjects > 0 && closeWindow != null)
             {
                 grabbedObjects = 0;
+                var t = GameObject.Instantiate(GameHelper.GM.thrownTrash, transform.position +
+                                                                          closeWindow.transform.up * 2,
+                    Quaternion.identity);
+                GameObject.Destroy(t, 1);
             }
 
             // Else, get a new object if any available

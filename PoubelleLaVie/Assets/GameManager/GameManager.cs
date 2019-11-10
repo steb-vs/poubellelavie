@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     
     public Image trashImage;
     public Sprite[] trashImages;
+    public GameObject thrownTrash;
     
     // When instiated, this object is stored in the GameHelper
     private void Awake()
