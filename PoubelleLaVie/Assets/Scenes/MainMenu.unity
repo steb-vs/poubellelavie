@@ -7804,41 +7804,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4476776109307149615, guid: c9fe498631e8f964086572468a2c944d,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 53
-      objectReference: {fileID: 0}
-    - target: {fileID: 4476776110769655382, guid: c9fe498631e8f964086572468a2c944d,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 53
-      objectReference: {fileID: 0}
-    - target: {fileID: 4476776110110660611, guid: c9fe498631e8f964086572468a2c944d,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 53
-      objectReference: {fileID: 0}
-    - target: {fileID: 4476776110171383095, guid: c9fe498631e8f964086572468a2c944d,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 53
-      objectReference: {fileID: 0}
-    - target: {fileID: 4476776111157417589, guid: c9fe498631e8f964086572468a2c944d,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 53
-      objectReference: {fileID: 0}
-    - target: {fileID: 4476776110372874420, guid: c9fe498631e8f964086572468a2c944d,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 53
-      objectReference: {fileID: 0}
-    - target: {fileID: 4476776109351818882, guid: c9fe498631e8f964086572468a2c944d,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 53
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c9fe498631e8f964086572468a2c944d, type: 3}
 --- !u!1 &1839455749
