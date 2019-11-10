@@ -50,17 +50,21 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     {
     }
 
-    public void Take(GameObject sender)
+    public bool Take(GameObject sender)
     {
         transform.parent = sender.transform;
         transform.localPosition = Vector3.zero;
         ToCarried();
+
+        return true;
     }
 
-    public void Drop(GameObject sender)
+    public bool Drop(GameObject sender)
     {
         transform.parent = null;
         ToTheGround();
+
+        return true;
     }
 
     /// <summary>

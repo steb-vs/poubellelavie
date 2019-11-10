@@ -65,8 +65,8 @@ public class PlayerComponent : MonoBehaviour
             if (_carriedObject != null)
             {
                 // Drop it!
-                _carriedObject.Drop(gameObject);
-                _carriedObject = null;
+                if(_carriedObject.Drop(gameObject))
+                    _carriedObject = null;
             }
 
             // Else, get a new object if any available
@@ -78,7 +78,8 @@ public class PlayerComponent : MonoBehaviour
                     .OrderBy(x => x.Distance)
                     .First().Obj;
 
-                _carriedObject.Take(gameObject);
+                if (!_carriedObject.Take(gameObject))
+                    _carriedObject = null;
             }
         }
 
@@ -118,6 +119,7 @@ public class PlayerComponent : MonoBehaviour
         if (speedModObj == null)
             return;
 
+        // Only update speed mod if the new speed mod is lesser than the current
         if (_speedModObj != null && _speedModObj.SpeedModifier < speedModObj.SpeedModifier)
             return;
 
@@ -130,7 +132,8 @@ public class PlayerComponent : MonoBehaviour
 
         if (speedModObj == null)
             return;
-
+        
+        // Skip if the speed mod object is not the same as the current
         if (_speedModObj != speedModObj)
             return;
 

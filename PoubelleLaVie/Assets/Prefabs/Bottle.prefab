@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4803359814171464832}
   - component: {fileID: 1163335325150450089}
-  - component: {fileID: 7221941869964365988}
+  - component: {fileID: -7366655695070820029}
   - component: {fileID: -6933773474881253725}
   m_Layer: 0
   m_Name: Bottle
@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4531288790792463214}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.1360216, y: 3.1158442, z: -21.738577}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7221941869964365988
+--- !u!114 &-7366655695070820029
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4531288790792463214}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8668a1db82fee4ff3be7e4695c4d44a5, type: 3}
+  m_Script: {fileID: 11500000, guid: 3976a466738b65b4f887a45944417509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   worldTile: {fileID: 0}
