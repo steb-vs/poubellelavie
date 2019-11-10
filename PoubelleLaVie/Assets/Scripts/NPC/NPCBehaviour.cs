@@ -9,6 +9,7 @@ public class NPCBehaviour : MonoBehaviour
 {
     private BoxCollider2D _boxCollider;
     private Animator _animatorNPC;
+    private SpriteRenderer _spriteRenderer;
 
     private GlobalState _globalState;
     private ActionState _actionState;
@@ -20,12 +21,14 @@ public class NPCBehaviour : MonoBehaviour
     public float incrCopsBarOverTime = 5.8f;
 
     public GameObject bottle;
+    public GameObject puke;
 
     // Start is called before the first frame update
     void Start()
     {
         _boxCollider = GetComponent<BoxCollider2D>();
         _animatorNPC = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
 
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
@@ -300,10 +303,7 @@ public class NPCBehaviour : MonoBehaviour
                 GetRandomDestination();
                 if (lastTile.walkable)
                 {
-                    var bottle_ =
-                        GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
-                    lastTile.walkable = false;
-                    bottle_.GetComponent<Garbage>().worldTile = lastTile;
+                    SpawnRandomGarbage();
                 }
             }
             else if (drunkType == DrunkState.LOVER)
@@ -333,6 +333,27 @@ public class NPCBehaviour : MonoBehaviour
                 print("Actual drunk state value:" + drunkType);
                 break;
         }
+    }
+
+    private void SpawnRandomGarbage()
+    {
+        int chooseGarbageType = Random.Range(0, 1);
+        GameObject garbage_;
+        Sprite[] sprites;
+        if (chooseGarbageType == 0) // Bottle
+        {
+            garbage_ = GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
+           
+        }
+        else // Puke
+        {
+            garbage_ = GameObject.Instantiate(puke, transform.position, Quaternion.identity) as GameObject;
+        }
+
+        lastTile.walkable = false;
+        garbage_.GetComponent<Garbage>().worldTile = lastTile;
+        sprites = garbage_.GetComponent<Garbage>().sprites;
+        _spriteRenderer.sprite = sprites[Random.Range(0, sprites.Length-1)];
     }
 
     /*
