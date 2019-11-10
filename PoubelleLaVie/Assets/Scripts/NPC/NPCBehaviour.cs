@@ -353,7 +353,7 @@ public class NPCBehaviour : MonoBehaviour
         lastTile.walkable = false;
         garbage_.GetComponent<Garbage>().worldTile = lastTile;
         sprites = garbage_.GetComponent<Garbage>().sprites;
-        _spriteRenderer.sprite = sprites[Random.Range(0, sprites.Length)];
+        _spriteRenderer.sprite = sprites[Random.Range(0, sprites.Length-1)];
     }
 
     /*
