@@ -10,10 +10,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     #region Public fields
 
     private GlobalState _globalState;
-    private ActionState _actionState;
     public DrunkState drunkType;
-    public float prctUntilDrunk;
-    public float incrDrunkOverTime = 1.0F;
     public float incrCopsBarOverTime = 5.8f;
     public GameObject bottle;
     public GameObject puke;
@@ -36,6 +33,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     private float distWalkedY;
     private float speed = 0.5f;
     private float timer = 5;
+    private uint numberDrinksPending;
     private bool gotDestination = false;
     private WorldTile lastTile = null;
 
@@ -52,9 +50,13 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
     public bool Take(GameObject sender)
     {
-        transform.parent = sender.transform;
+        transform.parent = sender.transform.GetChild(0).transform;
         transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
         ToCarried();
+
+        _animatorNPC.StopPlayback();
+        _animatorNPC.Play("Grabbed");
 
         return true;
     }
@@ -63,6 +65,9 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     {
         transform.parent = null;
         ToTheGround();
+
+        _animatorNPC.StopPlayback();
+        _animatorNPC.Play("New State");
 
         return true;
     }
@@ -87,15 +92,28 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         _collider.enabled = false;
     }
 
+    private IEnumerator fall()
+    {
+        while (transform.localScale.x > 0)
+        {
+            var coef = Time.deltaTime;
+            transform.localScale -= new Vector3(coef, coef, coef);
+            yield return new WaitForEndOfFrame();
+        }
+        yield return null;
+    }
+    
     /// <summary>
     /// Retire to the NPC the state of 'BEING_CARRIED'.
     /// </summary>
     public void ToTheGround()
     {
-        if (GameHelper.GM.playerComponent.closeToWindow &&
+        if (GameHelper.GM.playerComponent.closeWindow &&
             _globalState.HasFlag(GlobalState.DRUNK))
         {
-            Destroy(this.gameObject);
+            transform.position += GameHelper.GM.playerComponent.closeWindow.transform.up * 2;
+            StartCoroutine(fall());
+            Destroy(this.gameObject, 1);
             return;
         }
 
@@ -117,9 +135,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
 
         _globalState = GlobalState.NEED_DRINKING;
-        _actionState = ActionState.IDLE;
 
-        prctUntilDrunk = 0; // Over 100 (100%), the NPC becomes drunk
         _animatorNPC.SetBool("isDrunk", false);
         _animatorNPC.SetBool("isTrash", false);
 
@@ -142,13 +158,18 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     {
         _globalState = GlobalState.FINE;
         _animatorNPC.SetBool("isDrunk", true);
-        timer = -1;
+        numberDrinksPending = (uint) Random.Range(2, 5); // Between 2 and 4 times to drink before becoming drunk
+
+        timer = 0.5F; // Take 0.5 secs to grab a beer
+        gotDestination = false;
+        _gotPath = false;
     }
 
     private void GotToDestination()
     {
         gotDestination = false;
-        timer = 1.5f;
+        _gotPath = false;
+        timer = _globalState == GlobalState.FINE ? 2F : 1.5F; // Make the drinking action a little bit longer
         _animatorNPC.SetBool("isWalking", false);
     }
 
@@ -191,9 +212,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     private void Update()
     {
         if (_globalState.HasFlag(GlobalState.BEING_CARRIED))
-        {
             return; // We stop here
-        }
 
 
         // NPC is not being carried by the player: he can do his things
@@ -219,32 +238,28 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
                 break;
             case GlobalState.FINE:
-                // Increments the drunk bar
-                prctUntilDrunk += incrDrunkOverTime * Time.deltaTime * GameHelper.GM.timeScale;
-                if (prctUntilDrunk >= 100)
+                // Check if NPC is drunk
+                if (numberDrinksPending == 0)
                 {
                     _globalState = GlobalState.DRUNK;
                     getDrunk();
                 }
-
-//                Debug.Log(timer);
+                
+                // The NPC just ended the drink action
                 if (timer <= 0.0f && gotDestination == false && _gotPath == false)
                 {
                     GetRandomDestination();
                     callBack = GotToDestination;
+                    numberDrinksPending -= 1;
                 }
 
+                // NPC is drinking
                 if (!_gotPath)
-                {
-                    timer -= Time.deltaTime;
-                }
-
-//                print("CURRENT DRINK BAR: " + prctUntilDrunk);
+                    timer -= Time.deltaTime * GameHelper.GM.timeScale;
+                
                 break;
             case GlobalState.DRUNK:
                 HandleDrunk();
-
-
                 break;
             default:
                 print("Unexpected global state of an NPC !");
@@ -252,92 +267,81 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 break;
         }
 
-        // Set variables for the state machine
+        HandleDeplacement();
+        _animatorNPC.SetInteger("drunkState", (int) drunkType);
+    }
 
+    private void HandleDeplacement()
+    {
+        // No path
+        if (!_gotPath || _path == null)
+            return;
 
-        if (_gotPath)
+        // Ended deplacement
+        if (_path.Count <= 0 && callBack != null)
         {
-            if (_path == null)
-                return;
-
-            if (_path.Count <= 0)
-            {
-                _gotPath = false;
-                if (callBack != null)
-                    callBack();
-            }
-            else
-            {
-                if (!nextPos)
-                {
-                    nextPos = _path[0];
-
-                    if (nextPos.walkable == false)
-                    {
-                        _path.Clear();
-                        _path = null;
-                        nextPos = null;
-                        _gotPath = false;
-                        gotDestination = false;
-                        return;
-                    }
-
-                    distX = nextPos.gridX - transform.position.x;
-                    distY = nextPos.gridY - transform.position.y;
-
-
-                    var rot = transform.rotation;
-                    if (distX < -0.1f)
-                    {
-                        rot.z = 90;
-                    }
-                    else if (distX > 0.1f)
-                    {
-                        rot.z = 270;
-                    }
-                    else if (distY > 0.1f)
-                    {
-                        rot.z = 0;
-                    }
-                    else if (distY < -0.1f)
-                    {
-                        rot.z = 180;
-                    }
-
-                    transform.rotation = Quaternion.Euler(rot.x, rot.y, rot.z); //rot;
-
-                    distWalkedX = 0;
-                    distWalkedY = 0;
-                    nextPos.walkable = false;
-                    _actionState = ActionState.IDLE;
-                }
-                else
-                {
-                    float toWalkX = ((distX * Time.deltaTime) / speed) * GameHelper.GM.timeScale;
-                    float toWalkY = ((distY * Time.deltaTime) / speed) * GameHelper.GM.timeScale;
-
-                    distWalkedX += toWalkX;
-                    distWalkedY += toWalkY;
-
-                    transform.position += new Vector3(toWalkX, toWalkY, 0);
-//                    transform.Translate(toWalkX, toWalkY, 0);
-                    _actionState = ActionState.WALKING;
-
-
-                    if (Mathf.Abs(distX) - Mathf.Abs(distWalkedX) <= 0 &&
-                        Mathf.Abs(distY) - Mathf.Abs(distWalkedY) <= 0)
-                    {
-                        transform.position = new Vector3(nextPos.gridX, nextPos.gridY, 0);
-                        _path.RemoveAt(0);
-                        nextPos.walkable = true;
-                        lastTile = nextPos;
-                        nextPos = null;
-                    }
-                }
-            }
+            callBack();
+            return;
         }
 
-        _animatorNPC.SetInteger("drunkState", (int) drunkType);
+        
+        // NPC is making a turn
+        if (!nextPos)
+        {
+            nextPos = _path[0];
+
+            if (nextPos.walkable == false)
+            {
+                _path.Clear();
+                _path = null;
+                nextPos = null;
+                _gotPath = false;
+                gotDestination = false;
+                return;
+            }
+
+            distX = nextPos.gridX - transform.position.x;
+            distY = nextPos.gridY - transform.position.y;
+
+
+            var rot = transform.rotation;
+            if (distX < -0.1f)
+                rot.z = 90;
+            else if (distX > 0.1f)
+                rot.z = 270;
+            else if (distY > 0.1f)
+                rot.z = 0;
+            else if (distY < -0.1f)
+                rot.z = 180;
+
+            transform.rotation = Quaternion.Euler(rot.x, rot.y, rot.z);
+
+            distWalkedX = 0;
+            distWalkedY = 0;
+            nextPos.walkable = false;
+
+            return;
+        }
+
+        // Keep walking at the same direction
+        float toWalkX = ((distX * Time.deltaTime) / speed) * GameHelper.GM.timeScale;
+        float toWalkY = ((distY * Time.deltaTime) / speed) * GameHelper.GM.timeScale;
+
+        distWalkedX += toWalkX;
+        distWalkedY += toWalkY;
+
+        transform.position += new Vector3(toWalkX, toWalkY, 0);
+
+
+        if (Mathf.Abs(distX) - Mathf.Abs(distWalkedX) <= 0 &&
+            Mathf.Abs(distY) - Mathf.Abs(distWalkedY) <= 0)
+        {
+            transform.position = new Vector3(nextPos.gridX, nextPos.gridY, 0);
+            _path.RemoveAt(0);
+            nextPos.walkable = true;
+            lastTile = nextPos;
+            nextPos = null;
+        }
     }
 
     private void getDrunk()
@@ -347,21 +351,14 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         switch (drunkType)
         {
             case DrunkState.DANCER:
-                _animatorNPC.SetBool("isWalking", false);
-
-//                callBack = GotToDestination;
-                _actionState = ActionState.IDLE;
-                callBack = null;
-//                speed /= 2;
+                speed /= 2;
                 break;
             case DrunkState.LOVER:
                 callBack = GotToDestination;
-                _actionState = ActionState.IDLE;
                 gotDestination = false;
                 break;
             case DrunkState.PUKER:
                 callBack = GotToDestination;
-                _actionState = ActionState.IDLE;
                 gotDestination = false;
                 speed *= 2;
                 break;
@@ -377,17 +374,16 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     /// </summary>
     private void HandleDrunk()
     {
-        if (!_gotPath)
-        {
+        if (!_gotPath) // NPC is doing something : decrease timer
             timer -= Time.deltaTime * GameHelper.GM.timeScale;
-        }
 
         switch (drunkType)
         {
             case DrunkState.DANCER:
+                // Make the player lose more and more
                 GameHelper.GM.AddPrctUntilCops(incrCopsBarOverTime * Time.deltaTime * GameHelper.GM.timeScale);
-                _animatorNPC.SetBool("isWalking", false);
 
+                GetRandomDestination(); // Walk randomly
                 break;
             case DrunkState.LOVER:
                 if (_path == null || _gotPath == false)
@@ -424,13 +420,9 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         int chooseGarbageType = Random.Range(0, 2);
         GameObject garbage_;
         if (chooseGarbageType == 0) // Bottle
-        {
             garbage_ = GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
-        }
         else // Puke
-        {
             garbage_ = GameObject.Instantiate(puke, transform.position, Quaternion.identity) as GameObject;
-        }
 
         lastTile.walkable = false;
         garbage_.GetComponent<Garbage>().worldTile = lastTile;

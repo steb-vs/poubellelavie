@@ -16,10 +16,11 @@ public class PlayerComponent : MonoBehaviour
     private IUsable _carriedObject;
     private ISpeedModifier _speedModObj;
 
-    [HideInInspector] public bool closeToWindow = false;
+    [HideInInspector] public Window closeWindow = null;
 
-    public Image trashImage;
-    public Sprite[] trashImages;
+    [HideInInspector] public int grabbedObjects = 0;
+    public int maxGrabbedObjects = 10;
+    
 
     /// <summary>
     /// Sets the player data.
@@ -71,6 +72,15 @@ public class PlayerComponent : MonoBehaviour
                 // Drop it!
                 if(_carriedObject.Drop(gameObject))
                     _carriedObject = null;
+            }
+            
+            else if (grabbedObjects > 0 && closeWindow != null)
+            {
+                grabbedObjects = 0;
+                var t = GameObject.Instantiate(GameHelper.GM.thrownTrash, transform.position +
+                                                                          closeWindow.transform.up * 2,
+                    Quaternion.identity);
+                GameObject.Destroy(t, 1);
             }
 
             // Else, get a new object if any available
