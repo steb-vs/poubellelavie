@@ -200,17 +200,17 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         switch (_globalState)
         {
             case GlobalState.NEED_DRINKING:
-                if (_gotPath == false)
+                if (_gotPath == false) // Choose a random fridge, and go there to pick a beer
                 {
-                    var fridge = PathfinderHelper.Pathfinder.fridges[0];
+                    int fridgeNumber = Random.Range(0, PathfinderHelper.Pathfinder.fridges.Count);
+                    var fridge = PathfinderHelper.Pathfinder.fridges[fridgeNumber];
                     _path = PathfinderHelper.Pathfinder.GetPath2(
                         new Vector2Int((int) transform.position.x, (int) transform.position.y),
                         new Vector2Int(fridge.gridX, fridge.gridY - 1));
+
                     if (_path != null && _path.Count > 0)
                     {
                         _animatorNPC.SetBool("isWalking", true);
-
-
                         _gotPath = true;
                     }
 
@@ -377,18 +377,6 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     /// </summary>
     private void HandleDrunk()
     {
-        if (timer <= 0.0f && gotDestination == false && _gotPath == false)
-        {
-            if (drunkType == DrunkState.PUKER)
-            {
-                GetRandomDestination();
-                if (lastTile.walkable)
-                {
-                    SpawnRandomGarbage();
-                }
-            }
-        }
-
         if (!_gotPath)
         {
             timer -= Time.deltaTime * GameHelper.GM.timeScale;
