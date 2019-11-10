@@ -41,7 +41,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
     private SpriteRenderer _renderer;
     private Collider2D _collider;
-    
+
     #endregion
 
     #region Public methods
@@ -71,7 +71,8 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     {
         _globalState |= GlobalState.BEING_CARRIED;
 
-        _path.Clear();
+        if (_path != null)
+            _path.Clear();
         _path = null;
 
         _gotPath = false;
@@ -93,11 +94,10 @@ public class NPCBehaviour : MonoBehaviour, IUsable
             Destroy(this.gameObject);
             return;
         }
-        
+
         _globalState ^= GlobalState.BEING_CARRIED;
         _renderer.enabled = true;
         _collider.enabled = true;
-
     }
 
     #endregion
@@ -153,7 +153,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         var playerPos = GameHelper.GM.player.transform.position;
         _path = PathfinderHelper.Pathfinder.GetPath2(
             new Vector2Int((int) transform.position.x, (int) transform.position.y),
-            new Vector2Int((int)playerPos.x, (int)playerPos.y));
+            new Vector2Int((int) playerPos.x, (int) playerPos.y));
 
         if (_path != null && _path.Count > 0)
         {
@@ -162,7 +162,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
             _animatorNPC.SetBool("isWalking", true);
         }
     }
-    
+
     private void GetRandomDestination()
     {
         int rndX = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundX);
@@ -188,7 +188,6 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     {
         if (_globalState.HasFlag(GlobalState.BEING_CARRIED))
         {
-            print("DO THE THINGS WHILE I AM CARRIED");
             return; // We stop here
         }
 
@@ -240,8 +239,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 break;
             case GlobalState.DRUNK:
                 HandleDrunk();
-                
-  
+
 
                 break;
             default:
@@ -283,7 +281,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                     distX = nextPos.gridX - transform.position.x;
                     distY = nextPos.gridY - transform.position.y;
 
-                    
+
                     var rot = transform.rotation;
                     if (distX < -0.1f)
                     {
@@ -301,9 +299,9 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                     {
                         rot.z = 180;
                     }
-                    
-                    transform.rotation = Quaternion.Euler(rot.x, rot.y, rot.z);   //rot;
-                    
+
+                    transform.rotation = Quaternion.Euler(rot.x, rot.y, rot.z); //rot;
+
                     distWalkedX = 0;
                     distWalkedY = 0;
                     nextPos.walkable = false;
@@ -311,8 +309,8 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 }
                 else
                 {
-                    float toWalkX = (distX * Time.deltaTime) / speed;
-                    float toWalkY = (distY * Time.deltaTime) / speed;
+                    float toWalkX = ((distX * Time.deltaTime) / speed) * GameHelper.GM.timeScale;
+                    float toWalkY = ((distY * Time.deltaTime) / speed) * GameHelper.GM.timeScale;
 
                     distWalkedX += toWalkX;
                     distWalkedY += toWalkY;
@@ -391,7 +389,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         {
             timer -= Time.deltaTime * GameHelper.GM.timeScale;
         }
-        
+
         switch (drunkType)
         {
             case DrunkState.DANCER:
@@ -402,7 +400,8 @@ public class NPCBehaviour : MonoBehaviour, IUsable
             case DrunkState.LOVER:
                 if (_path == null || _gotPath == false)
                     GoToPlayer();
-                else if (_path.Count != 0) // Check if the LOVER is going to the right tile (not too far away from the player)
+                else if (_path.Count != 0
+                ) // Check if the LOVER is going to the right tile (not too far away from the player)
                 {
                     float targetX, targetY;
                     targetX = _path[_path.Count - 1].transform.position.x;
@@ -410,6 +409,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                     if (DistanceBetweenPlayer(targetX, targetY) > 2)
                         GoToPlayer(); // Current target tile is too far away from the player
                 }
+
                 break;
             case DrunkState.PUKER:
                 if (timer <= 0.0f && gotDestination == false && _gotPath == false)
@@ -434,7 +434,6 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         if (chooseGarbageType == 0) // Bottle
         {
             garbage_ = GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
-           
         }
         else // Puke
         {
@@ -451,7 +450,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         var playerPos = GameHelper.GM.player.transform.position;
         float res;
 
-        res =  Math.Abs(caseX - playerPos.x);
+        res = Math.Abs(caseX - playerPos.x);
         res += Math.Abs(caseY - playerPos.y);
 
         return res;

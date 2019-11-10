@@ -177,19 +177,19 @@ public class PlayerComponent : MonoBehaviour
         {
             if (_carriedObject.IsHeavy)
             {
-                _data.Speed = _data.DefaultSpeed * 0.6f * (_speedModObj != null ? _speedModObj.SpeedModifier : 1);
+                _data.Speed = _data.DefaultSpeed * 0.6f * (_speedModObj != null ? _speedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
                 _data.ActionState = PlayerActionState.Grabbing;
             }
             else
             {
-                _data.Speed = _data.DefaultSpeed * (_speedModObj != null ? _speedModObj.SpeedModifier : 1);
+                _data.Speed = _data.DefaultSpeed * (_speedModObj != null ? _speedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
                 _data.ActionState = PlayerActionState.Holding;
             }
         }
         else
         {
             _data.ActionState = PlayerActionState.Default;
-            _data.Speed = _data.DefaultSpeed * (_speedModObj != null ? _speedModObj.SpeedModifier : 1);
+            _data.Speed = _data.DefaultSpeed * (_speedModObj != null ? _speedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
         }
 
         // Update the animator parameters
