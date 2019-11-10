@@ -133,6 +133,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
+//        drunkType = DrunkState.LOVER;
 
         _globalState = GlobalState.NEED_DRINKING;
 
@@ -355,6 +356,8 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         {
             case DrunkState.DANCER:
                 speed /= 2;
+                callBack = GotToDestination;
+                gotDestination = false;
                 break;
             case DrunkState.LOVER:
                 callBack = GotToDestination;
