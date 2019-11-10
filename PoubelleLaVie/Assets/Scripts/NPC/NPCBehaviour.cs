@@ -377,18 +377,6 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     /// </summary>
     private void HandleDrunk()
     {
-        if (timer <= 0.0f && gotDestination == false && _gotPath == false)
-        {
-            if (drunkType == DrunkState.PUKER)
-            {
-                GetRandomDestination();
-                if (lastTile.walkable)
-                {
-                    SpawnRandomGarbage();
-                }
-            }
-        }
-
         if (!_gotPath)
         {
             timer -= Time.deltaTime * GameHelper.GM.timeScale;
