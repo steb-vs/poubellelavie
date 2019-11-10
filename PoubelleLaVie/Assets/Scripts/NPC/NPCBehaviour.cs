@@ -366,10 +366,6 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                     SpawnRandomGarbage();
                 }
             }
-            else if (drunkType == DrunkState.LOVER)
-            {
-                GoToPlayer();
-            }
         }
 
         if (!_gotPath)
@@ -385,7 +381,9 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
                 break;
             case DrunkState.LOVER:
-                if (_gotPath && _path.Count != 0) // Check if the LOVER is going to the right tile (not too far away from the player)
+                if (_path == null || _gotPath == false)
+                    GoToPlayer();
+                else if (_path.Count != 0) // Check if the LOVER is going to the right tile (not too far away from the player)
                 {
                     float targetX, targetY;
                     targetX = _path[_path.Count - 1].transform.position.x;
@@ -395,6 +393,13 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 }
                 break;
             case DrunkState.PUKER:
+                if (timer <= 0.0f && gotDestination == false && _gotPath == false)
+                {
+                    GetRandomDestination();
+                    if (lastTile.walkable)
+                        SpawnRandomGarbage();
+                }
+
                 break;
             default:
                 print("Unexpected drunk state of an NPC !");

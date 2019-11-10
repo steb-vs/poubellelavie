@@ -58,11 +58,18 @@ public class Pathfinder : MonoBehaviour
 
     public List<WorldTile> GetPath2(Vector2Int start, Vector2Int end)
     {
-        WorldTile goalNode = (from node in _listedNodes where (node.gridX == end.x && node.gridY == end.y) select node)
-            .First();
+        int findGoalNode = (from node in _listedNodes where (node.gridX == end.x && node.gridY == end.y) select node).Count();
+        if (findGoalNode == 0) // If no goal node can be found
+            return null;
+
+        WorldTile goalNode = (from node in _listedNodes where (node.gridX == end.x && node.gridY == end.y) select node).First();
         
         Debug.Log($"{start.x} - {start.y}");
-        
+
+        int findStartNode = (from node in _listedNodes where (node.gridX == start.x && node.gridY == start.y) select node).Count();
+        if (findStartNode == 0)
+            return null;
+
         WorldTile startNode =
             (from node in _listedNodes where (node.gridX == start.x && node.gridY == start.y) select node).First();
 
