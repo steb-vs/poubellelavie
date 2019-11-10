@@ -5,4 +5,5 @@ using UnityEngine;
 public class Garbage : MonoBehaviour
 {
     public WorldTile worldTile;
+    public Sprite[] sprites;
 }
