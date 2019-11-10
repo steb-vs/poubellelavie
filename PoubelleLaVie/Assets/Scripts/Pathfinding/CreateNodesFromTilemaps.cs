@@ -131,8 +131,12 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 						node.name = "UNWALKABLE NODE " + gridX.ToString () + " : " + gridY.ToString ();
 						if (foundFridge)
 						{
-							Debug.Log("Coucou");
 							PathfinderHelper.Pathfinder.fridges.Add(wt);
+						}
+
+						if (foundEntries)
+						{
+							PathfinderHelper.Pathfinder.entries.Add(wt);
 						}
 
 

@@ -28,8 +28,7 @@ public class NPCBehaviour : MonoBehaviour
         _animatorNPC = GetComponent<Animator>();
 
         Random rnd = new Random();
-//        drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
-        drunkType = DrunkState.LOVER;
+        drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
         _globalState = GlobalState.NEED_DRINKING;
         _actionState = ActionState.IDLE;
 
@@ -132,7 +131,7 @@ public class NPCBehaviour : MonoBehaviour
 
                 break;
             case GlobalState.FINE:
-                _boxCollider.enabled = false;
+//                _boxCollider.enabled = false;
 
                 // Increments the drunk bar
                 prctUntilDrunk += incrDrunkOverTime * Time.deltaTime * GameHelper.GM.timeScale;
@@ -294,7 +293,6 @@ public class NPCBehaviour : MonoBehaviour
     // Called when NPC's _globalState is DRUNK
     private void HandleDrunk()
     {
-        Debug.Log($"{timer} - {gotDestination} - {_gotPath}");
         if (timer <= 0.0f && gotDestination == false && _gotPath == false)
         {
             if (drunkType == DrunkState.PUKER)

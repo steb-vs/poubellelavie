@@ -7,6 +7,7 @@ using System.Linq;
 public class Pathfinder : MonoBehaviour
 {
     [HideInInspector] public List<WorldTile> fridges;
+    [HideInInspector] public List<WorldTile> entries;
 
     private void OnDrawGizmos()
     {
