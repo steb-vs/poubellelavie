@@ -11,6 +11,6 @@ public class Garbage : MonoBehaviour
 
     private void Start()
     {
-        GetComponent<SpriteRenderer>().sprite = sprites[UnityEngine.Random.Range(0, sprites.Length - 1)];
+        GetComponent<SpriteRenderer>().sprite = sprites[UnityEngine.Random.Range(0, sprites.Length)];
     }
 }
