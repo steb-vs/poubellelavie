@@ -29,7 +29,7 @@ public class NPCBehaviour : MonoBehaviour
 
         Random rnd = new Random();
 //        drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
-        drunkType = DrunkState.DANCER;
+        drunkType = DrunkState.PUKER;
         _globalState = GlobalState.NEED_DRINKING;
         _actionState = ActionState.IDLE;
 
@@ -125,7 +125,6 @@ public class NPCBehaviour : MonoBehaviour
                 {
                     _globalState = GlobalState.DRUNK;
                     getDrunk();
-                    callBack = null;
                 }
 
 //                Debug.Log(timer);
@@ -144,26 +143,8 @@ public class NPCBehaviour : MonoBehaviour
                 break;
             case GlobalState.DRUNK:
                 HandleDrunk();
-
-                if (timer <= 0.0f && gotDestination == false && _gotPath == false)
-                {
-                    GetRandomDestination();
-                    if (drunkType == DrunkState.PUKER)
-                    {
-                        if (lastTile.walkable)
-                        {
-                            var bottle_ =
-                                GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
-                            lastTile.walkable = false;
-                            bottle_.GetComponent<Garbage>().worldTile = lastTile;
-                        }
-                    }
-                }
-
-                if (!_gotPath)
-                {
-                    timer -= Time.deltaTime;
-                }
+                
+  
 
                 break;
             default:
@@ -205,7 +186,6 @@ public class NPCBehaviour : MonoBehaviour
                     distX = nextPos.gridX - transform.position.x;
                     distY = nextPos.gridY - transform.position.y;
 
-                    Debug.Log($"{distX} - {distY}");
                     
                     var rot = transform.rotation;
                     if (distX < -0.1f)
@@ -225,12 +205,8 @@ public class NPCBehaviour : MonoBehaviour
                         rot.z = 180;
                     }
                     
-                    Debug.Log(rot.z);
-
                     transform.rotation = Quaternion.Euler(rot.x, rot.y, rot.z);   //rot;
                     
-                    Debug.Log(transform.rotation);
-
                     distWalkedX = 0;
                     distWalkedY = 0;
                     nextPos.walkable = false;
@@ -286,7 +262,8 @@ public class NPCBehaviour : MonoBehaviour
                 break;
             case DrunkState.PUKER:
                 callBack = GotToDestination;
-
+                _actionState = ActionState.IDLE;
+                gotDestination = false;
                 speed *= 2;
                 break;
             default:
@@ -299,6 +276,27 @@ public class NPCBehaviour : MonoBehaviour
     // Called when NPC's _globalState is DRUNK
     private void HandleDrunk()
     {
+        Debug.Log($"{timer} - {gotDestination} - {_gotPath}");
+        if (timer <= 0.0f && gotDestination == false && _gotPath == false)
+        {
+            GetRandomDestination();
+            if (drunkType == DrunkState.PUKER)
+            {
+                if (lastTile.walkable)
+                {
+                    var bottle_ =
+                        GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
+                    lastTile.walkable = false;
+                    bottle_.GetComponent<Garbage>().worldTile = lastTile;
+                }
+            }
+        }
+
+        if (!_gotPath)
+        {
+            timer -= Time.deltaTime;
+        }
+        
         switch (drunkType)
         {
             case DrunkState.DANCER:
