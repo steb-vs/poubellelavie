@@ -18,7 +18,13 @@ public class BottleComponent : Garbage, IUsable
 
     public bool Take(GameObject sender)
     {
-        Destroy(gameObject);
+        Debug.Log($"{GameHelper.GM.playerComponent.grabbedObjects} - {GameHelper.GM.playerComponent.maxGrabbedObjects}");
+        if (GameHelper.GM.playerComponent.grabbedObjects <= GameHelper.GM.playerComponent.maxGrabbedObjects)
+        {
+            worldTile.walkable = true;
+            Destroy(gameObject);
+            GameHelper.GM.playerComponent.grabbedObjects++;    
+        }
         return false;
     }
 

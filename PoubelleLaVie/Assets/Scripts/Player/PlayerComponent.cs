@@ -18,8 +18,9 @@ public class PlayerComponent : MonoBehaviour
 
     [HideInInspector] public bool closeToWindow = false;
 
-    public Image trashImage;
-    public Sprite[] trashImages;
+    [HideInInspector] public int grabbedObjects = 0;
+    public int maxGrabbedObjects = 10;
+    
 
     /// <summary>
     /// Sets the player data.
@@ -71,6 +72,11 @@ public class PlayerComponent : MonoBehaviour
                 // Drop it!
                 if(_carriedObject.Drop(gameObject))
                     _carriedObject = null;
+            }
+            
+            else if (grabbedObjects > 0 && closeToWindow)
+            {
+                grabbedObjects = 0;
             }
 
             // Else, get a new object if any available

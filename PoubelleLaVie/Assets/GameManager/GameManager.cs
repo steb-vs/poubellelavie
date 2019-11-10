@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public PlayerComponent playerComponent;
 
     public GameObject canvasGameOver;
+    
+    public Image trashImage;
+    public Sprite[] trashImages;
     
     // When instiated, this object is stored in the GameHelper
     private void Awake()
@@ -46,6 +50,16 @@ public class GameManager : MonoBehaviour
         // Setting / Unsetting pause ?
         if (Input.GetButtonDown(InputHelper.PAUSE))
             timeScale = 1 - timeScale;
+
+        if (playerComponent.grabbedObjects == playerComponent.maxGrabbedObjects)
+        {
+            trashImage.sprite = trashImages[trashImages.Length - 1];
+        }
+        else
+        {
+            trashImage.sprite =
+                trashImages[(playerComponent.grabbedObjects * (trashImages.Length - 1)) / playerComponent.maxGrabbedObjects];
+        }
     }
 
     public void AddPrctUntilCops(float toAdd)
