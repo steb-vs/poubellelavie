@@ -47,17 +47,21 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     {
     }
 
-    public void Take(GameObject sender)
+    public bool Take(GameObject sender)
     {
         transform.parent = sender.transform;
         transform.localPosition = Vector3.zero;
         ToCarried();
+
+        return true;
     }
 
-    public void Drop(GameObject sender)
+    public bool Drop(GameObject sender)
     {
         transform.parent = null;
         ToTheGround();
+
+        return true;
     }
 
     /// <summary>
@@ -169,7 +173,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     {
         if (_globalState.HasFlag(GlobalState.BEING_CARRIED))
         {
-            print("DO THE THINGS WHILE I AM CARRIED");
+            //print("DO THE THINGS WHILE I AM CARRIED");
             return; // We stop here
         }
 
