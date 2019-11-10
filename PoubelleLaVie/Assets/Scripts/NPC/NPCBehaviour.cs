@@ -158,7 +158,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     private void GotToDestination()
     {
         gotDestination = false;
-        timer = 1.5f;
+        timer = _globalState == GlobalState.FINE ? 2F : 1.5F; // Make the drinking action a little bit longer
         _animatorNPC.SetBool("isWalking", false);
     }
 
@@ -354,12 +354,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         switch (drunkType)
         {
             case DrunkState.DANCER:
-                _animatorNPC.SetBool("isWalking", false);
-
-//                callBack = GotToDestination;
-                _actionState = ActionState.IDLE;
-                callBack = null;
-//                speed /= 2;
+                speed /= 2;
                 break;
             case DrunkState.LOVER:
                 callBack = GotToDestination;
@@ -384,7 +379,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     /// </summary>
     private void HandleDrunk()
     {
-        if (!_gotPath)
+        if (!_gotPath) // NPC is doing something : decrease timer
         {
             timer -= Time.deltaTime * GameHelper.GM.timeScale;
         }
@@ -392,9 +387,10 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         switch (drunkType)
         {
             case DrunkState.DANCER:
+                // Make the player lose more and more
                 GameHelper.GM.AddPrctUntilCops(incrCopsBarOverTime * Time.deltaTime * GameHelper.GM.timeScale);
-                _animatorNPC.SetBool("isWalking", false);
 
+                GetRandomDestination(); // Walk randomly
                 break;
             case DrunkState.LOVER:
                 if (_path == null || _gotPath == false)
