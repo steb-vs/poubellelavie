@@ -3,12 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Garbage : MonoBehaviour, ISpeedModifier
+public class Garbage : MonoBehaviour
 {
     public WorldTile worldTile;
     public Sprite[] sprites;
-
-    public float SpeedModifier => 0.25f;
 
     private void Start()
     {

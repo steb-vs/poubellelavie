@@ -27,11 +27,11 @@ public interface IUsable
     /// Triggers the object take behavior.
     /// </summary>
     /// <param name="sender"></param>
-    void Take(GameObject sender);
+    bool Take(GameObject sender);
 
     /// <summary>
     /// Triggers the object drop behavior.
     /// </summary>
     /// <param name="sender"></param>
-    void Drop(GameObject sender);
+    bool Drop(GameObject sender);
 }
