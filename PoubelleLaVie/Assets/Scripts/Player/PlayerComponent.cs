@@ -9,14 +9,11 @@ public class PlayerComponent : MonoBehaviour
     public GameObject playerSprite;
 
     private PlayerData _data;
-
     private Rigidbody2D _body;
-
     private Animator _animator;
-
     private HashSet<IUsable> _closeObjects;
-
-    private Animation _animation;
+    private IUsable _carriedObject;
+    private ISpeedModifier _speedModObj;
 
     /// <summary>
     /// Sets the player data.
@@ -34,7 +31,9 @@ public class PlayerComponent : MonoBehaviour
         _animator = playerSprite.GetComponent<Animator>();
         _data = PlayerData.Default;
         _closeObjects = new HashSet<IUsable>();
-        GameHelper.GM.player = this.gameObject;
+
+        if(GameHelper.GM != null)
+            GameHelper.GM.player = this.gameObject;
     }
 
     private void Update()
@@ -58,35 +57,35 @@ public class PlayerComponent : MonoBehaviour
         if(Input.GetButtonDown(InputHelper.TAKE_N_DROP))
         {
             // If we are holding an object
-            if (_data.CarriedObject != null)
+            if (_carriedObject != null)
             {
                 // Drop it!
-                _data.CarriedObject.Drop(gameObject);
-                _data.CarriedObject = null;
+                _carriedObject.Drop(gameObject);
+                _carriedObject = null;
             }
 
             // Else, get a new object if any available
             else if(_closeObjects.Any())
             {
                 // Find the closest object to the player
-                _data.CarriedObject = _closeObjects
+                _carriedObject = _closeObjects
                     .Select(x => new { Obj = x, Distance = (x.Position - transform.position).magnitude })
                     .OrderBy(x => x.Distance)
                     .First().Obj;
 
-                _data.CarriedObject.Take(gameObject);
+                _carriedObject.Take(gameObject);
             }
         }
 
         // Handle use action
-        if (Input.GetButtonDown(InputHelper.USE) && _data.CarriedObject != null)
-            _data.CarriedObject.Use(gameObject);
+        if (Input.GetButtonDown(InputHelper.USE) && _carriedObject != null)
+            _carriedObject.Use(gameObject);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void RegisterUsableObject(GameObject obj)
     {
         // Check if the object is usable
-        IUsable usable = collision.gameObject.GetComponent<IUsable>();
+        IUsable usable = obj.GetComponent<IUsable>();
 
         if (usable == null)
             return;
@@ -95,16 +94,58 @@ public class PlayerComponent : MonoBehaviour
         _closeObjects.Add(usable);
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    private void UnregisterUsableObject(GameObject obj)
     {
         // Check if the object is usable
-        IUsable usable = collision.gameObject.GetComponent<IUsable>();
+        IUsable usable = obj.GetComponent<IUsable>();
 
         if (usable == null)
             return;
 
         // Yes, remove it!
         _closeObjects.Remove(usable);
+    }
+
+    private void UpdateSpeedMod(GameObject obj)
+    {
+        ISpeedModifier speedModObj = obj.GetComponent<ISpeedModifier>();
+
+        if (speedModObj == null)
+            return;
+
+        if (_speedModObj != null && _speedModObj.SpeedModifier < speedModObj.SpeedModifier)
+            return;
+
+        _speedModObj = speedModObj;
+    }
+
+    private void RestoreSpeedMod(GameObject obj)
+    {
+        ISpeedModifier speedModObj = obj.GetComponent<ISpeedModifier>();
+
+        if (speedModObj == null)
+            return;
+
+        if (_speedModObj != speedModObj)
+            return;
+
+        _speedModObj = null;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) => RegisterUsableObject(collision.gameObject);
+
+    private void OnCollisionExit2D(Collision2D collision) => UnregisterUsableObject(collision.gameObject);
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        RegisterUsableObject(collision.gameObject);
+        UpdateSpeedMod(collision.gameObject);
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        UnregisterUsableObject(collision.gameObject);
+        RestoreSpeedMod(collision.gameObject);
     }
 
     /// <summary>
@@ -127,20 +168,23 @@ public class PlayerComponent : MonoBehaviour
             _data.MoveState = PlayerMoveState.Idle;
 
         // Update the action state
-        if (_data.CarriedObject != null)
+        if (_carriedObject != null)
         {
-            if (_data.CarriedObject.IsHeavy)
+            if (_carriedObject.IsHeavy)
             {
-                _data.Speed = 60;
+                _data.Speed = _data.DefaultSpeed * 0.6f * (_speedModObj != null ? _speedModObj.SpeedModifier : 1);
                 _data.ActionState = PlayerActionState.Grabbing;
             }
             else
+            {
+                _data.Speed = _data.DefaultSpeed * (_speedModObj != null ? _speedModObj.SpeedModifier : 1);
                 _data.ActionState = PlayerActionState.Holding;
+            }
         }
         else
         {
             _data.ActionState = PlayerActionState.Default;
-            _data.Speed = 100;
+            _data.Speed = _data.DefaultSpeed * (_speedModObj != null ? _speedModObj.SpeedModifier : 1);
         }
 
         // Update the animator parameters

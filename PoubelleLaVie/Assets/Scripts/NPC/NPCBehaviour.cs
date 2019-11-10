@@ -5,30 +5,97 @@ using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
-public class NPCBehaviour : MonoBehaviour
+public class NPCBehaviour : MonoBehaviour, IUsable
 {
-    private BoxCollider2D _boxCollider;
-    private Animator _animatorNPC;
+    #region Public fields
 
     private GlobalState _globalState;
     private ActionState _actionState;
     public DrunkState drunkType;
-
     public float prctUntilDrunk;
     public float incrDrunkOverTime = 1.0F;
-
     public float incrCopsBarOverTime = 5.8f;
-
     public GameObject bottle;
+    public GameObject puke;
+    public Vector3 Position => transform.position;
+    public bool IsHeavy => true;
 
-    // Start is called before the first frame update
-    void Start()
+    #endregion
+
+    #region Private fields 
+
+    private BoxCollider2D _boxCollider;
+    private Animator _animatorNPC;
+    private UnityAction callBack;
+    private bool _gotPath = false;
+    private List<WorldTile> _path;
+    private WorldTile nextPos = null;
+    private float distX = 0;
+    private float distY = 0;
+    private float distWalkedX;
+    private float distWalkedY;
+    private float speed = 0.5f;
+    private float timer = 5;
+    private bool gotDestination = false;
+    private WorldTile lastTile = null;
+
+    #endregion
+
+    #region Public methods
+
+    public void Use(GameObject sender)
+    {
+    }
+
+    public void Take(GameObject sender)
+    {
+        transform.parent = sender.transform;
+        transform.localPosition = Vector3.zero;
+        ToCarried();
+    }
+
+    public void Drop(GameObject sender)
+    {
+        transform.parent = null;
+        ToTheGround();
+    }
+
+    /// <summary>
+    /// Add to the NPC the state of 'BEING_CARRIED'.
+    /// Doesn't change the inner state.
+    /// </summary>
+    public void ToCarried()
+    {
+        _globalState |= GlobalState.BEING_CARRIED;
+
+        _path.Clear();
+        _path = null;
+
+        _gotPath = false;
+        timer = 0;
+        nextPos = null;
+    }
+
+    /// <summary>
+    /// Retire to the NPC the state of 'BEING_CARRIED'.
+    /// </summary>
+    public void ToTheGround()
+    {
+        _globalState ^= GlobalState.BEING_CARRIED;
+    }
+
+    #endregion
+
+    #region Private methods
+
+    private void Start()
     {
         _boxCollider = GetComponent<BoxCollider2D>();
         _animatorNPC = GetComponent<Animator>();
 
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
+
         _globalState = GlobalState.NEED_DRINKING;
         _actionState = ActionState.IDLE;
 
@@ -48,21 +115,21 @@ public class NPCBehaviour : MonoBehaviour
         }
     }
 
-    void GotBeer()
+    private void GotBeer()
     {
         _globalState = GlobalState.FINE;
         _animatorNPC.SetBool("isDrunk", true);
         timer = -1;
     }
 
-    void GotToDestination()
+    private void GotToDestination()
     {
         gotDestination = false;
         timer = 1.5f;
         _animatorNPC.SetBool("isWalking", false);
     }
 
-    void GoToPlayer()
+    private void GoToPlayer()
     {
         var playerPos = GameHelper.GM.player.transform.position;
         _path = PathfinderHelper.Pathfinder.GetPath2(
@@ -77,7 +144,7 @@ public class NPCBehaviour : MonoBehaviour
         }
     }
     
-    void GetRandomDestination()
+    private void GetRandomDestination()
     {
         int rndX = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundX);
         int rndY = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundY);
@@ -98,8 +165,7 @@ public class NPCBehaviour : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (_globalState.HasFlag(GlobalState.BEING_CARRIED))
         {
@@ -131,8 +197,6 @@ public class NPCBehaviour : MonoBehaviour
 
                 break;
             case GlobalState.FINE:
-//                _boxCollider.enabled = false;
-
                 // Increments the drunk bar
                 prctUntilDrunk += incrDrunkOverTime * Time.deltaTime * GameHelper.GM.timeScale;
                 if (prctUntilDrunk >= 100)
@@ -252,9 +316,6 @@ public class NPCBehaviour : MonoBehaviour
             }
         }
 
-//        _animatorNPC.SetBool("isWalking", _actionState == ActionState.WALKING);
-//        _animatorNPC.SetBool("isDrunk", _globalState == GlobalState.FINE);
-//        _animatorNPC.SetBool("isTrash", _globalState == GlobalState.DRUNK);
         _animatorNPC.SetInteger("drunkState", (int) drunkType);
     }
 
@@ -290,7 +351,9 @@ public class NPCBehaviour : MonoBehaviour
         }
     }
 
-    // Called when NPC's _globalState is DRUNK
+    /// <summary>
+    /// Called when NPC's _globalState is DRUNK.
+    /// </summary>
     private void HandleDrunk()
     {
         if (timer <= 0.0f && gotDestination == false && _gotPath == false)
@@ -300,21 +363,14 @@ public class NPCBehaviour : MonoBehaviour
                 GetRandomDestination();
                 if (lastTile.walkable)
                 {
-                    var bottle_ =
-                        GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
-                    lastTile.walkable = false;
-                    bottle_.GetComponent<Garbage>().worldTile = lastTile;
+                    SpawnRandomGarbage();
                 }
-            }
-            else if (drunkType == DrunkState.LOVER)
-            {
-                GoToPlayer();
             }
         }
 
         if (!_gotPath)
         {
-            timer -= Time.deltaTime;
+            timer -= Time.deltaTime * GameHelper.GM.timeScale;
         }
         
         switch (drunkType)
@@ -325,8 +381,25 @@ public class NPCBehaviour : MonoBehaviour
 
                 break;
             case DrunkState.LOVER:
+                if (_path == null || _gotPath == false)
+                    GoToPlayer();
+                else if (_path.Count != 0) // Check if the LOVER is going to the right tile (not too far away from the player)
+                {
+                    float targetX, targetY;
+                    targetX = _path[_path.Count - 1].transform.position.x;
+                    targetY = _path[_path.Count - 1].transform.position.y;
+                    if (DistanceBetweenPlayer(targetX, targetY) > 2)
+                        GoToPlayer(); // Current target tile is too far away from the player
+                }
                 break;
             case DrunkState.PUKER:
+                if (timer <= 0.0f && gotDestination == false && _gotPath == false)
+                {
+                    GetRandomDestination();
+                    if (lastTile.walkable)
+                        SpawnRandomGarbage();
+                }
+
                 break;
             default:
                 print("Unexpected drunk state of an NPC !");
@@ -335,42 +408,35 @@ public class NPCBehaviour : MonoBehaviour
         }
     }
 
-    /*
-     * Add to the NPC the state of 'BEING_CARRIED'.
-     * Doesn't change the inner state.
-     */
-    public void ToCarried()
+    private void SpawnRandomGarbage()
     {
-        _globalState |= GlobalState.BEING_CARRIED;
+        int chooseGarbageType = Random.Range(0, 2);
+        GameObject garbage_;
+        if (chooseGarbageType == 0) // Bottle
+        {
+            garbage_ = GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
+           
+        }
+        else // Puke
+        {
+            garbage_ = GameObject.Instantiate(puke, transform.position, Quaternion.identity) as GameObject;
+        }
 
-        _path.Clear();
-        _path = null;
-
-        _gotPath = false;
-        timer = 0;
-        nextPos = null;
+        lastTile.walkable = false;
+        garbage_.GetComponent<Garbage>().worldTile = lastTile;
     }
 
-    /*
-     * Retire to the NPC the state of 'BEING_CARRIED'.
-     */
-    public void ToTheGround()
+
+    private float DistanceBetweenPlayer(float caseX, float caseY)
     {
-        _globalState ^= GlobalState.BEING_CARRIED;
+        var playerPos = GameHelper.GM.player.transform.position;
+        float res;
+
+        res =  Math.Abs(caseX - playerPos.x);
+        res += Math.Abs(caseY - playerPos.y);
+
+        return res;
     }
 
-    private UnityAction callBack;
-
-    private bool _gotPath = false;
-    private List<WorldTile> _path;
-    private WorldTile nextPos = null;
-    private float distX = 0;
-    private float distY = 0;
-    private float distWalkedX;
-    private float distWalkedY;
-    private float speed = 0.5f;
-
-    private float timer = 5;
-    private bool gotDestination = false;
-    private WorldTile lastTile = null;
+    #endregion
 }

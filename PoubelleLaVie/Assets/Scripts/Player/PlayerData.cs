@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerData
 {
+    public float DefaultSpeed { get; set; }
+
     /// <summary>
     /// Gets or sets the speed.
     /// </summary>
@@ -30,20 +32,15 @@ public class PlayerData
     public PlayerActionState ActionState { get; set; }
 
     /// <summary>
-    /// Gets or sets the carried object.
-    /// </summary>
-    public IUsable CarriedObject { get; set; }
-
-    /// <summary>
     /// Returns default player data.
     /// </summary>
     public static PlayerData Default => new PlayerData
     {
         Direction = new Vector2(1, 0),
         Speed = 100,
+        DefaultSpeed = 100,
         Position = new Vector2(0, 0),
         MoveState = PlayerMoveState.Idle,
-        ActionState = PlayerActionState.Default,
-        CarriedObject = null
+        ActionState = PlayerActionState.Default
     };
 }

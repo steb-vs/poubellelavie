@@ -13,6 +13,7 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 
 	[FormerlySerializedAs("Fridges")] public Tilemap fridges;
 	public Tilemap entries;
+	public Tilemap windows;
 	
 	public GameObject nodePrefab;
 
@@ -68,6 +69,7 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 					bool foundObstacle = false;
 					bool foundFridge = false;
 					bool foundEntries = false;
+					bool foundWindows = false;
 					var pos = new Vector3Int(x, y, 0);
 					foreach (Tilemap t in obstacleLayers) {
 						TileBase tb2 = t.GetTile (pos);
@@ -106,6 +108,13 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 						foundEntries = true;
 					}
 
+					TileBase window = windows.GetTile(pos);
+					if (window)
+					{
+						foundWindows = true;
+						foundObstacle = false;
+					}
+
 					if (foundObstacle == false) {
 						//if we havent found an obstacle then we create a walkable node and assign its grid coords
 						GameObject node = (GameObject)Instantiate (nodePrefab, new Vector3 (x + 0.5f + gridBase.transform.position.x, y + 0.5f+ gridBase.transform.position.y, 0), Quaternion.Euler (0, 0, 0));
@@ -115,6 +124,13 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 						foundTileOnLastPass = true; //say that we have found a tile so we know to increment the index counters
 						unsortedNodes.Add (node); 
 
+						if (foundWindows)
+						{
+							var collider = wt.gameObject.AddComponent<BoxCollider2D>();
+							collider.size = new Vector2(1.5f, 1.5f);
+							collider.isTrigger = true;
+						}
+						
 						node.name = "NODE " + gridX.ToString () + " : " + gridY.ToString ();
 
 					} else {

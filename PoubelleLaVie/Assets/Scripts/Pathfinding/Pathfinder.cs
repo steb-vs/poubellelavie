@@ -58,13 +58,23 @@ public class Pathfinder : MonoBehaviour
 
     public List<WorldTile> GetPath2(Vector2Int start, Vector2Int end)
     {
-        WorldTile goalNode = (from node in _listedNodes where (node.gridX == end.x && node.gridY == end.y) select node)
-            .First();
+        WorldTile goalNode;
+        WorldTile startNode;
         
-        Debug.Log($"{start.x} - {start.y}");
-        
-        WorldTile startNode =
-            (from node in _listedNodes where (node.gridX == start.x && node.gridY == start.y) select node).First();
+        try
+        {
+             goalNode =
+                (from node in _listedNodes where (node.gridX == end.x && node.gridY == end.y) select node)
+                .First();
+
+             startNode =
+                (from node in _listedNodes where (node.gridX == start.x && node.gridY == start.y) select node).First();
+
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
 
         var openList = new List<WorldTile>();
         var closedList = new List<WorldTile>();
@@ -136,7 +146,6 @@ public class Pathfinder : MonoBehaviour
             }
         }
 
-        Debug.Log("????");
         return null;
     }
 
