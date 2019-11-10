@@ -9,14 +9,9 @@ public class PlayerComponent : MonoBehaviour
     public GameObject playerSprite;
 
     private PlayerData _data;
-
     private Rigidbody2D _body;
-
     private Animator _animator;
-
     private HashSet<IUsable> _closeObjects;
-
-    private Animation _animation;
 
     /// <summary>
     /// Sets the player data.
@@ -85,10 +80,10 @@ public class PlayerComponent : MonoBehaviour
             _data.CarriedObject.Use(gameObject);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void RegisterUsableObject(GameObject obj)
     {
         // Check if the object is usable
-        IUsable usable = collision.gameObject.GetComponent<IUsable>();
+        IUsable usable = obj.GetComponent<IUsable>();
 
         if (usable == null)
             return;
@@ -97,10 +92,10 @@ public class PlayerComponent : MonoBehaviour
         _closeObjects.Add(usable);
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    private void UnregisterUsableObject(GameObject obj)
     {
         // Check if the object is usable
-        IUsable usable = collision.gameObject.GetComponent<IUsable>();
+        IUsable usable = obj.GetComponent<IUsable>();
 
         if (usable == null)
             return;
@@ -108,6 +103,14 @@ public class PlayerComponent : MonoBehaviour
         // Yes, remove it!
         _closeObjects.Remove(usable);
     }
+
+    private void OnCollisionEnter2D(Collision2D collision) => RegisterUsableObject(collision.gameObject);
+
+    private void OnCollisionExit2D(Collision2D collision) => UnregisterUsableObject(collision.gameObject);
+
+    private void OnTriggerEnter2D(Collider2D collision) => RegisterUsableObject(collision.gameObject);
+
+    private void OnTriggerExit2D(Collider2D collision) => UnregisterUsableObject(collision.gameObject);
 
     /// <summary>
     /// Moves the player with the current data.
