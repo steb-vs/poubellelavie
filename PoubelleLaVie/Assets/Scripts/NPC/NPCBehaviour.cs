@@ -53,9 +53,13 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
     public bool Take(GameObject sender)
     {
-        transform.parent = sender.transform;
+        transform.parent = sender.transform.GetChild(0).transform;
         transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
         ToCarried();
+
+        _animatorNPC.StopPlayback();
+        _animatorNPC.Play("Grabbed");
 
         return true;
     }
@@ -64,6 +68,9 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     {
         transform.parent = null;
         ToTheGround();
+
+        _animatorNPC.StopPlayback();
+        _animatorNPC.Play("New State");
 
         return true;
     }
