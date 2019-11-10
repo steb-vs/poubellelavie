@@ -126,8 +126,6 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 
 						if (foundWindows)
 						{
-							Debug.Log(window.name);
-							Debug.Log("Whe");
 							var collider = wt.gameObject.AddComponent<BoxCollider2D>();
 							collider.size = new Vector2(1.5f, 1.5f);
 							collider.isTrigger = true;
