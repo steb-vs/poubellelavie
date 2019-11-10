@@ -12,20 +12,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: Puke
       objectReference: {fileID: 0}
+    - target: {fileID: 4531288790792463214, guid: c430be30375a549dd867a1419aec6acf,
+        type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4803359814171464832, guid: c430be30375a549dd867a1419aec6acf,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.1360216
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4803359814171464832, guid: c430be30375a549dd867a1419aec6acf,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.1158442
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4803359814171464832, guid: c430be30375a549dd867a1419aec6acf,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -21.738577
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4803359814171464832, guid: c430be30375a549dd867a1419aec6acf,
         type: 3}
@@ -102,5 +107,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -7991179690510270672, guid: fc67313e77d6243b9b82e961ad615567,
         type: 3}
+    - target: {fileID: -6933773474881253725, guid: c430be30375a549dd867a1419aec6acf,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c430be30375a549dd867a1419aec6acf, type: 3}
