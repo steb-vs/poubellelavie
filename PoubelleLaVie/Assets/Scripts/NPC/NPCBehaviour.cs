@@ -85,8 +85,9 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         _path = null;
 
         _gotPath = false;
-        timer = 0;
         nextPos = null;
+        timer = 0;
+        gotDestination = false;
 
         //_renderer.enabled = false;
         _collider.enabled = false;
@@ -253,7 +254,10 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 {
                     GetRandomDestination();
                     callBack = GotToDestination;
-                    numberDrinksPending -= 1;
+
+                    // NPC's timer has not been set to 0: he drank
+                    if (timer < 0) 
+                        numberDrinksPending -= 1;
                 }
 
                 // NPC is drinking
