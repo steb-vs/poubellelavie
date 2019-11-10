@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
         if (_prctCopsBar >= 100)
         {
             // End game
+            timeScale = 0;
             return;
         }
 
