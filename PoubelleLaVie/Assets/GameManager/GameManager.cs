@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
-using UnityEngine.PlayerLoop;
 
 public class GameManager : MonoBehaviour
 {
@@ -63,7 +62,9 @@ public class GameManager : MonoBehaviour
         if (_prctCopsBar >= 100 && !_end)
         {
             _end = true;
-            _audioSrcs[0].Play();
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 4);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+			_audioSrcs[0].Play();
 
             OnGameOver?.Invoke();
 
@@ -144,11 +145,7 @@ public class GameManager : MonoBehaviour
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 3);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
 		}
-		else if (oldPrctbar < 100 && _prctCopsBar >= 100)
-		{
-			lightAtmoAnimator.SetInteger("StateNeighborGauge", 4);
-			lightAtmoAnimator.SetBool("bStateHasChanged", true);
-		}
+		
 		//Debug.Log("Old : " + oldPrctbar + " new " + _prctCopsBar + "state" + lightAtmoAnimator.GetInteger("StateNeighborGauge"));
 	}
 
