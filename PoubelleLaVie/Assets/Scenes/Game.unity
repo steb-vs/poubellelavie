@@ -10978,18 +10978,28 @@ TilemapCollider2D:
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0.00001
---- !u!114 &1556627415 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2877713441904829241, guid: dc9a18e8015bc49458505a33c86dd2af,
+--- !u!1 &1583512578 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6966332607734630514, guid: b4b2d5d32f9115143b758b12cb897103,
     type: 3}
-  m_PrefabInstance: {fileID: 2877713440910253294}
+  m_PrefabInstance: {fileID: 6966332606076672571}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+--- !u!19719996 &1583512582
+TilemapCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583512578}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_MaximumTileChangeCount: 1000
+  m_ExtrusionFactor: 0.00001
 --- !u!1 &1601213644
 GameObject:
   m_ObjectHideFlags: 0
