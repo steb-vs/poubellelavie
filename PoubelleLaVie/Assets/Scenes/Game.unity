@@ -7639,59 +7639,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
         type: 3}
-      propertyPath: trashImages.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
-        type: 3}
-      propertyPath: trashImage
-      value: 
-      objectReference: {fileID: 130636710}
-    - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
-        type: 3}
-      propertyPath: trashImages.Array.data[0]
-      value: 
-      objectReference: {fileID: -1984049885866873280, guid: 8d317ed6453344d22aa9988c68afddc8,
-        type: 3}
-    - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
-        type: 3}
-      propertyPath: trashImages.Array.data[1]
-      value: 
-      objectReference: {fileID: -7202844805719091742, guid: 8d317ed6453344d22aa9988c68afddc8,
-        type: 3}
-    - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
-        type: 3}
-      propertyPath: trashImages.Array.data[2]
-      value: 
-      objectReference: {fileID: -3891451150272326939, guid: 8d317ed6453344d22aa9988c68afddc8,
-        type: 3}
-    - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
-        type: 3}
-      propertyPath: trashImages.Array.data[3]
-      value: 
-      objectReference: {fileID: 7947988811271348690, guid: 8d317ed6453344d22aa9988c68afddc8,
-        type: 3}
-    - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
-        type: 3}
-      propertyPath: thrownTrash
-      value: 
-      objectReference: {fileID: 4813393752870459444, guid: f441f466b1a154cf48e11e2696ab6096,
-        type: 3}
-    - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
-        type: 3}
       propertyPath: canvasGameOver
       value: 
       objectReference: {fileID: 968997392}
     - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
         type: 3}
-      propertyPath: timeScale
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: lightAtmoAnimator
+      value: 
+      objectReference: {fileID: 802230839}
     - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
         type: 3}
-      propertyPath: decrCopsBarOverTime
-      value: 3
-      objectReference: {fileID: 0}
+      propertyPath: trashImage
+      value: 
+      objectReference: {fileID: 130636710}
     - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
         type: 3}
       propertyPath: scoreMesh
@@ -8680,6 +8640,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2877713441904829241, guid: dc9a18e8015bc49458505a33c86dd2af,
+        type: 3}
+      propertyPath: m_margin.z
+      value: 2.546051
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc9a18e8015bc49458505a33c86dd2af, type: 3}
@@ -39669,6 +39634,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6966332607456008196, guid: b4b2d5d32f9115143b758b12cb897103,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6966332607734630514, guid: b4b2d5d32f9115143b758b12cb897103,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6966332607734630514, guid: b4b2d5d32f9115143b758b12cb897103,
         type: 3}
       propertyPath: m_IsActive
       value: 1
