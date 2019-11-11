@@ -41,6 +41,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     private uint numberDrinksPending;
     private bool gotDestination = false;
     private WorldTile lastTile = null;
+    private Color? npcColor;
 
     private SpriteRenderer _renderer;
     private Collider2D _collider;
@@ -55,9 +56,11 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
     public bool Take(GameObject sender)
     {
+        npcColor = _renderer.color;
         transform.parent = sender.transform.GetChild(0).transform;
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
+
         ToCarried();
 
         _animatorNPC.StopPlayback();
@@ -224,6 +227,12 @@ public class NPCBehaviour : MonoBehaviour, IUsable
             _gotPath = true;
             _animatorNPC.SetBool("isWalking", true);
         }
+    }
+
+    private void LateUpdate()
+    {
+        if(npcColor != null)
+            _renderer.color = npcColor.Value;
     }
 
     private void Update()
