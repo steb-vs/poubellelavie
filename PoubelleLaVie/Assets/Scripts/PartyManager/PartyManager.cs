@@ -25,5 +25,5 @@ public class PartyManager : MonoBehaviour
     }
 
     private float timer = 0.0f;
-    private float timeToPop = 10.0f;
+    private float timeToPop = 3.0f;
 }
