@@ -65,7 +65,7 @@ public class PartyManager : MonoBehaviour
     }
 
     private float timer = 0.0f;
-    private float timeToPop = 1.0F;
+    private float timeToPop = 10.0F;
     private float[] probEntries; // Histogram of probabilities
     private DrunkState[] lastNPCStates;
 }
