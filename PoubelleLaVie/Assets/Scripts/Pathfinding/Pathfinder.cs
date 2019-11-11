@@ -16,7 +16,6 @@ public class Pathfinder : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("coucou");
         PathfinderHelper.Pathfinder = this;
     }
 
@@ -24,8 +23,6 @@ public class Pathfinder : MonoBehaviour
     {
         _nodes = new WorldTile[gridBoundX + 1, gridBoundY + 1];
         _listedNodes = new List<WorldTile>();
-        Debug.Log(gridBoundX);
-        Debug.Log(gridBoundY);
         for (int x = 0; x <= gridBoundX; ++x)
         {
             for (int y = 0; y < gridBoundY; ++y)

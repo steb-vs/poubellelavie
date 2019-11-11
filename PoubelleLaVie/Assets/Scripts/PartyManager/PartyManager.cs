@@ -16,7 +16,6 @@ public class PartyManager : MonoBehaviour
         if (timer <= 0.0f)
         {
             timer = timeToPop;
-            Debug.Log($"OSIUEJFIOUZHEFIOHJ {PathfinderHelper.Pathfinder.entries.Count} -- {Random.Range(0, PathfinderHelper.Pathfinder.entries.Count)}");
             var entry = PathfinderHelper.Pathfinder.entries[Random.Range(0, PathfinderHelper.Pathfinder.entries.Count)];
             Vector3 spawnPos = new Vector3(entry.gridX, entry.gridY + 1, 0);
             GameObject.Instantiate(npc, spawnPos, Quaternion.identity);
