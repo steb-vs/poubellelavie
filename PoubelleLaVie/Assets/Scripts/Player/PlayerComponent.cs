@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -8,6 +9,16 @@ using UnityEngine.UI;
 public class PlayerComponent : MonoBehaviour
 {
     public GameObject playerSprite;
+    [HideInInspector] public Window closeWindow = null;
+    [HideInInspector] public int grabbedObjects = 0;
+    public int maxGrabbedObjects = 10;
+
+    public delegate void TrashThrownHandler(GameObject obj, PlayerComponent playerComponent, int garbageCount);
+    public delegate void UsableHandler(GameObject obj, PlayerComponent playerComponent, IUsable usable);
+
+    public event TrashThrownHandler OnTrashTrown;
+    public event UsableHandler OnObjectTaken;
+    public event UsableHandler OnObjectDropped;
 
     private PlayerData _data;
     private Rigidbody2D _body;
@@ -15,12 +26,6 @@ public class PlayerComponent : MonoBehaviour
     private HashSet<IUsable> _closeObjects;
     private IUsable _carriedObject;
     private ISpeedModifier _speedModObj;
-
-    [HideInInspector] public Window closeWindow = null;
-
-    [HideInInspector] public int grabbedObjects = 0;
-    public int maxGrabbedObjects = 10;
-    
 
     /// <summary>
     /// Sets the player data.
@@ -69,6 +74,8 @@ public class PlayerComponent : MonoBehaviour
             // If we are holding an object
             if (_carriedObject != null)
             {
+                OnObjectDropped?.Invoke(gameObject, this, _carriedObject);
+
                 // Drop it!
                 if(_carriedObject.Drop(gameObject))
                     _carriedObject = null;
@@ -76,6 +83,8 @@ public class PlayerComponent : MonoBehaviour
             
             else if (grabbedObjects > 0 && closeWindow != null)
             {
+                OnTrashTrown?.Invoke(gameObject, this, grabbedObjects);
+
                 grabbedObjects = 0;
                 var t = GameObject.Instantiate(GameHelper.GM.thrownTrash, transform.position +
                                                                           closeWindow.transform.up * 2,
@@ -91,6 +100,8 @@ public class PlayerComponent : MonoBehaviour
                     .Select(x => new { Obj = x, Distance = (x.Position - transform.position).magnitude })
                     .OrderBy(x => x.Distance)
                     .First().Obj;
+
+                OnObjectTaken?.Invoke(gameObject, this, _carriedObject);
 
                 if (!_carriedObject.Take(gameObject))
                     _carriedObject = null;
