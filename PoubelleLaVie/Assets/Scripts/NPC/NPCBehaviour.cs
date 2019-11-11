@@ -19,6 +19,12 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
     #endregion
 
+    #region Events
+
+    public event Action<GameObject, NPCBehaviour> OnFall;
+
+    #endregion
+
     #region Private fields 
 
     private BoxCollider2D _boxCollider;
@@ -112,6 +118,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         if (GameHelper.GM.playerComponent.closeWindow &&
             globalState.HasFlag(GlobalState.DRUNK))
         {
+            OnFall?.Invoke(gameObject, this);
             transform.position += GameHelper.GM.playerComponent.closeWindow.transform.up * 2;
             StartCoroutine(fall());
             Destroy(this.gameObject, 1);
