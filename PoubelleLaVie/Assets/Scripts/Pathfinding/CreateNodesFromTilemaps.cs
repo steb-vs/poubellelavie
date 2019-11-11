@@ -227,321 +227,321 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 	}
 
 	//gets the neighbours of the coords passed in
-	public List<WorldTile> getNeighbours(int x, int y,int width,int height)
-	{
-
-		List<WorldTile> myNeighbours = new List<WorldTile> ();
-
-		//needs the width & height to work out if a tile is not on the edge, also needs to check if the nodes is null due to the accounting for odd shapes
-
-
-		if (x > 0 && x < width) {
-			//can get tiles on both left and right of the tile
-
-			if (y > 0 && y < height) {
-				//top and bottom
-				if (nodes [x + 1, y] == null) {
-
-				} else {
-					
-					WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
-					if (wt1 == null) {
-					} else {
-						myNeighbours.Add (wt1);
-					}
-				}
-
-				if (nodes [x - 1, y] == null) {
-
-				} else {
-					WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
-
-					if (wt2 == null) {
-
-					} else {
-						myNeighbours.Add (wt2);
-
-					}
-				}
-
-				if (nodes [x, y + 1] == null) {
-
-				} else {
-					WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
-					if (wt3 == null) {
-
-					} else {
-						myNeighbours.Add (wt3);
-
-					}
-				}
-
-				if (nodes [x, y - 1] == null) {
-
-				} else {
-					
-					WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
-					if (wt4 == null) {
-
-					} else {
-						myNeighbours.Add (wt4);
-					}
-				}
-
-			} else if (y == 0) {
-				//just top
-				if (nodes [x + 1, y] == null) {
-
-				} else {
-
-					WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
-					if (wt1 == null) {
-					} else {
-						myNeighbours.Add (wt1);
-					}
-				}
-
-				if (nodes [x - 1, y] == null) {
-
-				} else {
-					WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
-
-					if (wt2 == null) {
-
-					} else {
-						myNeighbours.Add (wt2);
-
-					}
-				}
-				if (nodes [x, y + 1] == null) {
-
-				} else {
-					WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
-					if (wt3 == null) {
-
-					} else {
-						myNeighbours.Add (wt3);
-
-					}
-				}
-			} else if (y == height) {
-				//just bottom
-				if (nodes [x, y - 1] == null) {
-
-				} else {
-
-					WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
-					if (wt4 == null) {
-
-					} else {
-						myNeighbours.Add (wt4);
-					}
-				}
-				if (nodes [x + 1, y] == null) {
-
-				} else {
-
-					WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
-					if (wt1 == null) {
-					} else {
-						myNeighbours.Add (wt1);
-					}
-				}
-
-				if (nodes [x - 1, y] == null) {
-
-				} else {
-					WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
-
-					if (wt2 == null) {
-
-					} else {
-						myNeighbours.Add (wt2);
-
-					}
-				}
-			}
-
-
-		} else if (x == 0) {
-			//can't get tile on left
-			if (y > 0 && y < height) {
-				//top and bottom
-			
-				if (nodes [x + 1, y] == null) {
-
-				} else {
-
-					WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
-					if (wt1 == null) {
-					} else {
-						myNeighbours.Add (wt1);
-					}
-				}
-
-				if (nodes [x, y - 1] == null) {
-
-				} else {
-
-					WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
-					if (wt4 == null) {
-
-					} else {
-						myNeighbours.Add (wt4);
-					}
-				}
-				if (nodes [x, y + 1] == null) {
-
-				} else {
-					WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
-					if (wt3 == null) {
-
-					} else {
-						myNeighbours.Add (wt3);
-
-					}
-				}
-			} else if (y == 0) {
-				//just top
-				if (nodes [x + 1, y] == null) {
-
-				} else {
-
-					WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
-					if (wt1 == null) {
-					} else {
-						myNeighbours.Add (wt1);
-					}
-				}
-
-				if (nodes [x, y + 1] == null) {
-
-				} else {
-					WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
-					if (wt3 == null) {
-
-					} else {
-						myNeighbours.Add (wt3);
-
-					}
-				}
-			} else if (y == height ) {
-				//just bottom
-				if (nodes [x + 1, y] == null) {
-
-				} else {
-
-					WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
-					if (wt1 == null) {
-					} else {
-						myNeighbours.Add (wt1);
-					}
-				}
-				if (nodes [x, y - 1] == null) {
-
-				} else {
-
-					WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
-					if (wt4 == null) {
-
-					} else {
-						myNeighbours.Add (wt4);
-					}
-				}
-			}
-		} else if (x == width) {
-			//can't get tile on right
-			if (y > 0 && y < height) {
-				//top and bottom
-				if (nodes [x - 1, y] == null) {
-
-				} else {
-					WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
-
-					if (wt2 == null) {
-
-					} else {
-						myNeighbours.Add (wt2);
-
-					}
-				}
-
-				if (nodes [x, y + 1] == null) {
-
-				} else {
-					WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
-					if (wt3 == null) {
-
-					} else {
-						myNeighbours.Add (wt3);
-
-					}
-				}
-				if (nodes [x, y - 1] == null) {
-
-				} else {
-
-					WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
-					if (wt4 == null) {
-
-					} else {
-						myNeighbours.Add (wt4);
-					}
-				}
-			} else if (y == 0) {
-				//just top
-				if (nodes [x - 1, y] == null) {
-
-				} else {
-					WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
-
-					if (wt2 == null) {
-
-					} else {
-						myNeighbours.Add (wt2);
-
-					}
-				}
-				if (nodes [x, y + 1] == null) {
-
-				} else {
-					WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
-					if (wt3 == null) {
-
-					} else {
-						myNeighbours.Add (wt3);
-
-					}
-				}
-			} else if (y == height) {
-				//just bottom
-				if (nodes [x - 1, y] == null) {
-
-				} else {
-					WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
-
-					if (wt2 == null) {
-
-					} else {
-						myNeighbours.Add (wt2);
-
-					}
-				}
-				if (nodes [x, y - 1] == null) {
-
-				} else {
-
-					WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
-					if (wt4 == null) {
-
-					} else {
-						myNeighbours.Add (wt4);
-					}
-				}
-			}
-		}
-
-
-		return myNeighbours;
-	}
+    public List<WorldTile> getNeighbours(int x, int y,int width,int height)
+    {
+ 
+        List<WorldTile> myNeighbours = new List<WorldTile> ();
+ 
+        //needs the width & height to work out if a tile is not on the edge, also needs to check if the nodes is null due to the accounting for odd shapes
+ 
+ 
+        if (x > 0 && x < width) {
+            //can get tiles on both left and right of the tile
+ 
+            if (y > 0 && y < height) {
+                //top and bottom
+                if (nodes [x + 1, y] == null) {
+ 
+                } else {
+                   
+                    WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
+                    if (wt1 == null) {
+                    } else {
+                        myNeighbours.Add (wt1);
+                    }
+                }
+ 
+                if (nodes [x - 1, y] == null) {
+ 
+                } else {
+                    WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
+ 
+                    if (wt2 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt2);
+ 
+                    }
+                }
+ 
+                if (nodes [x, y + 1] == null) {
+ 
+                } else {
+                    WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
+                    if (wt3 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt3);
+ 
+                    }
+                }
+ 
+                if (nodes [x, y - 1] == null) {
+ 
+                } else {
+                   
+                    WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
+                    if (wt4 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt4);
+                    }
+                }
+ 
+            } else if (y == 0) {
+                //just top
+                if (nodes [x + 1, y] == null) {
+ 
+                } else {
+ 
+                    WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
+                    if (wt1 == null) {
+                    } else {
+                        myNeighbours.Add (wt1);
+                    }
+                }
+ 
+                if (nodes [x - 1, y] == null) {
+ 
+                } else {
+                    WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
+ 
+                    if (wt2 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt2);
+ 
+                    }
+                }
+                if (nodes [x, y + 1] == null) {
+ 
+                } else {
+                    WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
+                    if (wt3 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt3);
+ 
+                    }
+                }
+            } else if (y == height) {
+                //just bottom
+                if (nodes [x, y - 1] == null) {
+ 
+                } else {
+ 
+                    WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
+                    if (wt4 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt4);
+                    }
+                }
+                if (nodes [x + 1, y] == null) {
+ 
+                } else {
+ 
+                    WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
+                    if (wt1 == null) {
+                    } else {
+                        myNeighbours.Add (wt1);
+                    }
+                }
+ 
+                if (nodes [x - 1, y] == null) {
+ 
+                } else {
+                    WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
+ 
+                    if (wt2 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt2);
+ 
+                    }
+                }
+            }
+ 
+ 
+        } else if (x == 0) {
+            //can't get tile on left
+            if (y > 0 && y < height) {
+                //top and bottom
+           
+                if (nodes [x + 1, y] == null) {
+ 
+                } else {
+ 
+                    WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
+                    if (wt1 == null) {
+                    } else {
+                        myNeighbours.Add (wt1);
+                    }
+                }
+ 
+                if (nodes [x, y - 1] == null) {
+ 
+                } else {
+ 
+                    WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
+                    if (wt4 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt4);
+                    }
+                }
+                if (nodes [x, y + 1] == null) {
+ 
+                } else {
+                    WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
+                    if (wt3 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt3);
+ 
+                    }
+                }
+            } else if (y == 0) {
+                //just top
+                if (nodes [x + 1, y] == null) {
+ 
+                } else {
+ 
+                    WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
+                    if (wt1 == null) {
+                    } else {
+                        myNeighbours.Add (wt1);
+                    }
+                }
+ 
+                if (nodes [x, y + 1] == null) {
+ 
+                } else {
+                    WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
+                    if (wt3 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt3);
+ 
+                    }
+                }
+            } else if (y == height) {
+                //just bottom
+                if (nodes [x + 1, y] == null) {
+ 
+                } else {
+ 
+                    WorldTile wt1 = nodes [x + 1, y].GetComponent<WorldTile> ();
+                    if (wt1 == null) {
+                    } else {
+                        myNeighbours.Add (wt1);
+                    }
+                }
+                if (nodes [x, y - 1] == null) {
+ 
+                } else {
+ 
+                    WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
+                    if (wt4 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt4);
+                    }
+                }
+            }
+        } else if (x == width) {
+            //can't get tile on right
+            if (y > 0 && y < height - 1) {
+                //top and bottom
+                if (nodes [x - 1, y] == null) {
+ 
+                } else {
+                    WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
+ 
+                    if (wt2 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt2);
+ 
+                    }
+                }
+ 
+                if (nodes [x, y + 1] == null) {
+ 
+                } else {
+                    WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
+                    if (wt3 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt3);
+ 
+                    }
+                }
+                if (nodes [x, y - 1] == null) {
+ 
+                } else {
+ 
+                    WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
+                    if (wt4 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt4);
+                    }
+                }
+            } else if (y == 0) {
+                //just top
+                if (nodes [x - 1, y] == null) {
+ 
+                } else {
+                    WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
+ 
+                    if (wt2 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt2);
+ 
+                    }
+                }
+                if (nodes [x, y + 1] == null) {
+ 
+                } else {
+                    WorldTile wt3 = nodes [x, y + 1].GetComponent<WorldTile> ();
+                    if (wt3 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt3);
+ 
+                    }
+                }
+            } else if (y == height) {
+                //just bottom
+                if (nodes [x - 1, y] == null) {
+ 
+                } else {
+                    WorldTile wt2 = nodes [x - 1, y].GetComponent<WorldTile> ();
+ 
+                    if (wt2 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt2);
+ 
+                    }
+                }
+                if (nodes [x, y - 1] == null) {
+ 
+                } else {
+ 
+                    WorldTile wt4 = nodes [x, y - 1].GetComponent<WorldTile> ();
+                    if (wt4 == null) {
+ 
+                    } else {
+                        myNeighbours.Add (wt4);
+                    }
+                }
+            }
+        }
+ 
+ 
+        return myNeighbours;
+    }
 }

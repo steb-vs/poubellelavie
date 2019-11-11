@@ -85,8 +85,9 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         _path = null;
 
         _gotPath = false;
-        timer = 0;
         nextPos = null;
+        timer = 0;
+        gotDestination = false;
 
         //_renderer.enabled = false;
         _collider.enabled = false;
@@ -133,6 +134,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
+//        drunkType = DrunkState.LOVER;
 
         globalState = GlobalState.NEED_DRINKING;
 
@@ -193,7 +195,10 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         int rndX = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundX);
         int rndY = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundY);
 
-        var list = PathfinderHelper.Pathfinder._listedNodes.FindAll(n => n.walkable);
+        int x = (int)transform.position.x;
+        int y = (int)transform.position.y;
+
+        var list = PathfinderHelper.Pathfinder._listedNodes.FindAll(n => n.walkable && ((Mathf.Abs(n.gridX - x) + Mathf.Abs(n.gridY - y)) < 5));
         WorldTile destination =
             list[Random.Range(0, list.Count)];
 
@@ -250,7 +255,10 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 {
                     GetRandomDestination();
                     callBack = GotToDestination;
-                    numberDrinksPending -= 1;
+
+                    // NPC's timer has not been set to 0: he drank
+                    if (timer < 0) 
+                        numberDrinksPending -= 1;
                 }
 
                 // NPC is drinking
@@ -352,6 +360,8 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         {
             case DrunkState.DANCER:
                 speed /= 2;
+                callBack = GotToDestination;
+                gotDestination = false;
                 break;
             case DrunkState.LOVER:
                 callBack = GotToDestination;
@@ -383,7 +393,12 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 // Make the player lose more and more
                 GameHelper.GM.AddPrctUntilCops(incrCopsBarOverTime * Time.deltaTime * GameHelper.GM.timeScale);
 
-                GetRandomDestination(); // Walk randomly
+                if (timer <= 0.0F && gotDestination == false && _gotPath == false)
+                {
+                    GetRandomDestination();
+                    callBack = GotToDestination;
+                }
+
                 break;
             case DrunkState.LOVER:
                 if (_path == null || _gotPath == false)
