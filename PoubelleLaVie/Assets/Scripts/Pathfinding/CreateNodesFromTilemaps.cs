@@ -152,7 +152,6 @@ public class CreateNodesFromTilemaps : MonoBehaviour {
 
 						if (foundEntries)
 						{
-							Debug.Log("haha");
 							PathfinderHelper.Pathfinder.entries.Add(wt);
 						}
 

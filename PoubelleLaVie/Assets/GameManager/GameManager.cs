@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,6 +19,7 @@ public class GameManager : MonoBehaviour
     public Image trashImage;
     public Sprite[] trashImages;
     public GameObject thrownTrash;
+    public TextMeshProUGUI scoreMesh;
 
     public float score;
     
@@ -65,7 +68,9 @@ public class GameManager : MonoBehaviour
                 trashImages[(playerComponent.grabbedObjects * (trashImages.Length - 1)) / playerComponent.maxGrabbedObjects];
         }
 
+        // Update score
         score += Time.deltaTime * 3.5F * timeScale;
+        scoreMesh.text = "Score: " + Math.Truncate(score*100)/100;
     }
 
     public void AddPrctUntilCops(float toAdd)

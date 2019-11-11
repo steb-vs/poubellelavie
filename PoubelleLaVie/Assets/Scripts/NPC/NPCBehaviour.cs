@@ -197,15 +197,12 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         }
     }
 
-    private void GetRandomDestination()
+    private void GetRandomDestination(int min, int max)
     {
-        int rndX = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundX);
-        int rndY = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundY);
-
         int x = (int)transform.position.x;
         int y = (int)transform.position.y;
 
-        var list = PathfinderHelper.Pathfinder._listedNodes.FindAll(n => n.walkable && ((Mathf.Abs(n.gridX - x) + Mathf.Abs(n.gridY - y)) < 5));
+        var list = PathfinderHelper.Pathfinder._listedNodes.FindAll(n => n.walkable && ((Mathf.Abs(n.gridX - x) + Mathf.Abs(n.gridY - y)) < max));
         WorldTile destination =
             list[Random.Range(0, list.Count)];
 
@@ -260,7 +257,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 // The NPC just ended the drink action
                 if (timer <= 0.0f && gotDestination == false && _gotPath == false)
                 {
-                    GetRandomDestination();
+                    GetRandomDestination(2, 6);
                     callBack = GotToDestination;
 
                     // NPC's timer has not been set to 0: he drank
@@ -402,7 +399,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
                 if (timer <= 0.0F && gotDestination == false && _gotPath == false)
                 {
-                    GetRandomDestination();
+                    GetRandomDestination(2, 15);
                     callBack = GotToDestination;
                 }
 
@@ -424,7 +421,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
             case DrunkState.PUKER:
                 if (timer <= 0.0f && gotDestination == false && _gotPath == false)
                 {
-                    GetRandomDestination();
+                    GetRandomDestination(2, 5);
                     if (lastTile.walkable)
                         SpawnRandomGarbage();
                 }
