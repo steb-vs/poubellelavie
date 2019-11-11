@@ -141,6 +141,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
+//        drunkType = DrunkState.LOVER;
 
         globalState = GlobalState.NEED_DRINKING;
 
