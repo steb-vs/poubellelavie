@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using UnityEngine.PlayerLoop;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public PlayerComponent playerComponent;
 
     public GameObject canvasGameOver;
+    public GameObject canvasUI;
 	public Animator lightAtmoAnimator;
 
 	public Image trashImage;
@@ -31,6 +33,8 @@ public class GameManager : MonoBehaviour
 
     private AudioSource _audioSrc;
     private bool _end;
+
+    public TextMeshProUGUI endScore;
 
     // When instiated, this object is stored in the GameHelper
     private void Awake()
@@ -66,6 +70,8 @@ public class GameManager : MonoBehaviour
             // End game
             timeScale = 0;
             canvasGameOver.SetActive(true);
+            canvasUI.SetActive(false);
+            endScore.text = "Score: " + Math.Truncate(score*100)/100;
             return;
         }
 
