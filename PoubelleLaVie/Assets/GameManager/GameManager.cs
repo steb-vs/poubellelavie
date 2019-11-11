@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 1);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
 		}
-		else if (IsPrctInRange(34, 66, _prctCopsBar) && !IsPrctInRange(34, 66, oldPrctbar))
+		else if (IsPrctInRange(33, 66, _prctCopsBar) && !IsPrctInRange(33, 66, oldPrctbar))
 		{
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 2);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
