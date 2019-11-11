@@ -35,6 +35,7 @@ public class NPCSoundManager : MonoBehaviour
             return;
 
         _targetTime = Random.Range(rangeMin, rangeMax);
+        _currentTime = 0;
 
         _audioSrc.clip = GetRandomClip(_behavior.drunkType.ToString());
         _audioSrc.Play();
