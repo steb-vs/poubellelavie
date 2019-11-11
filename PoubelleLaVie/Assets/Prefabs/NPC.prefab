@@ -4716,6 +4716,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -9476,6 +9477,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -14237,6 +14239,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -14302,7 +14305,7 @@ GameObject:
   - component: {fileID: 1882422221245212753}
   m_Layer: 0
   m_Name: NPC
-  m_TagString: Untagged
+  m_TagString: NPC
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14338,6 +14341,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -14388,7 +14392,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalState: 0
   drunkType: 0
-  incrCopsBarOverTime: 15
   bottle: {fileID: 4531288790792463214, guid: c430be30375a549dd867a1419aec6acf, type: 3}
   puke: {fileID: 7222868899319371002, guid: 693b45607cf2adc45a8d19a42e021979, type: 3}
 --- !u!95 &1311561958075530535
