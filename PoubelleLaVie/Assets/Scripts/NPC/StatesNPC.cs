@@ -6,7 +6,7 @@
     TOTAL_DRUNK_STATES
 }
 
-enum GlobalState
+public enum GlobalState
 {
     NEED_DRINKING = 1,
     FINE = 2,
