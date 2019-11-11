@@ -12,8 +12,8 @@ public class GameOverUI : MonoBehaviour
     private List<TextMeshProUGUI> _choices;
     private List<string> _choicesSave;
 
-    [HideInInspector]
     public int index = 0;
+    public string controller = "Horizontal";
     
     // Start is called before the first frame update
     void Start()
@@ -30,7 +30,9 @@ public class GameOverUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float axis = Input.GetAxis(InputHelper.HORIZONTAL);
+        float axis = Input.GetAxis(controller);
+        if (controller == InputHelper.VERTICAL)
+            axis = -axis;
         
         if (axis > 0.1f && _tricked == false)
         {
@@ -55,7 +57,8 @@ public class GameOverUI : MonoBehaviour
 
         _choices[index].text = $"> {_choicesSave[index]}";
         
-        if (Input.GetButtonUp(InputHelper.TAKE_N_DROP))
+        if (Input.GetButtonUp(InputHelper.TAKE_N_DROP)  ||
+            Input.GetKeyDown(KeyCode.Return))
         {
             switch (index)
             {

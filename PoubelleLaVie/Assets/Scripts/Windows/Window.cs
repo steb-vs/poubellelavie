@@ -22,6 +22,8 @@ public class Window : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (!other.CompareTag("Player"))
+            return;
         l.sprite = leftWindow[1];
         r.sprite = rightWindow[1];
         GameHelper.GM.playerComponent.closeWindow = this;
@@ -29,6 +31,8 @@ public class Window : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        if (!other.CompareTag("Player"))
+            return;
         l.sprite = leftWindow[0];
         r.sprite = rightWindow[0];
         GameHelper.GM.playerComponent.closeWindow = null;

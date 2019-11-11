@@ -16,7 +16,6 @@ public class Pathfinder : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("coucou");
         PathfinderHelper.Pathfinder = this;
     }
 
@@ -24,8 +23,6 @@ public class Pathfinder : MonoBehaviour
     {
         _nodes = new WorldTile[gridBoundX + 1, gridBoundY + 1];
         _listedNodes = new List<WorldTile>();
-        Debug.Log(gridBoundX);
-        Debug.Log(gridBoundY);
         for (int x = 0; x <= gridBoundX; ++x)
         {
             for (int y = 0; y < gridBoundY; ++y)
@@ -66,10 +63,11 @@ public class Pathfinder : MonoBehaviour
         {
              goalNode =
                 (from node in _listedNodes where (node.gridX == end.x && node.gridY == end.y) select node)
+                .DefaultIfEmpty(_nodes[end.x, end.y])
                 .First();
 
              startNode =
-                (from node in _listedNodes where (node.gridX == start.x && node.gridY == start.y) select node).First();
+                (from node in _listedNodes where (node.gridX == start.x && node.gridY == start.y) select node).DefaultIfEmpty(_nodes[start.x, start.y]).First();
 
         }
         catch (Exception e)
@@ -91,18 +89,20 @@ public class Pathfinder : MonoBehaviour
             listedNode.hCost = 0;
         }
 
+        WorldTile current = null;
+        var path = new List<WorldTile>();
+
+
         while (openList.Count > 0)
         {
             var lowest = openList.Min(l => l.fCost);
-            var current = openList.First(l => l.fCost == lowest);
-
+            current = openList.First(l => l.fCost == lowest);
 
             closedList.Add(current);
             openList.Remove(current);
 
             if (closedList.FirstOrDefault(l => l.gridX == goalNode.gridX && l.gridY == goalNode.gridY) != null)
             {
-                var path = new List<WorldTile>();
                 while (current.parent)
                 {
                     path.Add(current);
@@ -147,6 +147,14 @@ public class Pathfinder : MonoBehaviour
             }
         }
 
+        while (current.parent)
+        {
+            path.Add(current);
+            current = current.parent;
+        }
+
+        path.Reverse();
+        return path;
         return null;
     }
 

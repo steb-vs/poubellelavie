@@ -9,13 +9,18 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 {
     #region Public fields
 
-    private GlobalState _globalState;
+    public GlobalState globalState;
     public DrunkState drunkType;
-    public float incrCopsBarOverTime = 5.8f;
     public GameObject bottle;
     public GameObject puke;
     public Vector3 Position => transform.position;
     public bool IsHeavy => true;
+
+    #endregion
+
+    #region Events
+
+    public event Action<GameObject, NPCBehaviour> OnFall;
 
     #endregion
 
@@ -36,6 +41,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     private uint numberDrinksPending;
     private bool gotDestination = false;
     private WorldTile lastTile = null;
+    private Color? npcColor;
 
     private SpriteRenderer _renderer;
     private Collider2D _collider;
@@ -50,9 +56,11 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
     public bool Take(GameObject sender)
     {
+        npcColor = _renderer.color;
         transform.parent = sender.transform.GetChild(0).transform;
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
+
         ToCarried();
 
         _animatorNPC.StopPlayback();
@@ -78,18 +86,23 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     /// </summary>
     public void ToCarried()
     {
-        _globalState |= GlobalState.BEING_CARRIED;
+        globalState |= GlobalState.BEING_CARRIED;
 
         if (_path != null)
             _path.Clear();
         _path = null;
 
         _gotPath = false;
-        timer = 0;
         nextPos = null;
+        timer = 0;
+        gotDestination = false;
 
         //_renderer.enabled = false;
         _collider.enabled = false;
+
+        // Desactivate the dancer (if dancer)
+        if (drunkType == DrunkState.DANCER)
+            GameHelper.GM.RetireDancer();
     }
 
     private IEnumerator fall()
@@ -109,17 +122,23 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     public void ToTheGround()
     {
         if (GameHelper.GM.playerComponent.closeWindow &&
-            _globalState.HasFlag(GlobalState.DRUNK))
+            globalState.HasFlag(GlobalState.DRUNK))
         {
+            OnFall?.Invoke(gameObject, this);
             transform.position += GameHelper.GM.playerComponent.closeWindow.transform.up * 2;
             StartCoroutine(fall());
             Destroy(this.gameObject, 1);
+
             return;
         }
 
-        _globalState ^= GlobalState.BEING_CARRIED;
+        globalState ^= GlobalState.BEING_CARRIED;
         _renderer.enabled = true;
         _collider.enabled = true;
+
+        // Add the dancer to nbrDancer (if dancer)
+        if (drunkType == DrunkState.DANCER)
+            GameHelper.GM.AddDancer();
     }
 
     #endregion
@@ -133,8 +152,9 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
         Random rnd = new Random();
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
+//        drunkType = DrunkState.LOVER;
 
-        _globalState = GlobalState.NEED_DRINKING;
+        globalState = GlobalState.NEED_DRINKING;
 
         _animatorNPC.SetBool("isDrunk", false);
         _animatorNPC.SetBool("isTrash", false);
@@ -156,7 +176,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
     private void GotBeer()
     {
-        _globalState = GlobalState.FINE;
+        globalState = GlobalState.FINE;
         _animatorNPC.SetBool("isDrunk", true);
         numberDrinksPending = (uint) Random.Range(2, 5); // Between 2 and 4 times to drink before becoming drunk
 
@@ -169,7 +189,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     {
         gotDestination = false;
         _gotPath = false;
-        timer = _globalState == GlobalState.FINE ? 2F : 1.5F; // Make the drinking action a little bit longer
+        timer = globalState == GlobalState.FINE ? 2F : 1.5F; // Make the drinking action a little bit longer
         _animatorNPC.SetBool("isWalking", false);
     }
 
@@ -188,12 +208,12 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         }
     }
 
-    private void GetRandomDestination()
+    private void GetRandomDestination(int min, int max)
     {
-        int rndX = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundX);
-        int rndY = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundY);
+        int x = (int)transform.position.x;
+        int y = (int)transform.position.y;
 
-        var list = PathfinderHelper.Pathfinder._listedNodes.FindAll(n => n.walkable);
+        var list = PathfinderHelper.Pathfinder._listedNodes.FindAll(n => n.walkable && ((Mathf.Abs(n.gridX - x) + Mathf.Abs(n.gridY - y)) < max));
         WorldTile destination =
             list[Random.Range(0, list.Count)];
 
@@ -209,14 +229,20 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         }
     }
 
+    private void LateUpdate()
+    {
+        if(npcColor != null)
+            _renderer.color = npcColor.Value;
+    }
+
     private void Update()
     {
-        if (_globalState.HasFlag(GlobalState.BEING_CARRIED))
+        if (globalState.HasFlag(GlobalState.BEING_CARRIED))
             return; // We stop here
 
 
         // NPC is not being carried by the player: he can do his things
-        switch (_globalState)
+        switch (globalState)
         {
             case GlobalState.NEED_DRINKING:
                 if (_gotPath == false) // Choose a random fridge, and go there to pick a beer
@@ -241,16 +267,19 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 // Check if NPC is drunk
                 if (numberDrinksPending == 0)
                 {
-                    _globalState = GlobalState.DRUNK;
+                    globalState = GlobalState.DRUNK;
                     getDrunk();
                 }
                 
                 // The NPC just ended the drink action
                 if (timer <= 0.0f && gotDestination == false && _gotPath == false)
                 {
-                    GetRandomDestination();
+                    GetRandomDestination(2, 6);
                     callBack = GotToDestination;
-                    numberDrinksPending -= 1;
+
+                    // NPC's timer has not been set to 0: he drank
+                    if (timer < 0) 
+                        numberDrinksPending -= 1;
                 }
 
                 // NPC is drinking
@@ -263,7 +292,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 break;
             default:
                 print("Unexpected global state of an NPC !");
-                print("Actual global state value: " + _globalState);
+                print("Actual global state value: " + globalState);
                 break;
         }
 
@@ -351,16 +380,20 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         switch (drunkType)
         {
             case DrunkState.DANCER:
-                speed /= 2;
+                speed /= 2; // Goes faster
+                callBack = GotToDestination;
+                gotDestination = false;
+                GameHelper.GM.AddDancer();
                 break;
             case DrunkState.LOVER:
+                speed /= 2; // Goes faster
                 callBack = GotToDestination;
                 gotDestination = false;
                 break;
             case DrunkState.PUKER:
                 callBack = GotToDestination;
                 gotDestination = false;
-                speed *= 2;
+                speed *= 2; // Goes slower
                 break;
             default:
                 print("Unexpected drunk state of an NPC !");
@@ -370,7 +403,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     }
 
     /// <summary>
-    /// Called when NPC's _globalState is DRUNK.
+    /// Called when NPC's globalState is DRUNK.
     /// </summary>
     private void HandleDrunk()
     {
@@ -380,10 +413,12 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         switch (drunkType)
         {
             case DrunkState.DANCER:
-                // Make the player lose more and more
-                GameHelper.GM.AddPrctUntilCops(incrCopsBarOverTime * Time.deltaTime * GameHelper.GM.timeScale);
+                if (timer <= 0.0F && gotDestination == false && _gotPath == false)
+                {
+                    GetRandomDestination(2, 15);
+                    callBack = GotToDestination;
+                }
 
-                GetRandomDestination(); // Walk randomly
                 break;
             case DrunkState.LOVER:
                 if (_path == null || _gotPath == false)
@@ -402,7 +437,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
             case DrunkState.PUKER:
                 if (timer <= 0.0f && gotDestination == false && _gotPath == false)
                 {
-                    GetRandomDestination();
+                    GetRandomDestination(2, 13);
                     if (lastTile.walkable)
                         SpawnRandomGarbage();
                 }
@@ -420,10 +455,11 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         int chooseGarbageType = Random.Range(0, 2);
         GameObject garbage_;
         if (chooseGarbageType == 0) // Bottle
+        {
             garbage_ = GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
+        }
         else // Puke
             garbage_ = GameObject.Instantiate(puke, transform.position, Quaternion.identity) as GameObject;
-
         lastTile.walkable = false;
         garbage_.GetComponent<Garbage>().worldTile = lastTile;
     }

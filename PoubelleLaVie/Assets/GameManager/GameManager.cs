@@ -2,22 +2,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using System;
 
 public class GameManager : MonoBehaviour
 {
     private float _prctCopsBar;
 
-    public float decrCopsBarOverTime;
+    public float decrCopsBarOverTime = 10.0F;
+    public float incrCopsBarOverTime = 10.0F;
     public float timeScale;
     [HideInInspector]public GameObject player;
     [HideInInspector] public PlayerComponent playerComponent;
 
     public GameObject canvasGameOver;
-    
-    public Image trashImage;
+    public GameObject canvasUI;
+	public Animator lightAtmoAnimator;
+
+	public Image trashImage;
     public Sprite[] trashImages;
     public GameObject thrownTrash;
-    
+    public TextMeshProUGUI scoreMesh;
+
+    public float score;
+
+    public int npcSoundPlayingCount = 0;
+    public int maxNpcSounds = 1;
+
+    public event Action OnGameOver;
+
+	private AudioSource[] _audioSrcs;
+	private bool _end;
+
+    public TextMeshProUGUI endScore;
+
+    private uint nbrDancers = 0;
+
     // When instiated, this object is stored in the GameHelper
     private void Awake()
     {
@@ -28,25 +48,40 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         _prctCopsBar = 0;
-        decrCopsBarOverTime = 3F;
         timeScale = 1;
+        score = 0;
+
+        _audioSrcs = GetComponents<AudioSource>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        float decrCopsBar = decrCopsBarOverTime * Time.deltaTime * timeScale;
-        _prctCopsBar -= decrCopsBar;
-        if (_prctCopsBar >= 100)
+		lightAtmoAnimator.SetBool("bStateHasChanged", false);
+
+
+        // Decrement automatically the cops bar
+        float coeff = Time.deltaTime * timeScale;
+        float modifyCopsBar = nbrDancers > 0 ? incrCopsBarOverTime * coeff : -decrCopsBarOverTime * coeff;
+        AddPrctUntilCops(modifyCopsBar);
+
+        if (_prctCopsBar >= 100 && !_end)
         {
+            _end = true;
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 4);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+			_audioSrcs[0].Play();
+
+            OnGameOver?.Invoke();
+
             // End game
             timeScale = 0;
             canvasGameOver.SetActive(true);
+            canvasUI.SetActive(false);
+            endScore.text = "Score: " + Math.Truncate(score*100)/100;
             return;
         }
 
-        // Decrement automatically the cops bar
-        _prctCopsBar = (_prctCopsBar < 0) ? 0 : _prctCopsBar;
 
         // Setting / Unsetting pause ?
         if (Input.GetButtonDown(InputHelper.PAUSE))
@@ -61,15 +96,68 @@ public class GameManager : MonoBehaviour
             trashImage.sprite =
                 trashImages[(playerComponent.grabbedObjects * (trashImages.Length - 1)) / playerComponent.maxGrabbedObjects];
         }
+
+        // Update score
+        score += Time.deltaTime * timeScale;
+        scoreMesh.text = "Score: " + Math.Truncate(score*10)/10;
+        print(_prctCopsBar);
     }
 
-    public void AddPrctUntilCops(float toAdd)
-    {
-        _prctCopsBar += toAdd;
-    }
+	bool IsPrctInRange(float rangeBegin, float rangeEnd, float value)
+	{
+		return value >= rangeBegin && value <= rangeEnd;
+	}
 
-    public float GetPrctUntilCops()
+	public void AddPrctUntilCops(float toAdd)
+	{
+        float oldPrctbar = _prctCopsBar;
+
+		_prctCopsBar += toAdd;
+		_prctCopsBar = (_prctCopsBar < 0) ? 0 : _prctCopsBar;
+
+		if (IsPrctInRange(0, 0, _prctCopsBar) && !IsPrctInRange(0, 0, oldPrctbar))
+		{
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 0);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+		}
+		else if (IsPrctInRange(1, 33, _prctCopsBar) && !IsPrctInRange(1, 33, oldPrctbar))
+		{
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 1);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+			if (_prctCopsBar > oldPrctbar)
+				_audioSrcs[2].Play();
+		}
+		else if (IsPrctInRange(33, 66, _prctCopsBar) && !IsPrctInRange(33, 66, oldPrctbar))
+		{
+			if (_prctCopsBar > oldPrctbar)
+				_audioSrcs[2].Play();
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 2);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+		}
+		else if (IsPrctInRange(66, 99, _prctCopsBar) && !IsPrctInRange(66, 99, oldPrctbar))
+		{
+			if (_prctCopsBar > oldPrctbar)
+				_audioSrcs[1].Play();
+
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 3);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+		}
+		
+		//Debug.Log("Old : " + oldPrctbar + " new " + _prctCopsBar + "state" + lightAtmoAnimator.GetInteger("StateNeighborGauge"));
+	}
+
+	public float GetPrctUntilCops()
     {
         return _prctCopsBar;
+    }
+
+    public void AddDancer()
+    {
+        nbrDancers++;
+    }
+
+    public void RetireDancer()
+    {
+        nbrDancers--;
     }
 }
