@@ -59,7 +59,9 @@ public class GameManager : MonoBehaviour
         if (_prctCopsBar >= 100 && !_end)
         {
             _end = true;
-            _audioSrcs[0].Play();
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 4);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+			_audioSrcs[0].Play();
 
             OnGameOver?.Invoke();
 
@@ -99,15 +101,15 @@ public class GameManager : MonoBehaviour
 	{
 		float oldPrctbar = _prctCopsBar;
 
-		//if (Input.GetButtonUp(InputHelper.USE))
-		//{
-		//	_prctCopsBar += 10.0f;
-		//}
+		if (Input.GetButtonUp(InputHelper.USE))
+		{
+			_prctCopsBar += 10.0f;
+		}
 
-		//if (Input.GetButtonUp(InputHelper.TAKE_N_DROP))
-		//{
-		//	_prctCopsBar -= 10.0f;
-		//}
+		if (Input.GetButtonUp(InputHelper.TAKE_N_DROP))
+		{
+			_prctCopsBar -= 10.0f;
+		}
 		_prctCopsBar += toAdd;
 		_prctCopsBar = (_prctCopsBar < 0) ? 0 : _prctCopsBar;
 
@@ -138,11 +140,7 @@ public class GameManager : MonoBehaviour
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 3);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
 		}
-		else if (oldPrctbar < 100 && _prctCopsBar >= 100)
-		{
-			lightAtmoAnimator.SetInteger("StateNeighborGauge", 4);
-			lightAtmoAnimator.SetBool("bStateHasChanged", true);
-		}
+		
 		//Debug.Log("Old : " + oldPrctbar + " new " + _prctCopsBar + "state" + lightAtmoAnimator.GetInteger("StateNeighborGauge"));
 	}
 
