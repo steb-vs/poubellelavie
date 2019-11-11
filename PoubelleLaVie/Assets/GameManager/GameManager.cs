@@ -106,15 +106,15 @@ public class GameManager : MonoBehaviour
 	{
 		float oldPrctbar = _prctCopsBar;
 
-		if (Input.GetButtonUp(InputHelper.USE))
-		{
-			_prctCopsBar += 10.0f;
-		}
+		//if (Input.GetButtonUp(InputHelper.USE))
+		//{
+		//	_prctCopsBar += 10.0f;
+		//}
 
-		if (Input.GetButtonUp(InputHelper.TAKE_N_DROP))
-		{
-			_prctCopsBar -= 10.0f;
-		}
+		//if (Input.GetButtonUp(InputHelper.TAKE_N_DROP))
+		//{
+		//	_prctCopsBar -= 10.0f;
+		//}
 		_prctCopsBar += toAdd;
 		_prctCopsBar = (_prctCopsBar < 0) ? 0 : _prctCopsBar;
 
