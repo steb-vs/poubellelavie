@@ -120,17 +120,20 @@ public class GameManager : MonoBehaviour
 		{
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 1);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
-			_audioSrcs[2].Play();
+			if (_prctCopsBar > oldPrctbar)
+				_audioSrcs[2].Play();
 		}
 		else if (IsPrctInRange(33, 66, _prctCopsBar) && !IsPrctInRange(33, 66, oldPrctbar))
 		{
-			_audioSrcs[2].Play();
+			if (_prctCopsBar > oldPrctbar)
+				_audioSrcs[2].Play();
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 2);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
 		}
 		else if (IsPrctInRange(66, 99, _prctCopsBar) && !IsPrctInRange(66, 99, oldPrctbar))
 		{
-			_audioSrcs[1].Play();
+			if (_prctCopsBar > oldPrctbar)
+				_audioSrcs[1].Play();
 
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 3);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
