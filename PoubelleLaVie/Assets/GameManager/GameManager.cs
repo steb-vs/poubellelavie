@@ -29,8 +29,8 @@ public class GameManager : MonoBehaviour
 
     public event Action OnGameOver;
 
-    private AudioSource _audioSrc;
-    private bool _end;
+	private AudioSource[] _audioSrcs;
+	private bool _end;
 
     // When instiated, this object is stored in the GameHelper
     private void Awake()
@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
         timeScale = 1;
         score = 0;
 
-        _audioSrc = GetComponent<AudioSource>();
+        _audioSrcs = GetComponents<AudioSource>();
     }
 
     // Update is called once per frame
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
         if (_prctCopsBar >= 100 && !_end)
         {
             _end = true;
-            _audioSrc.Play();
+            _audioSrcs[0].Play();
 
             OnGameOver?.Invoke();
 
@@ -120,14 +120,18 @@ public class GameManager : MonoBehaviour
 		{
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 1);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+			_audioSrcs[2].Play();
 		}
 		else if (IsPrctInRange(33, 66, _prctCopsBar) && !IsPrctInRange(33, 66, oldPrctbar))
 		{
+			_audioSrcs[2].Play();
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 2);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
 		}
 		else if (IsPrctInRange(66, 99, _prctCopsBar) && !IsPrctInRange(66, 99, oldPrctbar))
 		{
+			_audioSrcs[1].Play();
+
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 3);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
 		}
