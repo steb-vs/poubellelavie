@@ -9,13 +9,19 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 {
     #region Public fields
 
-    private GlobalState _globalState;
+    public GlobalState globalState;
     public DrunkState drunkType;
     public float incrCopsBarOverTime = 5.8f;
     public GameObject bottle;
     public GameObject puke;
     public Vector3 Position => transform.position;
     public bool IsHeavy => true;
+
+    #endregion
+
+    #region Events
+
+    public event Action<GameObject, NPCBehaviour> OnFall;
 
     #endregion
 
@@ -78,7 +84,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     /// </summary>
     public void ToCarried()
     {
-        _globalState |= GlobalState.BEING_CARRIED;
+        globalState |= GlobalState.BEING_CARRIED;
 
         if (_path != null)
             _path.Clear();
@@ -110,15 +116,16 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     public void ToTheGround()
     {
         if (GameHelper.GM.playerComponent.closeWindow &&
-            _globalState.HasFlag(GlobalState.DRUNK))
+            globalState.HasFlag(GlobalState.DRUNK))
         {
+            OnFall?.Invoke(gameObject, this);
             transform.position += GameHelper.GM.playerComponent.closeWindow.transform.up * 2;
             StartCoroutine(fall());
             Destroy(this.gameObject, 1);
             return;
         }
 
-        _globalState ^= GlobalState.BEING_CARRIED;
+        globalState ^= GlobalState.BEING_CARRIED;
         _renderer.enabled = true;
         _collider.enabled = true;
     }
@@ -136,7 +143,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         drunkType = (DrunkState) Random.Range(0, (int) DrunkState.TOTAL_DRUNK_STATES);
 //        drunkType = DrunkState.LOVER;
 
-        _globalState = GlobalState.NEED_DRINKING;
+        globalState = GlobalState.NEED_DRINKING;
 
         _animatorNPC.SetBool("isDrunk", false);
         _animatorNPC.SetBool("isTrash", false);
@@ -158,7 +165,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
     private void GotBeer()
     {
-        _globalState = GlobalState.FINE;
+        globalState = GlobalState.FINE;
         _animatorNPC.SetBool("isDrunk", true);
         numberDrinksPending = (uint) Random.Range(2, 5); // Between 2 and 4 times to drink before becoming drunk
 
@@ -171,7 +178,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     {
         gotDestination = false;
         _gotPath = false;
-        timer = _globalState == GlobalState.FINE ? 2F : 1.5F; // Make the drinking action a little bit longer
+        timer = globalState == GlobalState.FINE ? 2F : 1.5F; // Make the drinking action a little bit longer
         _animatorNPC.SetBool("isWalking", false);
     }
 
@@ -190,15 +197,12 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         }
     }
 
-    private void GetRandomDestination()
+    private void GetRandomDestination(int min, int max)
     {
-        int rndX = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundX);
-        int rndY = Random.Range(0, PathfinderHelper.Pathfinder.getGridBoundY);
-
         int x = (int)transform.position.x;
         int y = (int)transform.position.y;
 
-        var list = PathfinderHelper.Pathfinder._listedNodes.FindAll(n => n.walkable && (((n.gridX - x) + (n.gridY - y)) < 5));
+        var list = PathfinderHelper.Pathfinder._listedNodes.FindAll(n => n.walkable && ((Mathf.Abs(n.gridX - x) + Mathf.Abs(n.gridY - y)) < max));
         WorldTile destination =
             list[Random.Range(0, list.Count)];
 
@@ -216,12 +220,12 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
     private void Update()
     {
-        if (_globalState.HasFlag(GlobalState.BEING_CARRIED))
+        if (globalState.HasFlag(GlobalState.BEING_CARRIED))
             return; // We stop here
 
 
         // NPC is not being carried by the player: he can do his things
-        switch (_globalState)
+        switch (globalState)
         {
             case GlobalState.NEED_DRINKING:
                 if (_gotPath == false) // Choose a random fridge, and go there to pick a beer
@@ -246,14 +250,14 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 // Check if NPC is drunk
                 if (numberDrinksPending == 0)
                 {
-                    _globalState = GlobalState.DRUNK;
+                    globalState = GlobalState.DRUNK;
                     getDrunk();
                 }
                 
                 // The NPC just ended the drink action
                 if (timer <= 0.0f && gotDestination == false && _gotPath == false)
                 {
-                    GetRandomDestination();
+                    GetRandomDestination(2, 6);
                     callBack = GotToDestination;
 
                     // NPC's timer has not been set to 0: he drank
@@ -271,7 +275,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
                 break;
             default:
                 print("Unexpected global state of an NPC !");
-                print("Actual global state value: " + _globalState);
+                print("Actual global state value: " + globalState);
                 break;
         }
 
@@ -380,7 +384,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
     }
 
     /// <summary>
-    /// Called when NPC's _globalState is DRUNK.
+    /// Called when NPC's globalState is DRUNK.
     /// </summary>
     private void HandleDrunk()
     {
@@ -395,7 +399,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
                 if (timer <= 0.0F && gotDestination == false && _gotPath == false)
                 {
-                    GetRandomDestination();
+                    GetRandomDestination(2, 15);
                     callBack = GotToDestination;
                 }
 
@@ -417,7 +421,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
             case DrunkState.PUKER:
                 if (timer <= 0.0f && gotDestination == false && _gotPath == false)
                 {
-                    GetRandomDestination();
+                    GetRandomDestination(2, 5);
                     if (lastTile.walkable)
                         SpawnRandomGarbage();
                 }

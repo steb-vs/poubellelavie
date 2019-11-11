@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2533165248958168309
+--- !u!1 &237482217708586865
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2533165248958168304}
-  - component: {fileID: 2533165248958168307}
-  - component: {fileID: 2533165248958168306}
+  - component: {fileID: 237482217708586876}
+  - component: {fileID: 237482217708586867}
+  - component: {fileID: 237482217708586866}
   m_Layer: 0
   m_Name: BackgroundMusic
   m_TagString: Untagged
@@ -18,13 +18,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2533165248958168304
+--- !u!4 &237482217708586876
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2533165248958168309}
+  m_GameObject: {fileID: 237482217708586865}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -32,13 +32,13 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!82 &2533165248958168307
+--- !u!82 &237482217708586867
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2533165248958168309}
+  m_GameObject: {fileID: 237482217708586865}
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
@@ -128,18 +128,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &2533165248958168306
+--- !u!114 &237482217708586866
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2533165248958168309}
+  m_GameObject: {fileID: 237482217708586865}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9c4c28720533ba04ab92b6531fd7c3e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   musicParts:
-  - {fileID: 8300000, guid: fc60912a311c1be4ab074197d6b92454, type: 3}
-  - {fileID: 8300000, guid: c3bc6b50dacef6d45909f25428b384b6, type: 3}
+  - {fileID: 8300000, guid: 3a46fd6e57e0f8347bc7e7eec2103697, type: 3}
+  - {fileID: 8300000, guid: c60fc750565a3974590a2c5e2fab9ea7, type: 3}
