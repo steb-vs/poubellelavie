@@ -5019,12 +5019,12 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 126
+  m_fontSize: 191.15
   m_fontSizeBase: 126
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 191.13
   m_fontStyle: 0
   m_textAlignment: 514
   m_characterSpacing: 0
@@ -5127,10 +5127,10 @@ RectTransform:
   m_Father: {fileID: 2091915413}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.068122156}
-  m_AnchorMax: {x: 1, y: 0.582}
-  m_AnchoredPosition: {x: 0, y: -1.6000366}
-  m_SizeDelta: {x: 0, y: -3.2}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -462.5}
+  m_SizeDelta: {x: 0, y: -1073.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &788515001
 MonoBehaviour:
@@ -8048,11 +8048,11 @@ RectTransform:
   m_Father: {fileID: 2091915413}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -127.55499}
-  m_SizeDelta: {x: 3086, y: 349.7}
-  m_Pivot: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 602.1}
+  m_SizeDelta: {x: 0, y: -1459.2}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1876712293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8307,6 +8307,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6966332606134532784, guid: b4b2d5d32f9115143b758b12cb897103,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6966332607364025008, guid: b4b2d5d32f9115143b758b12cb897103,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6966332607734630514, guid: b4b2d5d32f9115143b758b12cb897103,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6966332606588904059, guid: b4b2d5d32f9115143b758b12cb897103,
         type: 3}
       propertyPath: m_Name
@@ -29808,17 +29823,7 @@ PrefabInstance:
       propertyPath: m_Tiles.Array.data[5].first.y
       value: 8
       objectReference: {fileID: 0}
-    - target: {fileID: 6966332606134532784, guid: b4b2d5d32f9115143b758b12cb897103,
-        type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6966332607190205016, guid: b4b2d5d32f9115143b758b12cb897103,
-        type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6966332607364025008, guid: b4b2d5d32f9115143b758b12cb897103,
         type: 3}
       propertyPath: m_Layer
       value: 0
@@ -29829,11 +29834,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6966332607456008196, guid: b4b2d5d32f9115143b758b12cb897103,
-        type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6966332607734630514, guid: b4b2d5d32f9115143b758b12cb897103,
         type: 3}
       propertyPath: m_Layer
       value: 0

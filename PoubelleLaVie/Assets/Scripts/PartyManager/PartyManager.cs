@@ -6,7 +6,9 @@ public class PartyManager : MonoBehaviour
 {
     public GameObject npc;
     public int[] entriesMass;
-    public float timeToPop = 5.0F;
+    public float startingTimeToPop = 10.0F;
+    public float endingTimeToPop = 2.0F;
+    public float timeToEnd = 180.0F;
     
     void Start()
     {
@@ -25,10 +27,17 @@ public class PartyManager : MonoBehaviour
         lastNPCStates = new DrunkState[4]; // Save of the last 4 NPC
         for (int i = 0; i < lastNPCStates.Length; i++)
             lastNPCStates[i] = DrunkState.DANCER;
+
+        // Calcul the coeff to adjust the function
+        coeff = (endingTimeToPop - startingTimeToPop) / timeToEnd;
     }
 
     void Update()
     {
+        timer -= Time.deltaTime * GameHelper.GM.timeScale;
+        t += Time.deltaTime * GameHelper.GM.timeScale;
+
+
         if (timer <= 0.0f) // Spawn a new NPC
         {
             // Choose a new entry, following the histogram
@@ -59,13 +68,18 @@ public class PartyManager : MonoBehaviour
             lastNPCStates[lastNPCStates.Length - 1] = newNPC.GetComponent<NPCBehaviour>().drunkType;
 
             // Set timer
+            timeToPop = t * coeff + startingTimeToPop;
+            timeToPop = timeToPop > startingTimeToPop ? startingTimeToPop : timeToPop; // Does not come across startingTimeToStop
+            timeToPop = timeToPop < endingTimeToPop ? endingTimeToPop : timeToPop;
+
             timer = timeToPop;
         }
-
-        timer -= Time.deltaTime * GameHelper.GM.timeScale;
     }
 
     private float timer = 0.0f;
+    private float t = 0.0F;
+    private float coeff;
+    private float timeToPop = 5.0F;
     private float[] probEntries; // Histogram of probabilities
     private DrunkState[] lastNPCStates;
 }
