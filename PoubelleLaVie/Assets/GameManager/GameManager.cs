@@ -23,7 +23,15 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI scoreMesh;
 
     public float score;
-    
+
+    public int npcSoundPlayingCount = 0;
+    public int maxNpcSounds = 1;
+
+    public event Action OnGameOver;
+
+    private AudioSource _audioSrc;
+    private bool _end;
+
     // When instiated, this object is stored in the GameHelper
     private void Awake()
     {
@@ -37,6 +45,8 @@ public class GameManager : MonoBehaviour
         decrCopsBarOverTime = 3F;
         timeScale = 1;
         score = 0;
+
+        _audioSrc = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -44,9 +54,15 @@ public class GameManager : MonoBehaviour
     {
 		lightAtmoAnimator.SetBool("bStateHasChanged", false);
 
-		float decrCopsBar = decrCopsBarOverTime * Time.deltaTime * timeScale;
-        if (_prctCopsBar >= 100)
+    
+        float decrCopsBar = decrCopsBarOverTime * Time.deltaTime * timeScale;
+        if (_prctCopsBar >= 100 && !_end)
         {
+            _end = true;
+            _audioSrc.Play();
+
+            OnGameOver?.Invoke();
+
             // End game
             timeScale = 0;
             canvasGameOver.SetActive(true);

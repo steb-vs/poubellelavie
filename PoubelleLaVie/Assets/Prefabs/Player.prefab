@@ -207,6 +207,7 @@ MonoBehaviour:
   pukeSound: {fileID: 8300000, guid: be20e393f4a4a5e4992be9b8b8beda36, type: 3}
   npcTakeSound: {fileID: 8300000, guid: be20e393f4a4a5e4992be9b8b8beda36, type: 3}
   npcDropSound: {fileID: 8300000, guid: be20e393f4a4a5e4992be9b8b8beda36, type: 3}
+  pukeStepSound: {fileID: 8300000, guid: ff1c32d9ea65e0149843864626dade6a, type: 3}
 --- !u!82 &-3517104752115691450
 AudioSource:
   m_ObjectHideFlags: 0
