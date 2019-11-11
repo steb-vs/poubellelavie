@@ -6,7 +6,8 @@ public class PartyManager : MonoBehaviour
 {
     public GameObject npc;
     public int[] entriesMass;
-    
+    public float timeToPop = 5.0F;
+
     void Start()
     {
         // Init histogram
@@ -65,7 +66,6 @@ public class PartyManager : MonoBehaviour
     }
 
     private float timer = 0.0f;
-    private float timeToPop = 1.0F;
     private float[] probEntries; // Histogram of probabilities
     private DrunkState[] lastNPCStates;
 }
