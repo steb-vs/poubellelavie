@@ -11,7 +11,6 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
     public GlobalState globalState;
     public DrunkState drunkType;
-    public float incrCopsBarOverTime = 5.8f;
     public GameObject bottle;
     public GameObject puke;
     public Vector3 Position => transform.position;
@@ -97,6 +96,10 @@ public class NPCBehaviour : MonoBehaviour, IUsable
 
         //_renderer.enabled = false;
         _collider.enabled = false;
+
+        // Desactivate the dancer (if dancer)
+        if (drunkType == DrunkState.DANCER)
+            GameHelper.GM.RetireDancer();
     }
 
     private IEnumerator fall()
@@ -122,12 +125,17 @@ public class NPCBehaviour : MonoBehaviour, IUsable
             transform.position += GameHelper.GM.playerComponent.closeWindow.transform.up * 2;
             StartCoroutine(fall());
             Destroy(this.gameObject, 1);
+
             return;
         }
 
         globalState ^= GlobalState.BEING_CARRIED;
         _renderer.enabled = true;
         _collider.enabled = true;
+
+        // Add the dancer to nbrDancer (if dancer)
+        if (drunkType == DrunkState.DANCER)
+            GameHelper.GM.AddDancer();
     }
 
     #endregion
@@ -363,18 +371,20 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         switch (drunkType)
         {
             case DrunkState.DANCER:
-                speed /= 2;
+                speed /= 2; // Goes faster
                 callBack = GotToDestination;
                 gotDestination = false;
+                GameHelper.GM.AddDancer();
                 break;
             case DrunkState.LOVER:
+                speed /= 2; // Goes faster
                 callBack = GotToDestination;
                 gotDestination = false;
                 break;
             case DrunkState.PUKER:
                 callBack = GotToDestination;
                 gotDestination = false;
-                speed *= 2;
+                speed *= 2; // Goes slower
                 break;
             default:
                 print("Unexpected drunk state of an NPC !");
@@ -394,9 +404,6 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         switch (drunkType)
         {
             case DrunkState.DANCER:
-                // Make the player lose more and more
-                GameHelper.GM.AddPrctUntilCops(incrCopsBarOverTime * Time.deltaTime * GameHelper.GM.timeScale);
-
                 if (timer <= 0.0F && gotDestination == false && _gotPath == false)
                 {
                     GetRandomDestination(2, 15);
