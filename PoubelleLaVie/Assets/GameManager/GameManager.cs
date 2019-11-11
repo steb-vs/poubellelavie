@@ -79,14 +79,23 @@ public class GameManager : MonoBehaviour
 		return value >= rangeBegin && value <= rangeEnd;
 	}
 
-    public void AddPrctUntilCops(float toAdd)
+	public void AddPrctUntilCops(float toAdd)
 	{
 		float oldPrctbar = _prctCopsBar;
 
+		//if (Input.GetButtonUp(InputHelper.USE))
+		//{
+		//	_prctCopsBar += 10.0f;
+		//}
+
+		//if (Input.GetButtonUp(InputHelper.TAKE_N_DROP))
+		//{
+		//	_prctCopsBar -= 10.0f;
+		//}
 		_prctCopsBar += toAdd;
 		_prctCopsBar = (_prctCopsBar < 0) ? 0 : _prctCopsBar;
 
-		if (IsPrctInRange(0,0, _prctCopsBar) && ! IsPrctInRange(0, 0, oldPrctbar))
+		if (IsPrctInRange(0, 0, _prctCopsBar) && !IsPrctInRange(0, 0, oldPrctbar))
 		{
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 0);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
@@ -111,9 +120,7 @@ public class GameManager : MonoBehaviour
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 4);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
 		}
-		Debug.Log("Old : " + oldPrctbar + " new " + _prctCopsBar + "state" + lightAtmoAnimator.GetInteger("StateNeighborGauge"));
-
-
+		//Debug.Log("Old : " + oldPrctbar + " new " + _prctCopsBar + "state" + lightAtmoAnimator.GetInteger("StateNeighborGauge"));
 	}
 
 	public float GetPrctUntilCops()
