@@ -10251,6 +10251,16 @@ PrefabInstance:
       propertyPath: entriesMass.Array.data[1]
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1680796301366804743, guid: 1376591ac88654a9aa139d043803d13a,
+        type: 3}
+      propertyPath: startingTimeToPop
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1680796301366804743, guid: 1376591ac88654a9aa139d043803d13a,
+        type: 3}
+      propertyPath: timeToEnd
+      value: 120
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1376591ac88654a9aa139d043803d13a, type: 3}
 --- !u!1 &1326829194
@@ -11478,7 +11488,7 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.9056604
       objectReference: {fileID: 0}
-    - target: {fileID: 2105475092255674737, guid: c9fe498631e8f964086572468a2c944d,
+    - target: {fileID: 5622014929612756463, guid: c9fe498631e8f964086572468a2c944d,
         type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -11488,7 +11498,7 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5622014929612756463, guid: c9fe498631e8f964086572468a2c944d,
+    - target: {fileID: 2105475092255674737, guid: c9fe498631e8f964086572468a2c944d,
         type: 3}
       propertyPath: m_IsActive
       value: 0
