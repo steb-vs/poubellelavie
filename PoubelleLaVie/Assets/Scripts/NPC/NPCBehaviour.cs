@@ -421,7 +421,7 @@ public class NPCBehaviour : MonoBehaviour, IUsable
             case DrunkState.PUKER:
                 if (timer <= 0.0f && gotDestination == false && _gotPath == false)
                 {
-                    GetRandomDestination(2, 5);
+                    GetRandomDestination(2, 13);
                     if (lastTile.walkable)
                         SpawnRandomGarbage();
                 }
@@ -439,10 +439,11 @@ public class NPCBehaviour : MonoBehaviour, IUsable
         int chooseGarbageType = Random.Range(0, 2);
         GameObject garbage_;
         if (chooseGarbageType == 0) // Bottle
+        {
             garbage_ = GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
+        }
         else // Puke
             garbage_ = GameObject.Instantiate(puke, transform.position, Quaternion.identity) as GameObject;
-
         lastTile.walkable = false;
         garbage_.GetComponent<Garbage>().worldTile = lastTile;
     }
