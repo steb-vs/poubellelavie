@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour
                 trashImages[(playerComponent.grabbedObjects * (trashImages.Length - 1)) / playerComponent.maxGrabbedObjects];
         }
 
+        // Update score
         score += Time.deltaTime * 3.5F * timeScale;
         scoreMesh.text = "Score: " + Math.Truncate(score*100)/100;
     }
