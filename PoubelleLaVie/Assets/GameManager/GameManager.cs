@@ -87,7 +87,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Update score
-        score += Time.deltaTime * 3.5F * timeScale;
+        score += Time.deltaTime * timeScale;
         scoreMesh.text = "Score: " + Math.Truncate(score*100)/100;    }
 
 	bool IsPrctInRange(float rangeBegin, float rangeEnd, float value)
