@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public PlayerComponent playerComponent;
 
     public GameObject canvasGameOver;
+    public GameObject canvasUI;
 	public Animator lightAtmoAnimator;
 
 	public Image trashImage;
@@ -30,8 +31,10 @@ public class GameManager : MonoBehaviour
 
     public event Action OnGameOver;
 
-    private AudioSource _audioSrc;
-    private bool _end;
+	private AudioSource[] _audioSrcs;
+	private bool _end;
+
+    public TextMeshProUGUI endScore;
 
     private uint nbrDancers = 0;
 
@@ -48,7 +51,7 @@ public class GameManager : MonoBehaviour
         timeScale = 1;
         score = 0;
 
-        _audioSrc = GetComponent<AudioSource>();
+        _audioSrcs = GetComponents<AudioSource>();
     }
 
     // Update is called once per frame
@@ -65,13 +68,17 @@ public class GameManager : MonoBehaviour
         if (_prctCopsBar >= 100 && !_end)
         {
             _end = true;
-            _audioSrc.Play();
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 4);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+			_audioSrcs[0].Play();
 
             OnGameOver?.Invoke();
 
             // End game
             timeScale = 0;
             canvasGameOver.SetActive(true);
+            canvasUI.SetActive(false);
+            endScore.text = "Score: " + Math.Truncate(score*100)/100;
             return;
         }
 
@@ -117,22 +124,25 @@ public class GameManager : MonoBehaviour
 		{
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 1);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+			if (_prctCopsBar > oldPrctbar)
+				_audioSrcs[2].Play();
 		}
 		else if (IsPrctInRange(33, 66, _prctCopsBar) && !IsPrctInRange(33, 66, oldPrctbar))
 		{
+			if (_prctCopsBar > oldPrctbar)
+				_audioSrcs[2].Play();
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 2);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
 		}
 		else if (IsPrctInRange(66, 99, _prctCopsBar) && !IsPrctInRange(66, 99, oldPrctbar))
 		{
+			if (_prctCopsBar > oldPrctbar)
+				_audioSrcs[1].Play();
+
 			lightAtmoAnimator.SetInteger("StateNeighborGauge", 3);
 			lightAtmoAnimator.SetBool("bStateHasChanged", true);
 		}
-		else if (oldPrctbar < 100 && _prctCopsBar >= 100)
-		{
-			lightAtmoAnimator.SetInteger("StateNeighborGauge", 4);
-			lightAtmoAnimator.SetBool("bStateHasChanged", true);
-		}
+		
 		//Debug.Log("Old : " + oldPrctbar + " new " + _prctCopsBar + "state" + lightAtmoAnimator.GetInteger("StateNeighborGauge"));
 	}
 
