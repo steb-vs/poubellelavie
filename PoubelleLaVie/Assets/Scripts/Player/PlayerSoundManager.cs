@@ -9,9 +9,11 @@ public class PlayerSoundManager : MonoBehaviour
     public AudioClip pukeSound;
     public AudioClip npcTakeSound;
     public AudioClip npcDropSound;
+    public AudioClip pukeStepSound;
 
     private AudioSource _audioSrc;
     private PlayerComponent _playerComponent;
+    private float _stepTimer;
 
     // Start is called before the first frame update
     private void Start()
@@ -75,6 +77,16 @@ public class PlayerSoundManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        
+        if (_stepTimer <= 0.5f)
+            _stepTimer += Time.deltaTime;
+
+        if(_playerComponent.Data.MoveState == PlayerMoveState.Run &&
+            _stepTimer >= 0.5f &&
+            _playerComponent.SpeedModObj is PukeComponent)
+        {
+            _stepTimer = 0.0f;
+            _audioSrc.clip = pukeStepSound;
+            _audioSrc.Play();
+        }
     }
 }
