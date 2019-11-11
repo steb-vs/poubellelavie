@@ -16,6 +16,7 @@ public class NPCSoundManager : MonoBehaviour
     private float _currentTime = 0;
     private AudioSource _audioSrc;
     private bool _falling;
+    private bool _wasPlaying;
 
     // Start is called before the first frame update
     private void Start()
@@ -25,6 +26,12 @@ public class NPCSoundManager : MonoBehaviour
         _currentTime = minTime;
 
         _behavior.OnFall += NPCFallAction;
+        GameHelper.GM.OnGameOver += GameOverAction;
+    }
+
+    private void GameOverAction()
+    {
+        _audioSrc.volume = 0.5f;
     }
 
     private void NPCFallAction(GameObject obj, NPCBehaviour behavior)
@@ -33,11 +40,19 @@ public class NPCSoundManager : MonoBehaviour
         _audioSrc.Play();
 
         _falling = true;
+
+        GameHelper.GM.OnGameOver -= GameOverAction;
     }
 
     // Update is called once per frame
     private void Update()
     {
+        if(_wasPlaying && !_audioSrc.isPlaying)
+        {
+            GameHelper.GM.npcSoundPlayingCount--;
+            _wasPlaying = false;
+        }
+
         if (_falling)
             return;
 
@@ -46,7 +61,7 @@ public class NPCSoundManager : MonoBehaviour
 
         _currentTime += Time.deltaTime;
 
-        if (_currentTime < minTime + _targetTime)
+        if (GameHelper.GM.npcSoundPlayingCount >= GameHelper.GM.maxNpcSounds || _currentTime < minTime + _targetTime)
             return;
 
         _targetTime = Random.Range(rangeMin, rangeMax);
@@ -54,6 +69,9 @@ public class NPCSoundManager : MonoBehaviour
 
         _audioSrc.clip = drunkSounds.GetRandom(_behavior.drunkType.ToString());
         _audioSrc.Play();
+        _wasPlaying = true;
+
+        GameHelper.GM.npcSoundPlayingCount++;
     }
 }
 
