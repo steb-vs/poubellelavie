@@ -17,6 +17,13 @@ public class BackgroundMusicManager : MonoBehaviour
 
         _audioSrc.clip = musicParts[0];
         _audioSrc.Play();
+
+        GameHelper.GM.OnGameOver += GameOverAction;
+    }
+
+    private void GameOverAction()
+    {
+        _audioSrc.volume = 0.5f;
     }
 
     // Update is called once per frame

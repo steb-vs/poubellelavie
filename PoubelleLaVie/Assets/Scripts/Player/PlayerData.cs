@@ -37,8 +37,8 @@ public class PlayerData
     public static PlayerData Default => new PlayerData
     {
         Direction = new Vector2(1, 0),
-        Speed = 100,
-        DefaultSpeed = 100,
+        Speed = 150,
+        DefaultSpeed = 150,
         Position = new Vector2(0, 0),
         MoveState = PlayerMoveState.Idle,
         ActionState = PlayerActionState.Default
