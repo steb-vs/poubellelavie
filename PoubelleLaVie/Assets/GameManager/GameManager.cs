@@ -9,7 +9,8 @@ public class GameManager : MonoBehaviour
 {
     private float _prctCopsBar;
 
-    public float decrCopsBarOverTime;
+    public float decrCopsBarOverTime = 10.0F;
+    public float incrCopsBarOverTime = 10.0F;
     public float timeScale;
     [HideInInspector]public GameObject player;
     [HideInInspector] public PlayerComponent playerComponent;
@@ -35,6 +36,8 @@ public class GameManager : MonoBehaviour
 
     public TextMeshProUGUI endScore;
 
+    private uint nbrDancers = 0;
+
     // When instiated, this object is stored in the GameHelper
     private void Awake()
     {
@@ -45,7 +48,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         _prctCopsBar = 0;
-        decrCopsBarOverTime = 3F;
         timeScale = 1;
         score = 0;
 
@@ -57,8 +59,12 @@ public class GameManager : MonoBehaviour
     {
 		lightAtmoAnimator.SetBool("bStateHasChanged", false);
 
-    
-        float decrCopsBar = decrCopsBarOverTime * Time.deltaTime * timeScale;
+
+        // Decrement automatically the cops bar
+        float coeff = Time.deltaTime * timeScale;
+        float modifyCopsBar = nbrDancers > 0 ? incrCopsBarOverTime * coeff : -decrCopsBarOverTime * coeff;
+        AddPrctUntilCops(modifyCopsBar);
+
         if (_prctCopsBar >= 100 && !_end)
         {
             _end = true;
@@ -76,8 +82,6 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-		// Decrement automatically the cops bar
-		AddPrctUntilCops(-decrCopsBar);
 
         // Setting / Unsetting pause ?
         if (Input.GetButtonDown(InputHelper.PAUSE))
@@ -95,7 +99,9 @@ public class GameManager : MonoBehaviour
 
         // Update score
         score += Time.deltaTime * timeScale;
-        scoreMesh.text = "Score: " + Math.Truncate(score*100)/100;    }
+        scoreMesh.text = "Score: " + Math.Truncate(score*10)/10;
+        print(_prctCopsBar);
+    }
 
 	bool IsPrctInRange(float rangeBegin, float rangeEnd, float value)
 	{
@@ -104,17 +110,8 @@ public class GameManager : MonoBehaviour
 
 	public void AddPrctUntilCops(float toAdd)
 	{
-		float oldPrctbar = _prctCopsBar;
+        float oldPrctbar = _prctCopsBar;
 
-		//if (Input.GetButtonUp(InputHelper.USE))
-		//{
-		//	_prctCopsBar += 10.0f;
-		//}
-
-		//if (Input.GetButtonUp(InputHelper.TAKE_N_DROP))
-		//{
-		//	_prctCopsBar -= 10.0f;
-		//}
 		_prctCopsBar += toAdd;
 		_prctCopsBar = (_prctCopsBar < 0) ? 0 : _prctCopsBar;
 
@@ -152,5 +149,15 @@ public class GameManager : MonoBehaviour
 	public float GetPrctUntilCops()
     {
         return _prctCopsBar;
+    }
+
+    public void AddDancer()
+    {
+        nbrDancers++;
+    }
+
+    public void RetireDancer()
+    {
+        nbrDancers--;
     }
 }

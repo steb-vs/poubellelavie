@@ -6764,6 +6764,16 @@ PrefabInstance:
       propertyPath: entriesMass.Array.data[1]
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1680796301366804743, guid: 1376591ac88654a9aa139d043803d13a,
+        type: 3}
+      propertyPath: startingTimeToPop
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1680796301366804743, guid: 1376591ac88654a9aa139d043803d13a,
+        type: 3}
+      propertyPath: timeToEnd
+      value: 120
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1376591ac88654a9aa139d043803d13a, type: 3}
 --- !u!1 &1326829194
@@ -7731,7 +7741,27 @@ PrefabInstance:
         type: 3}
       propertyPath: endScore
       value: 
-      objectReference: {fileID: 67566389}
+      objectReference: {fileID: 968997392}
+    - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
+        type: 3}
+      propertyPath: timeScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
+        type: 3}
+      propertyPath: decrCopsBarOverTime
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
+        type: 3}
+      propertyPath: scoreMesh
+      value: 
+      objectReference: {fileID: 1541097416}
+    - target: {fileID: 5005652659992764758, guid: d1a6fa2f6ededad49b73e21d2d94be47,
+        type: 3}
+      propertyPath: lightAtmoAnimator
+      value: 
+      objectReference: {fileID: 802230839}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d1a6fa2f6ededad49b73e21d2d94be47, type: 3}
 --- !u!1001 &1723202384
@@ -8705,6 +8735,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2877713441904829241, guid: dc9a18e8015bc49458505a33c86dd2af,
+        type: 3}
+      propertyPath: m_margin.z
+      value: 2.546051
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc9a18e8015bc49458505a33c86dd2af, type: 3}
@@ -39741,6 +39776,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6966332607456008196, guid: b4b2d5d32f9115143b758b12cb897103,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6966332607734630514, guid: b4b2d5d32f9115143b758b12cb897103,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6966332607734630514, guid: b4b2d5d32f9115143b758b12cb897103,
         type: 3}
       propertyPath: m_IsActive
       value: 1
