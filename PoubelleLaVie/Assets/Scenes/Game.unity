@@ -8061,6 +8061,18 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &897760178 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2877713441904829241, guid: dc9a18e8015bc49458505a33c86dd2af,
+    type: 3}
+  m_PrefabInstance: {fileID: 2877713440910253294}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &968997391
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11228,7 +11240,7 @@ PrefabInstance:
         type: 3}
       propertyPath: scoreMesh
       value: 
-      objectReference: {fileID: 1556627415}
+      objectReference: {fileID: 897760178}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d1a6fa2f6ededad49b73e21d2d94be47, type: 3}
 --- !u!1001 &1723202384
