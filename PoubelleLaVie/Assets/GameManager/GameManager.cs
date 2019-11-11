@@ -15,8 +15,9 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public PlayerComponent playerComponent;
 
     public GameObject canvasGameOver;
-    
-    public Image trashImage;
+	public Animator lightAtmoAnimator;
+
+	public Image trashImage;
     public Sprite[] trashImages;
     public GameObject thrownTrash;
     public TextMeshProUGUI scoreMesh;
@@ -41,7 +42,9 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float decrCopsBar = decrCopsBarOverTime * Time.deltaTime * timeScale;
+		lightAtmoAnimator.SetBool("bStateHasChanged", false);
+
+		float decrCopsBar = decrCopsBarOverTime * Time.deltaTime * timeScale;
         if (_prctCopsBar >= 100)
         {
             // End game
@@ -50,9 +53,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Decrement automatically the cops bar
-        _prctCopsBar -= decrCopsBar;
-        _prctCopsBar = (_prctCopsBar < 0) ? 0 : _prctCopsBar;
+		// Decrement automatically the cops bar
+		AddPrctUntilCops(-decrCopsBar);
 
         // Setting / Unsetting pause ?
         if (Input.GetButtonDown(InputHelper.PAUSE))
@@ -70,15 +72,58 @@ public class GameManager : MonoBehaviour
 
         // Update score
         score += Time.deltaTime * 3.5F * timeScale;
-        scoreMesh.text = "Score: " + Math.Truncate(score*100)/100;
-    }
+        scoreMesh.text = "Score: " + Math.Truncate(score*100)/100;    }
 
-    public void AddPrctUntilCops(float toAdd)
-    {
-        _prctCopsBar += toAdd;
-    }
+	bool IsPrctInRange(float rangeBegin, float rangeEnd, float value)
+	{
+		return value >= rangeBegin && value <= rangeEnd;
+	}
 
-    public float GetPrctUntilCops()
+	public void AddPrctUntilCops(float toAdd)
+	{
+		float oldPrctbar = _prctCopsBar;
+
+		//if (Input.GetButtonUp(InputHelper.USE))
+		//{
+		//	_prctCopsBar += 10.0f;
+		//}
+
+		//if (Input.GetButtonUp(InputHelper.TAKE_N_DROP))
+		//{
+		//	_prctCopsBar -= 10.0f;
+		//}
+		_prctCopsBar += toAdd;
+		_prctCopsBar = (_prctCopsBar < 0) ? 0 : _prctCopsBar;
+
+		if (IsPrctInRange(0, 0, _prctCopsBar) && !IsPrctInRange(0, 0, oldPrctbar))
+		{
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 0);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+		}
+		else if (IsPrctInRange(1, 33, _prctCopsBar) && !IsPrctInRange(1, 33, oldPrctbar))
+		{
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 1);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+		}
+		else if (IsPrctInRange(33, 66, _prctCopsBar) && !IsPrctInRange(33, 66, oldPrctbar))
+		{
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 2);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+		}
+		else if (IsPrctInRange(66, 99, _prctCopsBar) && !IsPrctInRange(66, 99, oldPrctbar))
+		{
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 3);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+		}
+		else if (oldPrctbar < 100 && _prctCopsBar >= 100)
+		{
+			lightAtmoAnimator.SetInteger("StateNeighborGauge", 4);
+			lightAtmoAnimator.SetBool("bStateHasChanged", true);
+		}
+		//Debug.Log("Old : " + oldPrctbar + " new " + _prctCopsBar + "state" + lightAtmoAnimator.GetInteger("StateNeighborGauge"));
+	}
+
+	public float GetPrctUntilCops()
     {
         return _prctCopsBar;
     }
