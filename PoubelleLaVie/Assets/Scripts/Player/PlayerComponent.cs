@@ -20,29 +20,17 @@ public class PlayerComponent : MonoBehaviour
     public event UsableHandler OnObjectTaken;
     public event UsableHandler OnObjectDropped;
 
-    public PlayerData Data { get; private set; }
-    public ISpeedModifier SpeedModObj { get; private set; }
-
     private Rigidbody2D _body;
     private Animator _animator;
     private HashSet<IUsable> _closeObjects;
     private IUsable _carriedObject;
-
-    /// <summary>
-    /// Sets the player data.
-    /// </summary>
-    /// <param name="data"></param>
-    public void SetData(PlayerData data)
-    {
-        Data = data;
-        transform.position = data.Position;
-    }
+    private PlayerDataComponent _data;
 
     private void Start()
     {
         _body = GetComponent<Rigidbody2D>();
         _animator = playerSprite.GetComponent<Animator>();
-        Data = PlayerData.Default;
+        _data = GetComponent<PlayerDataComponent>();
         _closeObjects = new HashSet<IUsable>();
 
         if (GameHelper.GM != null)
@@ -64,7 +52,7 @@ public class PlayerComponent : MonoBehaviour
     private void ReadInput()
     {
         // Get the character direction
-        Data.Direction = new Vector2(
+        Data.direction = new Vector2(
             Input.GetAxis(InputHelper.HORIZONTAL),
             Input.GetAxis(InputHelper.VERTICAL)
         );
@@ -194,55 +182,55 @@ public class PlayerComponent : MonoBehaviour
         {
             if (_carriedObject.IsHeavy)
             {
-                Data.Speed = Data.DefaultSpeed * 0.6f * (SpeedModObj != null ? SpeedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
-                Data.ActionState = PlayerActionState.Grabbing;
+                Data.speed = Data.defaultSpeed * 0.6f * (SpeedModObj != null ? SpeedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
+                Data.actionState = PlayerActionState.Grabbing;
             }
             else
             {
-                Data.Speed = Data.DefaultSpeed * (SpeedModObj != null ? SpeedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
-                Data.ActionState = PlayerActionState.Holding;
+                Data.speed = Data.defaultSpeed * (SpeedModObj != null ? SpeedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
+                Data.actionState = PlayerActionState.Holding;
             }
         }
         else
         {
-            Data.ActionState = PlayerActionState.Default;
-            Data.Speed = Data.DefaultSpeed * (SpeedModObj != null ? SpeedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
+            Data.actionState = PlayerActionState.Default;
+            Data.speed = Data.defaultSpeed * (SpeedModObj != null ? SpeedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
         }
 
         // Add force to the rigid body
-        _body.AddForce(Data.Direction * Data.Speed);
+        _body.AddForce(Data.direction * Data.speed);
 
-        if(Data.Direction.magnitude > 0.01f)
-            playerSprite.transform.localRotation = Quaternion.FromToRotation(Vector2.up, Data.Direction.normalized);
+        if(Data.direction.magnitude > 0.01f)
+            playerSprite.transform.localRotation = Quaternion.FromToRotation(Vector2.up, Data.direction.normalized);
 
         // Update the move state
         if (_body.velocity.magnitude > 0.1f)
-            Data.MoveState = PlayerMoveState.Run;
+            Data.moveState = PlayerMoveState.Run;
         else
-            Data.MoveState = PlayerMoveState.Idle;
+            Data.moveState = PlayerMoveState.Idle;
 
         // Update the animator parameters
-        if (_animator.GetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME) != (int)Data.ActionState)
+        if (_animator.GetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME) != (int)Data.actionState)
         {
-            _animator.SetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME, (int)Data.ActionState);
+            _animator.SetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME, (int)Data.actionState);
             updateAnimation = true;
         }
 
-        if (_animator.GetInteger(PlayerHelper.ANIMATOR_MOVE_PARAM_NAME) != (int)Data.MoveState)
+        if (_animator.GetInteger(PlayerHelper.ANIMATOR_MOVE_PARAM_NAME) != (int)Data.moveState)
         {
-            _animator.SetInteger(PlayerHelper.ANIMATOR_MOVE_PARAM_NAME, (int)Data.MoveState);
+            _animator.SetInteger(PlayerHelper.ANIMATOR_MOVE_PARAM_NAME, (int)Data.moveState);
             updateAnimation = true;
         }
 
         if(updateAnimation)
         {
-            string newAnimationName = Data.ActionState.ToString() + Data.MoveState.ToString();
+            string newAnimationName = Data.actionState.ToString() + Data.moveState.ToString();
             _animator.StopPlayback();
             _animator.Play(newAnimationName);
         }
 
         _animator.speed = 0.25f + (_body.velocity.magnitude / 6.0f);
 
-        Data.Position = transform.position;
+        Data.position = transform.position;
     }
 }
