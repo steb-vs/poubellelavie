@@ -21,7 +21,7 @@ public class PlayerSoundManager : MonoBehaviour
         _audioSrc = GetComponent<AudioSource>();
         _playerComponent = GetComponent<PlayerComponent>();
 
-        _playerComponent.OnTrashTrown += TrashThrownAction;
+        _playerComponent.OnTrashThrown += TrashThrownAction;
         _playerComponent.OnObjectTaken += ObjectTakenAction;
         _playerComponent.OnObjectDropped += ObjectDroppedAction;
     }
@@ -31,7 +31,7 @@ public class PlayerSoundManager : MonoBehaviour
         string typeName = usable.GetType().Name;
         AudioClip clip = null;
 
-        if (typeName == nameof(NPCBehaviour))
+        if (typeName == nameof(NPCComponent))
         {
             clip = npcDropSound;
         }
@@ -56,7 +56,7 @@ public class PlayerSoundManager : MonoBehaviour
         {
             clip = pukeSound;
         }
-        else if (typeName == nameof(NPCBehaviour))
+        else if (typeName == nameof(NPCComponent))
         {
             clip = npcTakeSound;
         }
@@ -80,7 +80,7 @@ public class PlayerSoundManager : MonoBehaviour
         if (_stepTimer <= 0.5f)
             _stepTimer += Time.deltaTime;
 
-        if(_playerComponent.Data.moveState == PlayerMoveState.Run &&
+        if(_playerComponent.Data.moveState == PlayerMoveState.Walk &&
             _stepTimer >= 0.5f &&
             _playerComponent.SpeedModObj is PukeComponent)
         {

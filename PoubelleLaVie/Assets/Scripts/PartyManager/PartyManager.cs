@@ -61,11 +61,11 @@ public class PartyManager : MonoBehaviour
                 }
 
             if (!dancerFound) // If not, modify the drunkType to a DANCER
-                newNPC.GetComponent<NPCBehaviour>().drunkType = DrunkState.DANCER;
+                newNPC.GetComponent<NPCComponent>().drunkType = DrunkState.DANCER;
 
             for (int i = 1; i < lastNPCStates.Length; i++)
                 lastNPCStates[i - 1] = lastNPCStates[i];
-            lastNPCStates[lastNPCStates.Length - 1] = newNPC.GetComponent<NPCBehaviour>().drunkType;
+            lastNPCStates[lastNPCStates.Length - 1] = newNPC.GetComponent<NPCComponent>().drunkType;
 
             // Set timer
             timeToPop = t * coeff + startingTimeToPop;

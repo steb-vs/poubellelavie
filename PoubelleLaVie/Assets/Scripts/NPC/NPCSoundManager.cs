@@ -11,7 +11,7 @@ public class NPCSoundManager : MonoBehaviour
     public float rangeMax;
     public float minTime;
 
-    private NPCBehaviour _behavior;
+    private NPCComponent _behavior;
     private float _targetTime = 0;
     private float _currentTime = 0;
     private AudioSource _audioSrc;
@@ -21,7 +21,7 @@ public class NPCSoundManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        _behavior = GetComponent<NPCBehaviour>();
+        _behavior = GetComponent<NPCComponent>();
         _audioSrc = GetComponent<AudioSource>();
         _currentTime = minTime;
 
@@ -34,7 +34,7 @@ public class NPCSoundManager : MonoBehaviour
         _audioSrc.volume = 0.5f;
     }
 
-    private void NPCFallAction(GameObject obj, NPCBehaviour behavior)
+    private void NPCFallAction(GameObject obj, NPCComponent behavior)
     {
         _audioSrc.clip = fallSounds.GetRandom();
         _audioSrc.Play();

@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 public enum PlayerMoveState
 {
     Idle = 0,
-    Run = 1
+    Walk = 1
 }
