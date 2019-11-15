@@ -20,13 +20,18 @@ public class PukeComponent : Garbage, ISpeedModifier, IUsable
 
     public bool Take(GameObject sender)
     {
-        Debug.Log($"{GameHelper.GM.playerComponent.grabbedObjects} - {GameHelper.GM.playerComponent.maxGrabbedObjects}");
-        if (GameHelper.GM.playerComponent.grabbedObjects <= GameHelper.GM.playerComponent.maxGrabbedObjects)
+        PlayerDataComponent data = sender.GetComponent<PlayerDataComponent>();
+
+        if (data == null)
+            return false;
+
+        if (data.trashCount <= data.trashLimit)
         {
             worldTile.walkable = true;
             Destroy(gameObject);
-            GameHelper.GM.playerComponent.grabbedObjects++;    
+            data.trashCount++;
         }
+
         return false;
     }
 

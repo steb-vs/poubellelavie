@@ -34,8 +34,8 @@ public class PartyManager : MonoBehaviour
 
     void Update()
     {
-        timer -= Time.deltaTime * GameHelper.GM.timeScale;
-        t += Time.deltaTime * GameHelper.GM.timeScale;
+        timer -= Time.deltaTime * GameHelper.GameManager.timeScale;
+        t += Time.deltaTime * GameHelper.GameManager.timeScale;
 
 
         if (timer <= 0.0f) // Spawn a new NPC

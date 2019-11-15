@@ -8,5 +8,11 @@ public class NPCDataComponent : HumanDataComponent
 
     public DrunkType drunkType;
 
+    public bool isCarried;
 
+    public float fallDuration;
+
+    public float fallTime;
+
+    public bool falling;
 }

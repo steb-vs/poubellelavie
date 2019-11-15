@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HumanUserController : IController<HumanAction>
+public abstract class HumanUserController : IController<HumanAction>
 {
     public bool GetActionDown(HumanAction action)
     {

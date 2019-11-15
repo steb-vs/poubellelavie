@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     // When instiated, this object is stored in the GameHelper
     private void Awake()
     {
-        GameHelper.GM = this;
+        GameHelper.GameManager = this;
     }
 
     // Start is called before the first frame update

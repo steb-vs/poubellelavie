@@ -26,7 +26,7 @@ public class NPCSoundManager : MonoBehaviour
         _currentTime = minTime;
 
         _behavior.OnFall += NPCFallAction;
-        GameHelper.GM.OnGameOver += GameOverAction;
+        GameHelper.GameManager.OnGameOver += GameOverAction;
     }
 
     private void GameOverAction()
@@ -41,7 +41,7 @@ public class NPCSoundManager : MonoBehaviour
 
         _falling = true;
 
-        GameHelper.GM.OnGameOver -= GameOverAction;
+        GameHelper.GameManager.OnGameOver -= GameOverAction;
     }
 
     // Update is called once per frame
@@ -49,7 +49,7 @@ public class NPCSoundManager : MonoBehaviour
     {
         if(_wasPlaying && !_audioSrc.isPlaying)
         {
-            GameHelper.GM.npcSoundPlayingCount--;
+            GameHelper.GameManager.npcSoundPlayingCount--;
             _wasPlaying = false;
         }
 
@@ -61,7 +61,7 @@ public class NPCSoundManager : MonoBehaviour
 
         _currentTime += Time.deltaTime;
 
-        if (GameHelper.GM.npcSoundPlayingCount >= GameHelper.GM.maxNpcSounds || _currentTime < minTime + _targetTime)
+        if (GameHelper.GameManager.npcSoundPlayingCount >= GameHelper.GameManager.maxNpcSounds || _currentTime < minTime + _targetTime)
             return;
 
         _targetTime = Random.Range(rangeMin, rangeMax);
@@ -71,7 +71,7 @@ public class NPCSoundManager : MonoBehaviour
         _audioSrc.Play();
         _wasPlaying = true;
 
-        GameHelper.GM.npcSoundPlayingCount++;
+        GameHelper.GameManager.npcSoundPlayingCount++;
     }
 }
 

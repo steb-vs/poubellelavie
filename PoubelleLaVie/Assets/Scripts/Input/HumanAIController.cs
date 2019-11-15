@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HumanAIController : MonoBehaviour
+public abstract class HumanAIController : IController<HumanAction>
 {
-    // Start is called before the first frame update
-    void Start()
+    public bool GetActionDown(HumanAction action)
     {
-        
+        throw new System.NotImplementedException();
     }
 
-    // Update is called once per frame
-    void Update()
+    public bool GetActionUp(HumanAction action)
     {
-        
+        throw new System.NotImplementedException();
+    }
+
+    public float GetActionValue(HumanAction action)
+    {
+        throw new System.NotImplementedException();
     }
 }

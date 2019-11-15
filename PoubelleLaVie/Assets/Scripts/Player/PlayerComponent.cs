@@ -28,10 +28,10 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
         _closeObjects = new HashSet<IUsable>();
         _animationNameResolver = () => _data.actionState.ToString() + _data.moveState.ToString();
 
-        if (GameHelper.GM != null)
+        if (GameHelper.GameManager != null)
         {
-            GameHelper.GM.player = this.gameObject;
-            GameHelper.GM.playerComponent = this;
+            GameHelper.GameManager.player = this.gameObject;
+            GameHelper.GameManager.playerComponent = this;
         }
     }
 
@@ -59,15 +59,15 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
                     _carriedObject = null;
             }
             
-            else if (_data.trashCount > 0 && _data.closeWindow != null)
+            else if (_data.trashCount > 0 && _data.closeWindows.Any())
             {
                 OnTrashThrown?.Invoke(gameObject, this, _data.trashCount);
 
                 _data.trashCount = 0;
 
                 GameObject t = Instantiate(
-                    GameHelper.GM.thrownTrash,
-                    transform.position + _data.closeWindow.transform.up * 2,
+                    GameHelper.GameManager.thrownTrash,
+                    transform.position + _data.closeWindows.First().transform.up * 2,
                     Quaternion.identity);
 
                 Destroy(t, 1);
@@ -169,19 +169,19 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
         {
             if (_carriedObject.IsHeavy)
             {
-                _data.speed = _data.defaultSpeed * 0.6f * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GM.timeScale;
+                _data.speed = _data.defaultSpeed * 0.6f * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.timeScale;
                 _data.actionState = PlayerActionState.Grabbing;
             }
             else
             {
-                _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GM.timeScale;
+                _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.timeScale;
                 _data.actionState = PlayerActionState.Holding;
             }
         }
         else
         {
             _data.actionState = PlayerActionState.Default;
-            _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GM.timeScale;
+            _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.timeScale;
         }
 
         base.Move(ref updateAnimation);

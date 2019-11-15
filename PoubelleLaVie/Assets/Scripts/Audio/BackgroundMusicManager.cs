@@ -18,7 +18,7 @@ public class BackgroundMusicManager : MonoBehaviour
         _audioSrc.clip = musicParts[0];
         _audioSrc.Play();
 
-        GameHelper.GM.OnGameOver += GameOverAction;
+        GameHelper.GameManager.OnGameOver += GameOverAction;
     }
 
     private void GameOverAction()
