@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
@@ -30,6 +31,7 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
     private WorldTile lastTile = null;
 
     private SpriteRenderer _renderer;
+    private PlayerDataComponent _playerData;
 
     public void Use(GameObject sender)
     {
@@ -55,7 +57,7 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
 
         // Desactivate the dancer (if dancer)
         if (_data.drunkType == DrunkType.Dancer)
-            GameHelper.GameManager.RetireDancer();
+            GameHelper.GameManager.data.dancerCount--;
 
         _animator.StopPlayback();
         _animator.Play("Grabbed");
@@ -68,18 +70,18 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
         _data.isCarried = false;
         transform.parent = null;
 
-        if (GameHelper.GameManager.playerComponent.closeWindow && _data.npcState == NPCState.Drunk)
+        if (_playerData.closeWindows.Any() && _data.npcState == NPCState.Drunk)
         {
             _data.falling = true;
             OnFall?.Invoke(gameObject, this);
-            transform.position += GameHelper.GameManager.playerComponent.closeWindow.transform.up * 2;
+            transform.position += _playerData.closeWindows.First().transform.up * 2;
         }
 
         _collider.enabled = true;
 
         // Add the dancer to nbrDancer (if dancer)
         if (_data.drunkType == DrunkType.Dancer)
-            GameHelper.GameManager.AddDancer();
+            GameHelper.GameManager.data.dancerCount++;
 
         _animator.StopPlayback();
         _animator.Play("New State");
@@ -98,13 +100,12 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
         _animator.SetBool("isTrash", false);
 
         _renderer = GetComponent<SpriteRenderer>();
+        _playerData = GameHelper.Player.GetComponent<PlayerDataComponent>();
     }
 
     protected override void Update()
     {
-        base.Update();
-
-        if(_data.falling)
+        if (_data.falling)
         {
             float scale;
 
@@ -122,58 +123,11 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
             return;
         }
 
-        if(_data.npcState == NPCState.NeedDrinking)
-        {
-            if (_gotPath == false) // Choose a random fridge, and go there to pick a beer
-            {
-                int fridgeNumber = Random.Range(0, PathfinderHelper.Pathfinder.fridges.Count);
-                var fridge = PathfinderHelper.Pathfinder.fridges[fridgeNumber];
-                _path = PathfinderHelper.Pathfinder.GetPath2(
-                    new Vector2Int((int)transform.position.x, (int)transform.position.y),
-                    new Vector2Int(fridge.gridX, fridge.gridY - 1));
-
-                if (_path != null && _path.Count > 0)
-                {
-                    _animator.SetBool("isWalking", true);
-                    _gotPath = true;
-                }
-
-                callBack = GotBeer;
-            }
-        }
-
-        else if(_data.npcState == NPCState.Fine)
-        {
-            // Check if NPC is drunk
-            if (numberDrinksPending == 0)
-            {
-                globalState = GlobalState.DRUNK;
-                getDrunk();
-            }
-
-            // The NPC just ended the drink action
-            if (timer <= 0.0f && gotDestination == false && _gotPath == false)
-            {
-                GetRandomDestination(2, 6);
-                callBack = GotToDestination;
-
-                // NPC's timer has not been set to 0: he drank
-                if (timer < 0)
-                    numberDrinksPending -= 1;
-            }
-
-            // NPC is drinking
-            if (!_gotPath)
-                timer -= Time.deltaTime * GameHelper.GameManager.timeScale;
-        }
-
-        else if(_data.npcState == NPCState.Drunk)
-        {
-            HandleDrunk();
-        }
+        base.Update();
+        
 
         HandleDeplacement();
-        _animator.SetInteger("drunkState", (int)drunkType);
+        _animator.SetInteger("drunkState", (int)_data.drunkType);
     }
 
     private void OnDrawGizmos()
@@ -189,7 +143,7 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
 
     private void GotBeer()
     {
-        globalState = GlobalState.FINE;
+        _data.npcState = NPCState.Fine;
         _animator.SetBool("isDrunk", true);
         numberDrinksPending = (uint) Random.Range(2, 5); // Between 2 and 4 times to drink before becoming drunk
 
@@ -202,13 +156,13 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
     {
         gotDestination = false;
         _gotPath = false;
-        timer = globalState == GlobalState.FINE ? 2F : 1.5F; // Make the drinking action a little bit longer
+        timer = _data.npcState == NPCState.Fine ? 2F : 1.5F; // Make the drinking action a little bit longer
         _animator.SetBool("isWalking", false);
     }
 
     private void GoToPlayer()
     {
-        var playerPos = GameHelper.GameManager.player.transform.position;
+        var playerPos = GameHelper.Player.transform.position;
         _path = PathfinderHelper.Pathfinder.GetPath2(
             new Vector2Int((int) transform.position.x, (int) transform.position.y),
             new Vector2Int((int) playerPos.x, (int) playerPos.y));
@@ -239,79 +193,6 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
             gotDestination = true;
             _gotPath = true;
             _animator.SetBool("isWalking", true);
-        }
-    }
-
-    private void HandleDeplacement()
-    {
-        // No path
-        if (!_gotPath || _path == null)
-            return;
-
-        // Ended deplacement
-        if (_path.Count <= 0 && callBack != null)
-        {
-            callBack();
-            return;
-        }
-
-        
-        // NPC is making a turn
-        if (!nextPos)
-        {
-            nextPos = _path[0];
-
-            if (nextPos.walkable == false)
-            {
-                _path.Clear();
-                _path = null;
-                nextPos = null;
-                _gotPath = false;
-                gotDestination = false;
-                return;
-            }
-
-            distX = nextPos.gridX - transform.position.x;
-            distY = nextPos.gridY - transform.position.y;
-
-
-            var rot = transform.rotation;
-            if (distX < -0.1f)
-                rot.z = 90;
-            else if (distX > 0.1f)
-                rot.z = 270;
-            else if (distY > 0.1f)
-                rot.z = 0;
-            else if (distY < -0.1f)
-                rot.z = 180;
-
-            transform.rotation = Quaternion.Euler(rot.x, rot.y, rot.z);
-
-            distWalkedX = 0;
-            distWalkedY = 0;
-            nextPos.walkable = false;
-
-            return;
-        }
-
-        // Keep walking at the same direction
-        float toWalkX = ((distX * Time.deltaTime) / speed) * GameHelper.GameManager.timeScale;
-        float toWalkY = ((distY * Time.deltaTime) / speed) * GameHelper.GameManager.timeScale;
-
-        distWalkedX += toWalkX;
-        distWalkedY += toWalkY;
-
-        transform.position += new Vector3(toWalkX, toWalkY, 0);
-
-
-        if (Mathf.Abs(distX) - Mathf.Abs(distWalkedX) <= 0 &&
-            Mathf.Abs(distY) - Mathf.Abs(distWalkedY) <= 0)
-        {
-            transform.position = new Vector3(nextPos.gridX, nextPos.gridY, 0);
-            _path.RemoveAt(0);
-            nextPos.walkable = true;
-            lastTile = nextPos;
-            nextPos = null;
         }
     }
 
@@ -350,7 +231,7 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
     private void HandleDrunk()
     {
         if (!_gotPath) // NPC is doing something : decrease timer
-            timer -= Time.deltaTime * GameHelper.GameManager.timeScale;
+            timer -= Time.deltaTime * GameHelper.GameManager.data.timeScale;
 
         switch (drunkType)
         {
@@ -398,10 +279,10 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
         GameObject garbage_;
         if (chooseGarbageType == 0) // Bottle
         {
-            garbage_ = GameObject.Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
+            garbage_ = Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
         }
         else // Puke
-            garbage_ = GameObject.Instantiate(puke, transform.position, Quaternion.identity) as GameObject;
+            garbage_ = Instantiate(puke, transform.position, Quaternion.identity) as GameObject;
         lastTile.walkable = false;
         garbage_.GetComponent<Garbage>().worldTile = lastTile;
     }
@@ -409,7 +290,7 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
 
     private float DistanceBetweenPlayer(float caseX, float caseY)
     {
-        var playerPos = GameHelper.GameManager.player.transform.position;
+        var playerPos = GameHelper.Player.transform.position;
         float res;
 
         res = Math.Abs(caseX - playerPos.x);

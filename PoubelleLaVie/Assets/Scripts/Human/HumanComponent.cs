@@ -33,9 +33,14 @@ public abstract class HumanComponent<TData> : MonoBehaviour
     {
     }
 
+    protected virtual void Awake()
+    {
+    }
+
     protected virtual void FixedUpdate()
     {
         bool updateAnimation = false;
+        _controller.UpdateAI();
         Move(ref updateAnimation);
 
         if (updateAnimation)
@@ -57,7 +62,11 @@ public abstract class HumanComponent<TData> : MonoBehaviour
         _data.direction = new Vector2(
             _controller.GetActionValue(HumanAction.Horizontal),
             _controller.GetActionValue(HumanAction.Vertical)
-        ).normalized;
+        );
+
+        // No more strafe cheat huehuehue
+        if (_data.direction.magnitude > 1.0f)
+            _data.direction = _data.direction.normalized;
 
         // Add force to the rigid body
         _body.AddForce(_data.direction * _data.speed);

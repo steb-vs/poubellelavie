@@ -27,12 +27,6 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
         _controller = GetComponent<IController<PlayerAction>>();
         _closeObjects = new HashSet<IUsable>();
         _animationNameResolver = () => _data.actionState.ToString() + _data.moveState.ToString();
-
-        if (GameHelper.GameManager != null)
-        {
-            GameHelper.GameManager.player = this.gameObject;
-            GameHelper.GameManager.playerComponent = this;
-        }
     }
 
     protected override void Update()
@@ -169,19 +163,19 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
         {
             if (_carriedObject.IsHeavy)
             {
-                _data.speed = _data.defaultSpeed * 0.6f * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.timeScale;
+                _data.speed = _data.defaultSpeed * 0.6f * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.data.timeScale;
                 _data.actionState = PlayerActionState.Grabbing;
             }
             else
             {
-                _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.timeScale;
+                _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.data.timeScale;
                 _data.actionState = PlayerActionState.Holding;
             }
         }
         else
         {
             _data.actionState = PlayerActionState.Default;
-            _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.timeScale;
+            _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.data.timeScale;
         }
 
         base.Move(ref updateAnimation);

@@ -9,7 +9,14 @@ public class PartyManager : MonoBehaviour
     public float startingTimeToPop = 10.0F;
     public float endingTimeToPop = 2.0F;
     public float timeToEnd = 180.0F;
-    
+
+    private float timer = 0.0f;
+    private float t = 0.0F;
+    private float coeff;
+    private float timeToPop = 5.0F;
+    private float[] probEntries; // Histogram of probabilities
+    private DrunkType[] lastNPCStates;
+
     void Start()
     {
         // Init histogram
@@ -24,9 +31,9 @@ public class PartyManager : MonoBehaviour
             probEntries[i] = (float)entriesMass[i] / totalMass + probEntries[i - 1];
 
         // Init lastNPCStates
-        lastNPCStates = new DrunkState[4]; // Save of the last 4 NPC
+        lastNPCStates = new DrunkType[4]; // Save of the last 4 NPC
         for (int i = 0; i < lastNPCStates.Length; i++)
-            lastNPCStates[i] = DrunkState.DANCER;
+            lastNPCStates[i] = DrunkType.Dancer;
 
         // Calcul the coeff to adjust the function
         coeff = (endingTimeToPop - startingTimeToPop) / timeToEnd;
@@ -34,9 +41,8 @@ public class PartyManager : MonoBehaviour
 
     void Update()
     {
-        timer -= Time.deltaTime * GameHelper.GameManager.timeScale;
-        t += Time.deltaTime * GameHelper.GameManager.timeScale;
-
+        timer -= Time.deltaTime * GameHelper.GameManager.data.timeScale;
+        t += Time.deltaTime * GameHelper.GameManager.data.timeScale;
 
         if (timer <= 0.0f) // Spawn a new NPC
         {
@@ -49,23 +55,24 @@ public class PartyManager : MonoBehaviour
 
             var entry = PathfinderHelper.Pathfinder.entries[entryNumber];
             Vector3 spawnPos = new Vector3(entry.gridX, entry.gridY + 1, 0);
-            GameObject newNPC = GameObject.Instantiate(npc, spawnPos, Quaternion.identity);
+            GameObject newNPC = Instantiate(npc, spawnPos, Quaternion.identity);
+            NPCDataComponent npcData = newNPC.GetComponent<NPCDataComponent>();
 
             // Check if a dancer has spawn in the last 4 NPC
             bool dancerFound = false;
-            foreach (DrunkState state in lastNPCStates)
-                if (state == DrunkState.DANCER)
+            foreach (DrunkType state in lastNPCStates)
+                if (state == DrunkType.Dancer)
                 {
                     dancerFound = true;
                     break;
                 }
 
             if (!dancerFound) // If not, modify the drunkType to a DANCER
-                newNPC.GetComponent<NPCComponent>().drunkType = DrunkState.DANCER;
+                npcData.drunkType = DrunkType.Dancer;
 
             for (int i = 1; i < lastNPCStates.Length; i++)
                 lastNPCStates[i - 1] = lastNPCStates[i];
-            lastNPCStates[lastNPCStates.Length - 1] = newNPC.GetComponent<NPCComponent>().drunkType;
+            lastNPCStates[lastNPCStates.Length - 1] = npcData.drunkType;
 
             // Set timer
             timeToPop = t * coeff + startingTimeToPop;
@@ -75,11 +82,4 @@ public class PartyManager : MonoBehaviour
             timer = timeToPop;
         }
     }
-
-    private float timer = 0.0f;
-    private float t = 0.0F;
-    private float coeff;
-    private float timeToPop = 5.0F;
-    private float[] probEntries; // Histogram of probabilities
-    private DrunkState[] lastNPCStates;
 }

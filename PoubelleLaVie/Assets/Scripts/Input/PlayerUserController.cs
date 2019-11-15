@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerUserController : HumanUserController, IController<PlayerAction>
+public class PlayerUserController : Controller<HumanAction>, IController<PlayerAction>
 {
     public bool GetActionDown(PlayerAction action)
     {
@@ -15,6 +15,11 @@ public class PlayerUserController : HumanUserController, IController<PlayerActio
     }
 
     public float GetActionValue(PlayerAction action)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void UpdateAI()
     {
         throw new System.NotImplementedException();
     }

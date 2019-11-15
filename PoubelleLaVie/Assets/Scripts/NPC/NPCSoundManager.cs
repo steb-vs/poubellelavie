@@ -11,21 +11,24 @@ public class NPCSoundManager : MonoBehaviour
     public float rangeMax;
     public float minTime;
 
-    private NPCComponent _behavior;
-    private float _targetTime = 0;
-    private float _currentTime = 0;
+    private NPCComponent _npc;
+    private NPCDataComponent _data;
+    private float _targetTime;
+    private float _currentTime;
     private AudioSource _audioSrc;
-    private bool _falling;
     private bool _wasPlaying;
 
     // Start is called before the first frame update
     private void Start()
     {
-        _behavior = GetComponent<NPCComponent>();
+        _npc = GetComponent<NPCComponent>();
         _audioSrc = GetComponent<AudioSource>();
-        _currentTime = minTime;
+        _data = GetComponent<NPCDataComponent>();
 
-        _behavior.OnFall += NPCFallAction;
+        _currentTime = minTime;
+        _targetTime = 0;
+
+        _npc.OnFall += NPCFallAction;
         GameHelper.GameManager.OnGameOver += GameOverAction;
     }
 
@@ -39,8 +42,6 @@ public class NPCSoundManager : MonoBehaviour
         _audioSrc.clip = fallSounds.GetRandom();
         _audioSrc.Play();
 
-        _falling = true;
-
         GameHelper.GameManager.OnGameOver -= GameOverAction;
     }
 
@@ -49,49 +50,28 @@ public class NPCSoundManager : MonoBehaviour
     {
         if(_wasPlaying && !_audioSrc.isPlaying)
         {
-            GameHelper.GameManager.npcSoundPlayingCount--;
+            GameHelper.GameManager.data.npcSoundPlayingCount--;
             _wasPlaying = false;
         }
 
-        if (_falling)
+        if (_data.falling)
             return;
 
-        if (!_behavior.globalState.HasFlag(GlobalState.DRUNK))
+        if (_data.npcState != NPCState.Drunk)
             return;
 
         _currentTime += Time.deltaTime;
 
-        if (GameHelper.GameManager.npcSoundPlayingCount >= GameHelper.GameManager.maxNpcSounds || _currentTime < minTime + _targetTime)
+        if (GameHelper.GameManager.data.npcSoundPlayingCount >= GameHelper.GameManager.data.maxNpcSounds || _currentTime < minTime + _targetTime)
             return;
 
         _targetTime = Random.Range(rangeMin, rangeMax);
         _currentTime = 0;
 
-        _audioSrc.clip = drunkSounds.GetRandom(_behavior.drunkType.ToString());
+        _audioSrc.clip = drunkSounds.GetRandom(_data.drunkType.ToString());
         _audioSrc.Play();
         _wasPlaying = true;
 
-        GameHelper.GameManager.npcSoundPlayingCount++;
-    }
-}
-
-public static class AudioClipExtensions
-{
-    public static AudioClip GetRandom(this AudioClip[] input, string startsWith = null)
-    {
-        List<AudioClip> candidates;
-
-        if(!string.IsNullOrEmpty(startsWith))
-        {
-            candidates = input
-                .Where(x => x.name.ToUpper().StartsWith(startsWith.ToUpper()))
-                .ToList();
-        }
-        else
-        {
-            candidates = input.ToList();
-        }
-
-        return candidates[Random.Range(0, candidates.Count)];
+        GameHelper.GameManager.data.npcSoundPlayingCount++;
     }
 }
