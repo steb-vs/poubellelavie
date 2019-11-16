@@ -26,7 +26,11 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
         _data = GetComponent<PlayerDataComponent>();
         _controller = GetComponent<IController<PlayerAction>>();
         _closeObjects = new HashSet<IUsable>();
-        _animationNameResolver = () => _data.actionState.ToString() + _data.moveState.ToString();
+    }
+
+    protected override string ResolveAnimationName()
+    {
+        return _data.actionState.ToString() + _data.moveState.ToString();
     }
 
     protected override void Update()
@@ -181,9 +185,9 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
         base.Move(ref updateAnimation);
 
         // Update the animator parameters
-        if (_animator.GetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME) != (int)_data.actionState)
+        if (_animator.GetInteger(PlayerHelper.ANIMATOR_ACTION_STATE_PARAM_NAME) != (int)_data.actionState)
         {
-            _animator.SetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME, (int)_data.actionState);
+            _animator.SetInteger(PlayerHelper.ANIMATOR_ACTION_STATE_PARAM_NAME, (int)_data.actionState);
             updateAnimation = true;
         }
     }

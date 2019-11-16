@@ -82,7 +82,7 @@ public class PlayerSoundManager : MonoBehaviour
         if (_stepTimer <= 0.5f)
             _stepTimer += Time.deltaTime;
 
-        if(_data.moveState == PlayerMoveState.Walk &&
+        if(_data.moveState == HumanMoveState.Walk &&
             _stepTimer >= 0.5f &&
             _data.speedModifierObject is PukeComponent)
         {

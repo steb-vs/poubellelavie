@@ -24,7 +24,7 @@ public abstract class HumanDataComponent : MonoBehaviour
     /// <summary>
     /// Gets or sets the move state.
     /// </summary>
-    public PlayerMoveState moveState;
+    public HumanMoveState moveState;
 
     public HumanDataComponent()
     {
@@ -32,6 +32,6 @@ public abstract class HumanDataComponent : MonoBehaviour
         speed = 150;
         defaultSpeed = 150;
         position = new Vector2(0, 0);
-        moveState = PlayerMoveState.Idle;
+        moveState = HumanMoveState.Idle;
     }
 }

@@ -1,12 +1,26 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
 {
+    public delegate void NPCAIHandler(WorldTile targetTile, NPCState npcState, DrunkType drunkType);
+
+    public event NPCAIHandler OnNPCReachTarget;
+
     private NPCDataComponent _data;
-    private bool _gotPath;
     private List<WorldTile> _path;
+    private float _vertical;
+    private float _horizontal;
+    private WorldTile _nextTile;
+    private Vector2 _targetDist;
+    private Action _callback;
+    private int _numberDrinksPending;
+    private float _idleTimer;
+    private bool _idleMode;
+    private WorldTile _targetTile;
 
     private void Start()
     {
@@ -15,157 +29,205 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
 
     public bool GetActionDown(NPCAction action)
     {
-        throw new System.NotImplementedException();
+        return false;
     }
 
     public override bool GetActionDown(HumanAction action)
     {
-        throw new System.NotImplementedException();
+        return false;
     }
 
     public bool GetActionUp(NPCAction action)
     {
-        throw new System.NotImplementedException();
+        return false;
     }
 
     public override bool GetActionUp(HumanAction action)
     {
-        throw new System.NotImplementedException();
+        return false;
     }
 
     public float GetActionValue(NPCAction action)
     {
-        throw new System.NotImplementedException();
+        return 0.0f;
     }
 
     public override float GetActionValue(HumanAction action)
     {
-        throw new System.NotImplementedException();
+        if (action == HumanAction.Horizontal)
+            return _horizontal;
+
+        if (action == HumanAction.Vertical)
+            return _vertical;
+
+        return 0.0f;
     }
 
     public override void UpdateAI()
     {
+        if (_data.grabbed || _data.falling)
+            return;
+
         if (_data.npcState == NPCState.NeedDrinking)
         {
-            if (_gotPath == false) // Choose a random fridge, and go there to pick a beer
+            if (_path == null) // Choose a random fridge, and go there to pick a beer
             {
-                int fridgeNumber = Random.Range(0, PathfinderHelper.Pathfinder.fridges.Count);
+                int fridgeNumber = UnityEngine.Random.Range(0, PathfinderHelper.Pathfinder.fridges.Count);
                 var fridge = PathfinderHelper.Pathfinder.fridges[fridgeNumber];
                 _path = PathfinderHelper.Pathfinder.GetPath2(
                     new Vector2Int((int)transform.position.x, (int)transform.position.y),
                     new Vector2Int(fridge.gridX, fridge.gridY - 1));
 
-                if (_path != null && _path.Count > 0)
-                {
-                    _animator.SetBool("isWalking", true);
-                    _gotPath = true;
-                }
-
-                callBack = GotBeer;
+                _callback = GotBeer;
             }
         }
 
         else if (_data.npcState == NPCState.Fine)
         {
-            // Check if NPC is drunk
-            if (numberDrinksPending == 0)
-            {
-                _data.npcState = NPCState.Drunk;
-                getDrunk();
-            }
-
             // The NPC just ended the drink action
-            if (timer <= 0.0f && gotDestination == false && _gotPath == false)
+            if (_idleTimer <= 0.0f)
             {
-                GetRandomDestination(2, 6);
-                callBack = GotToDestination;
+                _idleMode = false;
 
-                // NPC's timer has not been set to 0: he drank
-                if (timer < 0)
-                    numberDrinksPending -= 1;
+                GetRandomDestination(2, 6);
+                _callback = GotToDestinationFine;
             }
 
             // NPC is drinking
-            if (!_gotPath)
-                timer -= Time.deltaTime * GameHelper.GameManager.data.timeScale;
+            if (_idleMode)
+                _idleTimer -= Time.fixedDeltaTime * GameHelper.GameManager.data.timeScale;
         }
 
         else if (_data.npcState == NPCState.Drunk)
         {
-            HandleDrunk();
-        }
-    }
+            if (_idleTimer <= 0.0f)
+            {
+                _idleMode = false;
 
-    private void HandleDeplacement()
-    {
+                if (_data.drunkType == DrunkType.Dancer)
+                    GetRandomDestination(2, 15);
+                else if(_data.drunkType == DrunkType.Puker)
+                    GetRandomDestination(2, 13);
+                else
+                    GoToPlayer();
+
+                _callback = GotToDestinationDrunk;
+            }
+
+            if (_idleMode)
+                _idleTimer -= Time.fixedDeltaTime * GameHelper.GameManager.data.timeScale;
+        }
+
+        _horizontal = 0.0f;
+        _vertical = 0.0f;
+
         // No path
-        if (!_gotPath || _path == null)
+        if (_path == null)
             return;
 
         // Ended deplacement
-        if (_path.Count <= 0 && callBack != null)
+        if (!_path.Any())
         {
-            callBack();
+            _callback?.Invoke();
+            _callback = null;
+            OnNPCReachTarget?.Invoke(_targetTile, _data.npcState, _data.drunkType);
+            _path = null;
             return;
         }
 
+        _targetTile = _path.Last();
 
-        // NPC is making a turn
-        if (!nextPos)
+        _nextTile = _path[0];
+
+        if (_nextTile.walkable == false)
         {
-            nextPos = _path[0];
-
-            if (nextPos.walkable == false)
-            {
-                _path.Clear();
-                _path = null;
-                nextPos = null;
-                _gotPath = false;
-                gotDestination = false;
-                return;
-            }
-
-            distX = nextPos.gridX - transform.position.x;
-            distY = nextPos.gridY - transform.position.y;
-
-
-            var rot = transform.rotation;
-            if (distX < -0.1f)
-                rot.z = 90;
-            else if (distX > 0.1f)
-                rot.z = 270;
-            else if (distY > 0.1f)
-                rot.z = 0;
-            else if (distY < -0.1f)
-                rot.z = 180;
-
-            transform.rotation = Quaternion.Euler(rot.x, rot.y, rot.z);
-
-            distWalkedX = 0;
-            distWalkedY = 0;
-            nextPos.walkable = false;
-
+            _path = null;
+            _nextTile = null;
             return;
         }
 
-        // Keep walking at the same direction
-        float toWalkX = ((distX * Time.deltaTime) / speed) * GameHelper.GameManager.data.timeScale;
-        float toWalkY = ((distY * Time.deltaTime) / speed) * GameHelper.GameManager.data.timeScale;
+        _targetDist.x = _nextTile.gridX - transform.position.x;
+        _targetDist.y = _nextTile.gridY - transform.position.y;
 
-        distWalkedX += toWalkX;
-        distWalkedY += toWalkY;
-
-        transform.position += new Vector3(toWalkX, toWalkY, 0);
-
-
-        if (Mathf.Abs(distX) - Mathf.Abs(distWalkedX) <= 0 &&
-            Mathf.Abs(distY) - Mathf.Abs(distWalkedY) <= 0)
+        if (_targetDist.magnitude < 0.1f)
         {
-            transform.position = new Vector3(nextPos.gridX, nextPos.gridY, 0);
+            if(_path.Count > 1)
+                _nextTile.walkable = true;
+
+            _nextTile = null;
             _path.RemoveAt(0);
-            nextPos.walkable = true;
-            lastTile = nextPos;
-            nextPos = null;
+
+            return;
+        }
+
+        if (_targetDist.x < -0.1f)
+            _horizontal = -1.0f;
+        else if (_targetDist.x > 0.1f)
+            _horizontal = 1.0f;
+
+        if (_targetDist.y > 0.1f)
+            _vertical = 1.0f;
+        else if (_targetDist.y < -0.1f)
+            _vertical = -1.0f;
+
+        //_nextTile.walkable = false;
+    }
+
+    private void GotToDestinationFine()
+    {
+        _idleTimer = _data.npcState == NPCState.Fine ? 2F : 1.5F; // Make the drinking action a little bit longer
+        _numberDrinksPending--;
+
+        if (_numberDrinksPending == 0)
+            _data.npcState = NPCState.Drunk;
+
+        _idleMode = true;
+    }
+
+    private void GotToDestinationDrunk()
+    {
+        _idleTimer = UnityEngine.Random.Range(0.2f, 3.0f);
+        _idleMode = true;
+    }
+
+    private void GotBeer()
+    {
+        _data.npcState = NPCState.Fine;
+        _numberDrinksPending = UnityEngine.Random.Range(2, 5); // Between 2 and 4 times to drink before becoming drunk
+        _idleTimer = 0.5f; // Take 0.5 secs to grab a beer
+        _idleMode = true;
+    }
+
+    private void GoToPlayer()
+    {
+        var playerPos = GameHelper.Player.transform.position;
+        _path = PathfinderHelper.Pathfinder.GetPath2(
+            new Vector2Int((int)transform.position.x, (int)transform.position.y),
+            new Vector2Int((int)playerPos.x, (int)playerPos.y));
+    }
+
+    private void GetRandomDestination(int min, int max)
+    {
+        int x = (int)transform.position.x;
+        int y = (int)transform.position.y;
+
+        var list = PathfinderHelper.Pathfinder._listedNodes.FindAll(n => n.walkable && ((Mathf.Abs(n.gridX - x) + Mathf.Abs(n.gridY - y)) < max));
+        WorldTile destination =
+            list[UnityEngine.Random.Range(0, list.Count)];
+
+        _path = PathfinderHelper.Pathfinder.GetPath2(
+            new Vector2Int((int)transform.position.x, (int)transform.position.y),
+            new Vector2Int(destination.gridX, destination.gridY));
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (_path != null)
+        {
+            foreach (var worldTile in _path)
+            {
+                Gizmos.DrawCube(worldTile.transform.position, Vector3.one / 3);
+            }
         }
     }
 }

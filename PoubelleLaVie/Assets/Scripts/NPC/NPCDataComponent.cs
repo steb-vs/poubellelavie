@@ -8,7 +8,7 @@ public class NPCDataComponent : HumanDataComponent
 
     public DrunkType drunkType;
 
-    public bool isCarried;
+    public bool grabbed;
 
     public float fallDuration;
 
@@ -20,7 +20,7 @@ public class NPCDataComponent : HumanDataComponent
     {
         npcState = NPCState.Fine;
         drunkType = DrunkType.Dancer;
-        isCarried = false;
+        grabbed = false;
         fallDuration = 2.0f;
         fallTime = 0.0f;
         falling = false;

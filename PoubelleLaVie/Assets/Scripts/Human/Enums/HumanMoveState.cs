@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public static class PlayerHelper
+public enum HumanMoveState
 {
-    public const string ANIMATOR_ACTION_STATE_PARAM_NAME = "ActionState";
+    Idle = 0,
+    Walk = 1
 }

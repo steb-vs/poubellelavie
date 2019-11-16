@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DancerWalk
+  m_Name: PukerWalk
   serializedVersion: 6
   m_Legacy: 0
   m_Compressed: 0
@@ -33,28 +33,43 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_IsActive
-    path: DanceParticle
+    path: PukerParticle
     classID: 1
     script: {fileID: 0}
   m_PPtrCurves:
   - curve:
     - time: 0
-      value: {fileID: 8861838549569390250, guid: 6ad371da13f194f2287e28aa11c816c6,
+      value: {fileID: 4055010993176627326, guid: a72b064d566d2aa46b060494a1cc0206,
         type: 3}
     - time: 0.16666667
-      value: {fileID: -3296930896064534776, guid: 6ad371da13f194f2287e28aa11c816c6,
+      value: {fileID: 5805186111383282093, guid: a72b064d566d2aa46b060494a1cc0206,
         type: 3}
-    - time: 0.31666666
-      value: {fileID: 6260803787865798541, guid: 6ad371da13f194f2287e28aa11c816c6,
+    - time: 0.33333334
+      value: {fileID: 8476996496615661754, guid: a72b064d566d2aa46b060494a1cc0206,
         type: 3}
-    - time: 0.48333332
-      value: {fileID: -6408467810825072298, guid: 6ad371da13f194f2287e28aa11c816c6,
+    - time: 0.5
+      value: {fileID: 937732502746343835, guid: a72b064d566d2aa46b060494a1cc0206,
+        type: 3}
+    - time: 0.6666667
+      value: {fileID: 8672610229296676049, guid: a72b064d566d2aa46b060494a1cc0206,
+        type: 3}
+    - time: 0.8333333
+      value: {fileID: 4461418468751480720, guid: a72b064d566d2aa46b060494a1cc0206,
+        type: 3}
+    - time: 1
+      value: {fileID: -2160893580646862634, guid: a72b064d566d2aa46b060494a1cc0206,
+        type: 3}
+    - time: 1.1666666
+      value: {fileID: 4461418468751480720, guid: a72b064d566d2aa46b060494a1cc0206,
+        type: 3}
+    - time: 1.3333334
+      value: {fileID: 4461418468751480720, guid: a72b064d566d2aa46b060494a1cc0206,
         type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
-  m_SampleRate: 60
+  m_SampleRate: 12
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -62,7 +77,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 625047968
+      path: 3926495442
       attribute: 2086281974
       script: {fileID: 0}
       typeID: 1
@@ -76,16 +91,21 @@ AnimationClip:
       customType: 23
       isPPtrCurve: 1
     pptrCurveMapping:
-    - {fileID: 8861838549569390250, guid: 6ad371da13f194f2287e28aa11c816c6, type: 3}
-    - {fileID: -3296930896064534776, guid: 6ad371da13f194f2287e28aa11c816c6, type: 3}
-    - {fileID: 6260803787865798541, guid: 6ad371da13f194f2287e28aa11c816c6, type: 3}
-    - {fileID: -6408467810825072298, guid: 6ad371da13f194f2287e28aa11c816c6, type: 3}
+    - {fileID: 4055010993176627326, guid: a72b064d566d2aa46b060494a1cc0206, type: 3}
+    - {fileID: 5805186111383282093, guid: a72b064d566d2aa46b060494a1cc0206, type: 3}
+    - {fileID: 8476996496615661754, guid: a72b064d566d2aa46b060494a1cc0206, type: 3}
+    - {fileID: 937732502746343835, guid: a72b064d566d2aa46b060494a1cc0206, type: 3}
+    - {fileID: 8672610229296676049, guid: a72b064d566d2aa46b060494a1cc0206, type: 3}
+    - {fileID: 4461418468751480720, guid: a72b064d566d2aa46b060494a1cc0206, type: 3}
+    - {fileID: -2160893580646862634, guid: a72b064d566d2aa46b060494a1cc0206, type: 3}
+    - {fileID: 4461418468751480720, guid: a72b064d566d2aa46b060494a1cc0206, type: 3}
+    - {fileID: 4461418468751480720, guid: a72b064d566d2aa46b060494a1cc0206, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.5
+    m_StopTime: 1.4166667
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -117,7 +137,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_IsActive
-    path: DanceParticle
+    path: PukerParticle
     classID: 1
     script: {fileID: 0}
   m_EulerEditorCurves: []

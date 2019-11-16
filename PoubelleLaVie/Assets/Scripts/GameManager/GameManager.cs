@@ -34,10 +34,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        data.timeScale = 1;
-
-        _audioSrcs = GetComponents<AudioSource>();
         data = GetComponent<GameDataComponent>();
+        _audioSrcs = GetComponents<AudioSource>();
     }
 
     private void CreatePlayer()

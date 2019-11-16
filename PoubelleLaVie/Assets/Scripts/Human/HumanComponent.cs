@@ -11,7 +11,6 @@ public abstract class HumanComponent<TData> : MonoBehaviour
     protected Rigidbody2D _body;
     protected Animator _animator;
     protected BoxCollider2D _collider;
-    protected Func<string> _animationNameResolver;
     protected TData _data;
 
     private IController<HumanAction> _controller;
@@ -24,8 +23,6 @@ public abstract class HumanComponent<TData> : MonoBehaviour
         _data = GetComponent<TData>();
         _collider = GetComponent<BoxCollider2D>();
         _animator = spriteGameObject.GetComponent<Animator>();
-
-        _animationNameResolver = () => _data.moveState.ToString();
     }
 
     // Update is called once per frame
@@ -50,8 +47,10 @@ public abstract class HumanComponent<TData> : MonoBehaviour
     private void UpdateAnimation()
     {
         _animator.StopPlayback();
-        _animator.Play(_animationNameResolver());
+        _animator.Play(ResolveAnimationName());
     }
+
+    protected abstract string ResolveAnimationName();
 
     /// <summary>
     /// Moves the player with the current data.
@@ -76,13 +75,13 @@ public abstract class HumanComponent<TData> : MonoBehaviour
 
         // Update the move state
         if (_body.velocity.magnitude > 0.1f)
-            _data.moveState = PlayerMoveState.Walk;
+            _data.moveState = HumanMoveState.Walk;
         else
-            _data.moveState = PlayerMoveState.Idle;
+            _data.moveState = HumanMoveState.Idle;
 
-        if (_animator.GetInteger(HumanHelper.ANIMATOR_MOVE_PARAM_NAME) != (int)_data.moveState)
+        if (_animator.GetInteger(HumanHelper.ANIMATOR_MOVE_STATE_PARAM_NAME) != (int)_data.moveState)
         {
-            _animator.SetInteger(HumanHelper.ANIMATOR_MOVE_PARAM_NAME, (int)_data.moveState);
+            _animator.SetInteger(HumanHelper.ANIMATOR_MOVE_STATE_PARAM_NAME, (int)_data.moveState);
             updateAnimation = true;
         }
 

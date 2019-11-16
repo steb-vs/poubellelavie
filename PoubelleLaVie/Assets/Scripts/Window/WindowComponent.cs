@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class WindowComponent : MonoBehaviour
 {
-    public Sprite[] leftWindow;
-    public Sprite[] rightWindow;
+    public Sprite leftWindowSprite;
+    public Sprite rightWindowSprite;
 
     private SpriteRenderer _leftPartRenderer;
     private SpriteRenderer _rightPartRenderer;
@@ -16,8 +16,8 @@ public class WindowComponent : MonoBehaviour
         _leftPartRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         _rightPartRenderer = transform.GetChild(1).GetComponent<SpriteRenderer>();
 
-        _leftPartRenderer.sprite = leftWindow[0];
-        _rightPartRenderer.sprite = rightWindow[0];
+        _leftPartRenderer.sprite = leftWindowSprite;
+        _rightPartRenderer.sprite = rightWindowSprite;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -27,8 +27,8 @@ public class WindowComponent : MonoBehaviour
         if (data == null)
             return;
 
-        _leftPartRenderer.sprite = leftWindow[1];
-        _rightPartRenderer.sprite = rightWindow[1];
+        _leftPartRenderer.sprite = leftWindowSprite;
+        _rightPartRenderer.sprite = rightWindowSprite;
 
         data.closeWindows.Add(this);
     }
@@ -40,8 +40,8 @@ public class WindowComponent : MonoBehaviour
         if (data == null)
             return;
 
-        _leftPartRenderer.sprite = leftWindow[0];
-        _rightPartRenderer.sprite = rightWindow[0];
+        _leftPartRenderer.sprite = leftWindowSprite;
+        _rightPartRenderer.sprite = rightWindowSprite;
 
         data.closeWindows.Remove(this);
     }
