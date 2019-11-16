@@ -41,6 +41,9 @@ public class PartyManager : MonoBehaviour
 
     void Update()
     {
+        if (GameHelper.GameManager.data.gameOver)
+            return;
+
         timer -= Time.deltaTime * GameHelper.GameManager.data.timeScale;
         t += Time.deltaTime * GameHelper.GameManager.data.timeScale;
 

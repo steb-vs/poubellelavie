@@ -10,7 +10,7 @@ public abstract class HumanComponent<TData> : MonoBehaviour
 
     protected Rigidbody2D _body;
     protected Animator _animator;
-    protected BoxCollider2D _collider;
+    protected CircleCollider2D _collider;
     protected TData _data;
 
     private IController<HumanAction> _controller;
@@ -21,7 +21,7 @@ public abstract class HumanComponent<TData> : MonoBehaviour
         _controller = GetComponent<IController<HumanAction>>();
         _body = GetComponent<Rigidbody2D>();
         _data = GetComponent<TData>();
-        _collider = GetComponent<BoxCollider2D>();
+        _collider = GetComponent<CircleCollider2D>();
         _animator = spriteGameObject.GetComponent<Animator>();
     }
 
@@ -36,6 +36,9 @@ public abstract class HumanComponent<TData> : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
+        if (GameHelper.GameManager.data.gameOver)
+            return;
+
         bool updateAnimation = false;
         _controller.UpdateAI();
         Move(ref updateAnimation);
@@ -68,10 +71,10 @@ public abstract class HumanComponent<TData> : MonoBehaviour
             _data.direction = _data.direction.normalized;
 
         // Add force to the rigid body
-        _body.AddForce(_data.direction * _data.speed);
+        _body.AddForce(_data.direction * _data.speed * GameHelper.GameManager.data.timeScale);
 
-        if (_data.direction.magnitude > 0.01f)
-            spriteGameObject.transform.localRotation = Quaternion.FromToRotation(Vector2.up, _data.direction.normalized);
+        if (_body.velocity.magnitude > 0.01f)
+            spriteGameObject.transform.localRotation = Quaternion.FromToRotation(Vector2.up, _body.velocity.normalized);
 
         // Update the move state
         if (_body.velocity.magnitude > 0.1f)

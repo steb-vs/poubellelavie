@@ -326,7 +326,7 @@ PrefabInstance:
     - target: {fileID: 1599653055069188839, guid: 22c4ffc19abf84fefbf3707fad7716ee,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1599653055069188839, guid: 22c4ffc19abf84fefbf3707fad7716ee,
         type: 3}
@@ -436,7 +436,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &130636709
 PrefabInstance:
@@ -449,6 +449,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: UICanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 3592280419827773760, guid: 5870e043bb9194d9786d91430462d5b0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3592280419827773772, guid: 5870e043bb9194d9786d91430462d5b0,
         type: 3}
@@ -658,7 +663,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &167395029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6797,6 +6802,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PartyManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1680796301366804740, guid: 1376591ac88654a9aa139d043803d13a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1680796301366804742, guid: 1376591ac88654a9aa139d043803d13a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7871,7 +7881,8 @@ PrefabInstance:
         type: 3}
       propertyPath: playerPrefab
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7751005440688214986, guid: 87b02657dedbd4f6089592c442cb9713,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d1a6fa2f6ededad49b73e21d2d94be47, type: 3}
 --- !u!1001 &1723202384
@@ -7885,6 +7896,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Fridge
+      objectReference: {fileID: 0}
+    - target: {fileID: 927699539567647322, guid: 7c5597dd63a694f4aaaca3d3128bd469,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6319977214076430842, guid: 7c5597dd63a694f4aaaca3d3128bd469,
         type: 3}
@@ -39863,11 +39879,6 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: d5c9b51767a5a48448199a452a300603, type: 2}
     - target: {fileID: 6966332606588904056, guid: b4b2d5d32f9115143b758b12cb897103,
         type: 3}
-      propertyPath: unwalkableNodeBorder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6966332606588904056, guid: b4b2d5d32f9115143b758b12cb897103,
-        type: 3}
       propertyPath: pathfinder
       value: 
       objectReference: {fileID: 1403409975}
@@ -39895,6 +39906,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6966332606588904056, guid: b4b2d5d32f9115143b758b12cb897103,
+        type: 3}
+      propertyPath: unwalkableNodeBorder
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4b2d5d32f9115143b758b12cb897103, type: 3}

@@ -17,6 +17,8 @@ public interface IUsable
     /// </summary>
     bool IsHeavy { get; }
 
+    int Priority { get; }
+
     /// <summary>
     /// Trigger the object use behavior.
     /// </summary>

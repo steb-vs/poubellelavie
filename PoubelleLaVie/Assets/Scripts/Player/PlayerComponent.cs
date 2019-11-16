@@ -36,6 +36,10 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
     protected override void Update()
     {
         base.Update();
+
+        if (GameHelper.GameManager.data.gameOver)
+            return;
+
         ProcessActions();
     }
 
@@ -77,7 +81,8 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
                 // Find the closest object to the player
                 _carriedObject = _closeObjects
                     .Select(x => new { Obj = x, Distance = (x.Position - transform.position).magnitude })
-                    .OrderBy(x => x.Distance)
+                    .OrderBy(x => x.Obj.Priority)
+                    .ThenBy(x => x.Distance)
                     .First().Obj;
 
                 OnObjectTaken?.Invoke(gameObject, this, _carriedObject);
@@ -144,9 +149,15 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
         _data.speedModifierObject = null;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision) => RegisterUsableObject(collision.gameObject);
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        RegisterUsableObject(collision.gameObject);
+    }
 
-    private void OnCollisionExit2D(Collision2D collision) => UnregisterUsableObject(collision.gameObject);
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        UnregisterUsableObject(collision.gameObject);
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -167,19 +178,19 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
         {
             if (_carriedObject.IsHeavy)
             {
-                _data.speed = _data.defaultSpeed * 0.6f * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.data.timeScale;
+                _data.speed = _data.defaultSpeed * 0.6f * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
                 _data.actionState = PlayerActionState.Grabbing;
             }
             else
             {
-                _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.data.timeScale;
+                _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
                 _data.actionState = PlayerActionState.Holding;
             }
         }
         else
         {
             _data.actionState = PlayerActionState.Default;
-            _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1) * GameHelper.GameManager.data.timeScale;
+            _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
         }
 
         base.Move(ref updateAnimation);

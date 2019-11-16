@@ -13,6 +13,8 @@ public class PukeComponent : Garbage, ISpeedModifier, IUsable
 
     public bool IsHeavy => false;
 
+    public int Priority => 11;
+
     public bool Drop(GameObject sender)
     {
         return true;
@@ -30,6 +32,7 @@ public class PukeComponent : Garbage, ISpeedModifier, IUsable
             worldTile.walkable = true;
             Destroy(gameObject);
             data.trashCount++;
+            GameHelper.GameManager.data.score += 10;
         }
 
         return false;

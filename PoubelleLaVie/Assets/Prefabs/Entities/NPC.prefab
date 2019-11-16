@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 226682611}
   - component: {fileID: 226682613}
   - component: {fileID: 226682612}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: DanceParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4775,7 +4775,7 @@ GameObject:
   - component: {fileID: 1060919433}
   - component: {fileID: 1060919435}
   - component: {fileID: 1060919434}
-  m_Layer: 4
+  m_Layer: 9
   m_Name: LoverParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9535,7 +9535,7 @@ GameObject:
   - component: {fileID: 2031967951}
   - component: {fileID: 2031967953}
   - component: {fileID: 2031967952}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PukerParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14301,7 +14301,8 @@ GameObject:
   - component: {fileID: 1555787814208354178}
   - component: {fileID: 6542323687772985866}
   - component: {fileID: -269768676927050107}
-  m_Layer: 0
+  - component: {fileID: 7972861545017523297}
+  m_Layer: 9
   m_Name: NPC
   m_TagString: NPC
   m_Icon: {fileID: 0}
@@ -14372,7 +14373,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -14468,17 +14469,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12c5ae393781c2c4aa9d8b6c343b4259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultSpeed: 150
-  speed: 150
+  defaultSpeed: 70
+  speed: 70
   direction: {x: 1, y: 0}
   position: {x: 0, y: 0}
   moveState: 0
+  loverColor: {r: 1, g: 0.5, b: 1, a: 1}
+  dancerColor: {r: 1, g: 0.25, b: 0, a: 1}
+  pukerColor: {r: 0, g: 0.5, b: 0, a: 1}
   npcState: 1
   drunkType: 2
   grabbed: 0
-  fallDuration: 2
+  fallDuration: 1
   fallTime: 0
   falling: 0
+  tile: {fileID: 0}
 --- !u!114 &1555787814208354178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14547,6 +14552,32 @@ MonoBehaviour:
   rangeMin: 0
   rangeMax: 5
   minTime: 10
+--- !u!61 &7972861545017523297
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1311561958075530531}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0.8
 --- !u!1 &8094879421490325258
 GameObject:
   m_ObjectHideFlags: 0
@@ -14558,7 +14589,7 @@ GameObject:
   - component: {fileID: 8607012390748829688}
   - component: {fileID: 5061626314403574102}
   - component: {fileID: 5387448727583870931}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14619,7 +14650,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 200
   m_Sprite: {fileID: 4035959289877228764, guid: dec830f7786359b43a1a140f336fab2a,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

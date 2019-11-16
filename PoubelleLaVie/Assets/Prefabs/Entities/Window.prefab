@@ -125,7 +125,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 230
+  m_SortingOrder: 150
   m_Sprite: {fileID: 205408305262063334, guid: fc67313e77d6243b9b82e961ad615567, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -205,7 +205,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 230
+  m_SortingOrder: 150
   m_Sprite: {fileID: -6148499254855959845, guid: fc67313e77d6243b9b82e961ad615567,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -291,7 +291,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a62dc67ff6266d4db119d9cc51b19db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftWindowSprite: {fileID: -7831515307254572097, guid: fc67313e77d6243b9b82e961ad615567,
+  openLeftSprite: {fileID: -7831515307254572097, guid: fc67313e77d6243b9b82e961ad615567,
     type: 3}
-  rightWindowSprite: {fileID: -3495413744572321313, guid: fc67313e77d6243b9b82e961ad615567,
+  openRightSprite: {fileID: -3495413744572321313, guid: fc67313e77d6243b9b82e961ad615567,
+    type: 3}
+  closeSprite: {fileID: -6148499254855959845, guid: fc67313e77d6243b9b82e961ad615567,
     type: 3}

@@ -15,16 +15,24 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
     private float _vertical;
     private float _horizontal;
     private WorldTile _nextTile;
-    private Vector2 _targetDist;
+    private WorldTile _previousTile;
+    private Vector2 _nextDiff;
     private Action _callback;
     private int _numberDrinksPending;
     private float _idleTimer;
     private bool _idleMode;
     private WorldTile _targetTile;
+    private bool _leaveFridge;
+    private float _stuckTimer;
+    private Rigidbody2D _body;
+    private bool _dancerRegistered;
+
+    private const float MAX_STUCK_TIME = 2.0f;
 
     private void Start()
     {
         _data = GetComponent<NPCDataComponent>();
+        _body = GetComponent<Rigidbody2D>();
     }
 
     public bool GetActionDown(NPCAction action)
@@ -65,12 +73,17 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
 
     public override void UpdateAI()
     {
-        if (_data.grabbed || _data.falling)
+        if (_data.grabbed || _data.falling || GameHelper.GameManager.data.paused)
             return;
+
+        if(_body.velocity.magnitude < 0.1f && !_idleMode)
+            _stuckTimer += Time.fixedDeltaTime;
+        else
+            _stuckTimer = 0.0f;
 
         if (_data.npcState == NPCState.NeedDrinking)
         {
-            if (_path == null) // Choose a random fridge, and go there to pick a beer
+            if (_path == null || (_stuckTimer > MAX_STUCK_TIME && !_idleMode)) // Choose a random fridge, and go there to pick a beer
             {
                 int fridgeNumber = UnityEngine.Random.Range(0, PathfinderHelper.Pathfinder.fridges.Count);
                 var fridge = PathfinderHelper.Pathfinder.fridges[fridgeNumber];
@@ -85,98 +98,114 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
         else if (_data.npcState == NPCState.Fine)
         {
             // The NPC just ended the drink action
-            if (_idleTimer <= 0.0f)
+            if (_leaveFridge || (_idleMode && _idleTimer <= 0.0f) || (_stuckTimer > MAX_STUCK_TIME && !_idleMode))
             {
                 _idleMode = false;
+                _leaveFridge = false;
 
                 GetRandomDestination(2, 6);
                 _callback = GotToDestinationFine;
             }
-
-            // NPC is drinking
-            if (_idleMode)
-                _idleTimer -= Time.fixedDeltaTime * GameHelper.GameManager.data.timeScale;
         }
 
         else if (_data.npcState == NPCState.Drunk)
         {
-            if (_idleTimer <= 0.0f)
+            if(_data.drunkType == DrunkType.Dancer && !_dancerRegistered)
+            {
+                _dancerRegistered = true;
+                GameHelper.GameManager.data.dancerCount++;
+            }
+
+            if ((_idleMode && _idleTimer <= 0.0f) || (_stuckTimer > MAX_STUCK_TIME && !_idleMode))
             {
                 _idleMode = false;
 
                 if (_data.drunkType == DrunkType.Dancer)
-                    GetRandomDestination(2, 15);
+                    GetRandomDestination(5, 15);
                 else if(_data.drunkType == DrunkType.Puker)
-                    GetRandomDestination(2, 13);
+                    GetRandomDestination(2, 10);
                 else
                     GoToPlayer();
 
                 _callback = GotToDestinationDrunk;
             }
-
-            if (_idleMode)
-                _idleTimer -= Time.fixedDeltaTime * GameHelper.GameManager.data.timeScale;
         }
 
         _horizontal = 0.0f;
         _vertical = 0.0f;
 
+        if (_idleMode)
+        {
+            _idleTimer -= Time.fixedDeltaTime * GameHelper.GameManager.data.timeScale;
+            return;
+        }
+
         // No path
         if (_path == null)
             return;
 
-        // Ended deplacement
+        // Reached target tile
         if (!_path.Any())
         {
+            _path = null;
+
             _callback?.Invoke();
             _callback = null;
-            OnNPCReachTarget?.Invoke(_targetTile, _data.npcState, _data.drunkType);
-            _path = null;
+
+            OnNPCReachTarget?.Invoke(_data.tile, _data.npcState, _data.drunkType);
+
             return;
         }
 
         _targetTile = _path.Last();
-
+        _previousTile = _nextTile;
         _nextTile = _path[0];
 
-        if (_nextTile.walkable == false)
+        // Do we try to reach the same tile as the previous tick? 
+        // If not, be sure the new tile is walkable...
+        if (_previousTile != _nextTile && _nextTile.walkable == false)
         {
+            // Not reachable, clear path!
             _path = null;
             _nextTile = null;
             return;
         }
 
-        _targetDist.x = _nextTile.gridX - transform.position.x;
-        _targetDist.y = _nextTile.gridY - transform.position.y;
+        _nextDiff.x = _nextTile.gridX - transform.position.x;
+        _nextDiff.y = _nextTile.gridY - transform.position.y;
 
-        if (_targetDist.magnitude < 0.1f)
+        // Did we reach the next tile?
+        if (_nextDiff.magnitude < 0.2f)
         {
-            if(_path.Count > 1)
-                _nextTile.walkable = true;
+            // Yes, make the current walkable again...
+            if (_data.tile != null)
+                _data.tile.walkable = true;
 
+            // ...and update it with the reached one
+            _data.tile = _nextTile;
+            // No more walkable
+            _data.tile.walkable = false;
+
+            // Tell that we need the next tile
             _nextTile = null;
+            // Pop
             _path.RemoveAt(0);
 
             return;
         }
 
-        if (_targetDist.x < -0.1f)
-            _horizontal = -1.0f;
-        else if (_targetDist.x > 0.1f)
-            _horizontal = 1.0f;
+        _horizontal = _nextDiff.normalized.x;
+        _vertical = _nextDiff.normalized.y;
 
-        if (_targetDist.y > 0.1f)
-            _vertical = 1.0f;
-        else if (_targetDist.y < -0.1f)
-            _vertical = -1.0f;
-
-        //_nextTile.walkable = false;
+        // "Book" the next tile while we don't reach it
+        _nextTile.walkable = false;
     }
 
     private void GotToDestinationFine()
     {
         _idleTimer = _data.npcState == NPCState.Fine ? 2F : 1.5F; // Make the drinking action a little bit longer
         _numberDrinksPending--;
+        _idleTimer = UnityEngine.Random.Range(1.0f, 5.0f);
 
         if (_numberDrinksPending == 0)
             _data.npcState = NPCState.Drunk;
@@ -186,7 +215,7 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
 
     private void GotToDestinationDrunk()
     {
-        _idleTimer = UnityEngine.Random.Range(0.2f, 3.0f);
+        _idleTimer = UnityEngine.Random.Range(0.2f, _data.drunkType != DrunkType.Puker ? 3.0f : 0.8f);
         _idleMode = true;
     }
 
@@ -194,8 +223,7 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
     {
         _data.npcState = NPCState.Fine;
         _numberDrinksPending = UnityEngine.Random.Range(2, 5); // Between 2 and 4 times to drink before becoming drunk
-        _idleTimer = 0.5f; // Take 0.5 secs to grab a beer
-        _idleMode = true;
+        _leaveFridge = true;
     }
 
     private void GoToPlayer()
@@ -220,7 +248,7 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
             new Vector2Int(destination.gridX, destination.gridY));
     }
 
-    private void OnDrawGizmos()
+    public void OnDrawGizmos()
     {
         if (_path != null)
         {

@@ -11,6 +11,8 @@ public class BottleComponent : Garbage, IUsable
 
     public bool IsHeavy => false;
 
+    public int Priority => 10;
+
     public bool Drop(GameObject sender)
     {
         return true;
@@ -27,7 +29,8 @@ public class BottleComponent : Garbage, IUsable
         {
             worldTile.walkable = true;
             Destroy(gameObject);
-            data.trashCount++;    
+            data.trashCount++;
+            GameHelper.GameManager.data.score += 10;
         }
 
         return false;

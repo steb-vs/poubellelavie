@@ -13,12 +13,18 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
 
     public Vector3 Position => transform.position;
     public bool IsHeavy => true;
+    public int Priority =>
+        _data?.npcState != NPCState.Drunk ? 100 :
+        _data?.drunkType == DrunkType.Dancer ? 1 :
+        _data?.drunkType == DrunkType.Puker ? 2 :
+        _data?.drunkType == DrunkType.Dancer ? 3 :
+        100;
 
     public event Action<GameObject, NPCComponent> OnFall;
 
-    private BoxCollider2D _boxCollider;
     private PlayerDataComponent _playerData;
     private NPCAIController _controller;
+    private SpriteRenderer _spriteRenderer;
 
     public void Use(GameObject sender)
     {
@@ -31,15 +37,15 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
         transform.parent = sender.transform.GetChild(0).transform;
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
+        spriteGameObject.transform.localRotation = Quaternion.identity;
 
         _collider.enabled = false;
+        _body.isKinematic = true;
+        _body.velocity = Vector2.zero;
 
         // Desactivate the dancer (if dancer)
         if (_data.drunkType == DrunkType.Dancer)
             GameHelper.GameManager.data.dancerCount--;
-
-        _animator.StopPlayback();
-        _animator.Play("Grabbed");
 
         return true;
     }
@@ -48,22 +54,24 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
     {
         _data.grabbed = false;
         transform.parent = null;
+        transform.localRotation = Quaternion.identity;
 
         if (_playerData.closeWindows.Any() && _data.npcState == NPCState.Drunk)
         {
             _data.falling = true;
             OnFall?.Invoke(gameObject, this);
             transform.position += _playerData.closeWindows.First().transform.up * 2;
+            GameHelper.GameManager.data.score += 100;
+
+            return true;
         }
 
         _collider.enabled = true;
+        _body.isKinematic = false;
 
         // Add the dancer to nbrDancer (if dancer)
         if (_data.drunkType == DrunkType.Dancer)
             GameHelper.GameManager.data.dancerCount++;
-
-        _animator.StopPlayback();
-        _animator.Play("New State");
 
         return true;
     }
@@ -87,14 +95,15 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
 
         _playerData = GameHelper.Player.GetComponent<PlayerDataComponent>();
         _controller = GetComponent<NPCAIController>();
+        _spriteRenderer = spriteGameObject.GetComponent<SpriteRenderer>();
 
         if(_controller != null)
             _controller.OnNPCReachTarget += NPCReachTargetAction;
     }
 
-    private void NPCReachTargetAction(WorldTile targetTile, NPCState npcState, DrunkType drunkType)
+    private void NPCReachTargetAction(WorldTile reachedTile, NPCState npcState, DrunkType drunkType)
     {
-        if (drunkType != DrunkType.Puker)
+        if (drunkType != DrunkType.Puker || npcState != NPCState.Drunk || reachedTile == null || reachedTile.garbage != null)
             return;
 
         int chooseGarbageType = Random.Range(0, 2);
@@ -107,13 +116,18 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
         else // Puke
             garbage = Instantiate(puke, transform.position, Quaternion.identity) as GameObject;
 
-        targetTile.walkable = false;
-
-        garbage.GetComponent<Garbage>().worldTile = targetTile;
+        reachedTile.walkable = false;
+        reachedTile.garbage = garbage;
+        garbage.GetComponent<Garbage>().worldTile = reachedTile;
     }
 
     protected override void Update()
     {
+        base.Update();
+
+        if (GameHelper.GameManager.data.gameOver)
+            return;
+
         if (_data.falling)
         {
             float scale;
@@ -131,18 +145,33 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
 
             return;
         }
-
-        base.Update();
     }
 
     protected override void Move(ref bool updateAnimation)
     {
-        if (_data.drunkType == DrunkType.Dancer)
+        if (_animator.GetBool(NPCHelper.ANIMATOR_GRABBED_PARAM_NAME) != _data.grabbed)
+        {
+            _animator.SetBool(NPCHelper.ANIMATOR_GRABBED_PARAM_NAME, _data.grabbed);
+            updateAnimation = true;
+        }
+
+        if (_data.grabbed)
+        {
+            _body.velocity = Vector2.zero;
+            return;
+        }
+
+        if (_data.npcState == NPCState.Drunk)
+        {
+            if (_data.drunkType == DrunkType.Dancer)
+                _data.speed = _data.defaultSpeed * 1.8f;
+            else if (_data.drunkType == DrunkType.Lover)
+                _data.speed = _data.defaultSpeed * 1.5f;
+            else if (_data.drunkType == DrunkType.Puker)
+                _data.speed = _data.defaultSpeed * 0.5f;
+        }
+        else
             _data.speed = _data.defaultSpeed;
-        else if (_data.drunkType == DrunkType.Lover)
-            _data.speed = _data.defaultSpeed;
-        else if (_data.drunkType == DrunkType.Puker)
-            _data.speed = _data.defaultSpeed * 0.5f;
 
         base.Move(ref updateAnimation);
 
@@ -159,10 +188,20 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
             updateAnimation = true;
         }
 
-        if (_animator.GetBool(NPCHelper.ANIMATOR_GRABBED_PARAM_NAME) != _data.grabbed)
+        if (_data.npcState == NPCState.Drunk)
         {
-            _animator.SetBool(NPCHelper.ANIMATOR_GRABBED_PARAM_NAME, _data.grabbed);
-            updateAnimation = true;
+            _animator.speed = 1.0f;
+
+            if (_data.drunkType == DrunkType.Dancer)
+                _spriteRenderer.color = _data.dancerColor;
+            else if (_data.drunkType == DrunkType.Lover)
+                _spriteRenderer.color = _data.loverColor;
+            else if (_data.drunkType == DrunkType.Puker)
+                _spriteRenderer.color = _data.pukerColor;
+        }
+        else
+        {
+            _spriteRenderer.color = Color.white;
         }
     }
 }

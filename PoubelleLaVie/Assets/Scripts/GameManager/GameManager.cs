@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
 
     private void CreatePlayer()
     {
-        GameHelper.Player = Instantiate(playerPrefab);
+        GameHelper.Player = Instantiate(playerPrefab, new Vector3(5, 5, 5), Quaternion.identity);
         _playerData = GameHelper.Player.GetComponent<PlayerDataComponent>();
     }
 
@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
             data.timeScale = 0;
             canvasGameOver.SetActive(true);
             canvasUI.SetActive(false);
-            endScore.text = "Score: " + Math.Truncate(data.score * 100) / 100;
+            endScore.text = "Score: " + (int)data.score;
             return;
         }
 
@@ -94,8 +94,8 @@ public class GameManager : MonoBehaviour
         }
 
         // Update score
-        data.score += Time.deltaTime * data.timeScale;
-        scoreMesh.text = "Score: " + Math.Truncate(data.score * 10) / 10;
+        data.score += (Time.deltaTime * data.timeScale) * 10;
+        scoreMesh.text = "Score: " + data.score.ToString("000000000");
     }
 
 	public void UpdateCopGauge()

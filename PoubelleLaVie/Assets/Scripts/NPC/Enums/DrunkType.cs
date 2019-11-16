@@ -6,6 +6,5 @@ public enum DrunkType
 {
     Puker,
     Lover,
-    Dancer,
-    TotalDrunkTypes
+    Dancer
 }

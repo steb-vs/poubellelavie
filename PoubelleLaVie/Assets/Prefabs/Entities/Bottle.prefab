@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1163335325150450089}
   - component: {fileID: -7366655695070820029}
   - component: {fileID: -6933773474881253725}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Bottle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 770
+  m_SortingOrder: 100
   m_Sprite: {fileID: 8950614447118804490, guid: fc67313e77d6243b9b82e961ad615567,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5402745653161928253}
   - component: {fileID: -8658211412663614786}
   - component: {fileID: 4978973589201778999}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Puke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 988
+  m_SortingOrder: 100
   m_Sprite: {fileID: 5021127052836279932, guid: fc67313e77d6243b9b82e961ad615567,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

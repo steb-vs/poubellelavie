@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7772009123027820118}
   - component: {fileID: 7139939461923669951}
   - component: {fileID: 2874510218668813524}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -69,7 +69,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1369
+  m_SortingOrder: 300
   m_Sprite: {fileID: -7870276711496609559, guid: f5b088d557d2b1149b5d4aa7e8626066,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 7735977099687035144}
   - component: {fileID: 2411725499568119819}
   - component: {fileID: 6531514868104673600}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -188,7 +188,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0

@@ -34,7 +34,7 @@ public class NPCSoundManager : MonoBehaviour
 
     private void GameOverAction()
     {
-        _audioSrc.volume = 0.5f;
+        _audioSrc.volume = 0.25f;
     }
 
     private void NPCFallAction(GameObject obj, NPCComponent behavior)
