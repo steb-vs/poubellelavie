@@ -11,6 +11,8 @@ public class BottleComponent : Garbage, IUsable
 
     public bool IsHeavy => false;
 
+    public int Priority => 10;
+
     public bool Drop(GameObject sender)
     {
         return true;
@@ -18,13 +20,19 @@ public class BottleComponent : Garbage, IUsable
 
     public bool Take(GameObject sender)
     {
-        Debug.Log($"{GameHelper.GM.playerComponent.grabbedObjects} - {GameHelper.GM.playerComponent.maxGrabbedObjects}");
-        if (GameHelper.GM.playerComponent.grabbedObjects <= GameHelper.GM.playerComponent.maxGrabbedObjects)
+        PlayerDataComponent data = sender.GetComponent<PlayerDataComponent>();
+
+        if (data == null)
+            return false;
+
+        if (data.trashCount <= data.trashLimit)
         {
             worldTile.walkable = true;
             Destroy(gameObject);
-            GameHelper.GM.playerComponent.grabbedObjects++;    
+            data.trashCount++;
+            GameHelper.GameManager.data.score += 10;
         }
+
         return false;
     }
 

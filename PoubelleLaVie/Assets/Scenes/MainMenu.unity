@@ -168,7 +168,7 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 0.8
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -216,7 +216,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 11aa5093444e26a478449a6eb854bd49, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -4962,7 +4962,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000061035156}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0.000061035}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &779500493
@@ -5012,7 +5012,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 167.1
+  m_fontSize: 167.85
   m_fontSizeBase: 126
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8303,6 +8303,11 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6966332607364025008, guid: b4b2d5d32f9115143b758b12cb897103,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6966332607734630514, guid: b4b2d5d32f9115143b758b12cb897103,
         type: 3}
       propertyPath: m_Layer
       value: 0
@@ -29809,11 +29814,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6966332607456008196, guid: b4b2d5d32f9115143b758b12cb897103,
-        type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6966332607734630514, guid: b4b2d5d32f9115143b758b12cb897103,
         type: 3}
       propertyPath: m_Layer
       value: 0

@@ -6,8 +6,14 @@ using System.Linq;
 
 public class Pathfinder : MonoBehaviour
 {
+    public List<WorldTile> _listedNodes;
+
     [HideInInspector] public List<WorldTile> fridges = new  List<WorldTile>();
     [HideInInspector] public List<WorldTile> entries = new List<WorldTile>();
+
+    private WorldTile[,] _nodes;
+    private int _gridBoundX;
+    private int _gridBoundY;
 
     private void OnDrawGizmos()
     {
@@ -255,9 +261,4 @@ public class Pathfinder : MonoBehaviour
     {
         get { return _gridBoundY; }
     }
-
-    private WorldTile[,] _nodes;
-    private int _gridBoundX;
-    private int _gridBoundY;
-    public List<WorldTile> _listedNodes;
 }

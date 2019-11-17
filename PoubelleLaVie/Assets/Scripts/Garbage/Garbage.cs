@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class Garbage : MonoBehaviour
 {
-    public WorldTile worldTile;
     public Sprite[] sprites;
+
+    [HideInInspector] public WorldTile worldTile;
 
     private void Start()
     {

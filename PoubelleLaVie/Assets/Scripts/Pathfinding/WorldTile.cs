@@ -10,6 +10,7 @@ public class WorldTile : MonoBehaviour
     public bool walkable = true;
     public List<WorldTile> myNeighbours;
     public WorldTile parent;
+    public GameObject garbage;
 
     public float fCost
     {

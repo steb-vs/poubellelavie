@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public enum PlayerActionState
 {
-    Default = 0,
-    Holding = 1,
-    Grabbing = 2
+    Default,
+    Holding,
+    Grabbing
 }

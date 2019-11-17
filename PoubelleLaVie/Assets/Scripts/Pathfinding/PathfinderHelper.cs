@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PathfinderHelper : MonoBehaviour
+public static class PathfinderHelper
 {
-    public static Pathfinder Pathfinder;
+    public static Pathfinder Pathfinder { get; set; }
 }

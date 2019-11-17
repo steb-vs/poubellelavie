@@ -12,18 +12,20 @@ public class PlayerSoundManager : MonoBehaviour
     public AudioClip pukeStepSound;
 
     private AudioSource _audioSrc;
-    private PlayerComponent _playerComponent;
+    private PlayerDataComponent _data;
+    private PlayerComponent _player;
     private float _stepTimer;
 
     // Start is called before the first frame update
     private void Start()
     {
         _audioSrc = GetComponent<AudioSource>();
-        _playerComponent = GetComponent<PlayerComponent>();
+        _player = GetComponent<PlayerComponent>();
+        _data = GetComponent<PlayerDataComponent>();
 
-        _playerComponent.OnTrashTrown += TrashThrownAction;
-        _playerComponent.OnObjectTaken += ObjectTakenAction;
-        _playerComponent.OnObjectDropped += ObjectDroppedAction;
+        _player.OnTrashThrown += TrashThrownAction;
+        _player.OnObjectTaken += ObjectTakenAction;
+        _player.OnObjectDropped += ObjectDroppedAction;
     }
 
     private void ObjectDroppedAction(GameObject obj, PlayerComponent playerComponent, IUsable usable)
@@ -31,7 +33,7 @@ public class PlayerSoundManager : MonoBehaviour
         string typeName = usable.GetType().Name;
         AudioClip clip = null;
 
-        if (typeName == nameof(NPCBehaviour))
+        if (typeName == nameof(NPCComponent))
         {
             clip = npcDropSound;
         }
@@ -56,7 +58,7 @@ public class PlayerSoundManager : MonoBehaviour
         {
             clip = pukeSound;
         }
-        else if (typeName == nameof(NPCBehaviour))
+        else if (typeName == nameof(NPCComponent))
         {
             clip = npcTakeSound;
         }
@@ -68,7 +70,7 @@ public class PlayerSoundManager : MonoBehaviour
         _audioSrc.Play();
     }
 
-    private void TrashThrownAction(GameObject obj, PlayerComponent playerComponent, int garbageCount)
+    private void TrashThrownAction(GameObject obj, PlayerComponent playerComponent, int trashCount)
     {
         _audioSrc.clip = trashSound;
         _audioSrc.Play();
@@ -80,9 +82,9 @@ public class PlayerSoundManager : MonoBehaviour
         if (_stepTimer <= 0.5f)
             _stepTimer += Time.deltaTime;
 
-        if(_playerComponent.Data.MoveState == PlayerMoveState.Run &&
+        if(_data.moveState == HumanMoveState.Walk &&
             _stepTimer >= 0.5f &&
-            _playerComponent.SpeedModObj is PukeComponent)
+            _data.speedModifierObject is PukeComponent)
         {
             _stepTimer = 0.0f;
             _audioSrc.clip = pukeStepSound;
