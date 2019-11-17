@@ -136,6 +136,6 @@ public class GameManager : MonoBehaviour
 
         // Update score
         data.score += (Time.deltaTime * data.timeScale) * 10;
-        scoreMesh.text = "Score: " + data.score.ToString("000000000");
+        scoreMesh.text = "Score: " + data.score.ToString("000000");
     }
 }
