@@ -101,26 +101,6 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
             _controller.OnNPCReachTarget += NPCReachTargetAction;
     }
 
-    private void NPCReachTargetAction(WorldTile reachedTile, NPCState npcState, DrunkType drunkType)
-    {
-        if (drunkType != DrunkType.Puker || npcState != NPCState.Drunk || reachedTile == null || reachedTile.garbage != null)
-            return;
-
-        int chooseGarbageType = Random.Range(0, 2);
-        GameObject garbage;
-
-        if (chooseGarbageType == 0) // Bottle
-        {
-            garbage = Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
-        }
-        else // Puke
-            garbage = Instantiate(puke, transform.position, Quaternion.identity) as GameObject;
-
-        reachedTile.walkable = false;
-        reachedTile.garbage = garbage;
-        garbage.GetComponent<Garbage>().worldTile = reachedTile;
-    }
-
     protected override void Update()
     {
         base.Update();
@@ -203,5 +183,25 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
         {
             _spriteRenderer.color = Color.white;
         }
+    }
+
+    private void NPCReachTargetAction(WorldTile reachedTile, NPCState npcState, DrunkType drunkType)
+    {
+        if (drunkType != DrunkType.Puker || npcState != NPCState.Drunk || reachedTile == null || reachedTile.garbage != null)
+            return;
+
+        int chooseGarbageType = Random.Range(0, 2);
+        GameObject garbage;
+
+        if (chooseGarbageType == 0) // Bottle
+        {
+            garbage = Instantiate(bottle, transform.position, Quaternion.identity) as GameObject;
+        }
+        else // Puke
+            garbage = Instantiate(puke, transform.position, Quaternion.identity) as GameObject;
+
+        reachedTile.walkable = false;
+        reachedTile.garbage = garbage;
+        garbage.GetComponent<Garbage>().worldTile = reachedTile;
     }
 }

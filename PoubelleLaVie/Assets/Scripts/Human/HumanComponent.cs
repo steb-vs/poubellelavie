@@ -47,12 +47,6 @@ public abstract class HumanComponent<TData> : MonoBehaviour
             UpdateAnimation();
     }
 
-    private void UpdateAnimation()
-    {
-        _animator.StopPlayback();
-        _animator.Play(ResolveAnimationName());
-    }
-
     protected abstract string ResolveAnimationName();
 
     /// <summary>
@@ -73,6 +67,7 @@ public abstract class HumanComponent<TData> : MonoBehaviour
         // Add force to the rigid body
         _body.AddForce(_data.direction * _data.speed * GameHelper.GameManager.data.timeScale);
 
+        // Rotation
         if (_body.velocity.magnitude > 0.01f)
             spriteGameObject.transform.localRotation = Quaternion.FromToRotation(Vector2.up, _body.velocity.normalized);
 
@@ -91,5 +86,11 @@ public abstract class HumanComponent<TData> : MonoBehaviour
         _animator.speed = 0.25f + (_body.velocity.magnitude / 6.0f);
 
         _data.position = transform.position;
+    }
+
+    private void UpdateAnimation()
+    {
+        _animator.StopPlayback();
+        _animator.Play(ResolveAnimationName());
     }
 }

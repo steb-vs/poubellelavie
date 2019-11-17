@@ -43,6 +43,38 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
         ProcessActions();
     }
 
+    protected override void Move(ref bool updateAnimation)
+    {
+        // Update the action state
+        if (_carriedObject != null)
+        {
+            if (_carriedObject.IsHeavy)
+            {
+                _data.speed = _data.defaultSpeed * 0.6f * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
+                _data.actionState = PlayerActionState.Grabbing;
+            }
+            else
+            {
+                _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
+                _data.actionState = PlayerActionState.Holding;
+            }
+        }
+        else
+        {
+            _data.actionState = PlayerActionState.Default;
+            _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
+        }
+
+        base.Move(ref updateAnimation);
+
+        // Update the animator parameters
+        if (_animator.GetInteger(PlayerHelper.ANIMATOR_ACTION_STATE_PARAM_NAME) != (int)_data.actionState)
+        {
+            _animator.SetInteger(PlayerHelper.ANIMATOR_ACTION_STATE_PARAM_NAME, (int)_data.actionState);
+            updateAnimation = true;
+        }
+    }
+
     /// <summary>
     /// Processes the user input.
     /// </summary>
@@ -169,37 +201,5 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
     {
         UnregisterUsableObject(collision.gameObject);
         RestoreSpeedMod(collision.gameObject);
-    }
-
-    protected override void Move(ref bool updateAnimation)
-    {
-        // Update the action state
-        if (_carriedObject != null)
-        {
-            if (_carriedObject.IsHeavy)
-            {
-                _data.speed = _data.defaultSpeed * 0.6f * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
-                _data.actionState = PlayerActionState.Grabbing;
-            }
-            else
-            {
-                _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
-                _data.actionState = PlayerActionState.Holding;
-            }
-        }
-        else
-        {
-            _data.actionState = PlayerActionState.Default;
-            _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
-        }
-
-        base.Move(ref updateAnimation);
-
-        // Update the animator parameters
-        if (_animator.GetInteger(PlayerHelper.ANIMATOR_ACTION_STATE_PARAM_NAME) != (int)_data.actionState)
-        {
-            _animator.SetInteger(PlayerHelper.ANIMATOR_ACTION_STATE_PARAM_NAME, (int)_data.actionState);
-            updateAnimation = true;
-        }
     }
 }

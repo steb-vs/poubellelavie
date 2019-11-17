@@ -11,7 +11,7 @@ public class BackgroundMusicManager : MonoBehaviour
     private int clipIndex = 1;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _audioSrc = GetComponent<AudioSource>();
 
@@ -27,7 +27,7 @@ public class BackgroundMusicManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if(!_audioSrc.isPlaying)
         {

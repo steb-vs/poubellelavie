@@ -21,7 +21,6 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
     private int _numberDrinksPending;
     private float _idleTimer;
     private bool _idleMode;
-    private WorldTile _targetTile;
     private bool _leaveFridge;
     private float _stuckTimer;
     private Rigidbody2D _body;
@@ -157,7 +156,6 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
             return;
         }
 
-        _targetTile = _path.Last();
         _previousTile = _nextTile;
         _nextTile = _path[0];
 

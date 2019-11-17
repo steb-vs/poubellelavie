@@ -17,7 +17,7 @@ public class PartyManager : MonoBehaviour
     private float[] probEntries; // Histogram of probabilities
     private DrunkType[] lastNPCStates;
 
-    void Start()
+    private void Start()
     {
         // Init histogram
         int totalMass = 0;
@@ -39,7 +39,7 @@ public class PartyManager : MonoBehaviour
         coeff = (endingTimeToPop - startingTimeToPop) / timeToEnd;
     }
 
-    void Update()
+    private void Update()
     {
         if (GameHelper.GameManager.data.gameOver)
             return;

@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 public enum HumanMoveState
 {
-    Idle = 0,
-    Walk = 1
+    Idle,
+    Walk
 }
