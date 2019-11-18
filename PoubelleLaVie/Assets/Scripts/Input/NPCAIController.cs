@@ -226,10 +226,13 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
 
     private void GoToPlayer()
     {
-        var playerPos = GameHelper.Player.transform.position;
+        var player = GameHelper.Players
+            .Select(x => new { Player = x, Distance = (transform.position - x.transform.position).magnitude })
+            .OrderBy(x => x.Distance)
+            .First().Player;
         _path = PathfinderHelper.Pathfinder.GetPath2(
             new Vector2Int((int)transform.position.x, (int)transform.position.y),
-            new Vector2Int((int)playerPos.x, (int)playerPos.y));
+            new Vector2Int((int)player.transform.position.x, (int)player.transform.position.y));
     }
 
     private void GetRandomDestination(int min, int max)

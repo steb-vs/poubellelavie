@@ -4,13 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
     public GameObject canvasGameOver;
     public GameObject canvasUI;
-	public Animator lightAtmoAnimator;
-	public Image trashImage;
+    public Animator lightAtmoAnimator;
+    public Image trashImage;
     public Sprite[] trashImages;
     public GameObject thrownTrash;
     public TextMeshProUGUI scoreMesh;
@@ -21,8 +22,8 @@ public class GameManager : MonoBehaviour
 
     public event Action OnGameOver;
 
-	private AudioSource[] _audioSrcs;
-    private PlayerDataComponent _playerData;
+    private AudioSource[] _audioSrcs;
+    private List<PlayerDataComponent> _playerDataList;
 
     public void UpdateCopGauge()
     {
@@ -69,7 +70,11 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         GameHelper.GameManager = this;
-        CreatePlayer();
+        GameHelper.Players = new List<GameObject>();
+        _playerDataList = new List<PlayerDataComponent>();
+
+        for(int i = 1; i <= GameHelper.Settings.playerCount; i++)
+            CreatePlayer(i);
     }
 
     // Start is called before the first frame update
@@ -79,25 +84,35 @@ public class GameManager : MonoBehaviour
         _audioSrcs = GetComponents<AudioSource>();
     }
 
-    private void CreatePlayer()
+    private void CreatePlayer(int id)
     {
-        GameHelper.Player = Instantiate(playerPrefab, new Vector3(5, 5, 5), Quaternion.identity);
-        _playerData = GameHelper.Player.GetComponent<PlayerDataComponent>();
+        PlayerDataComponent playerData;
+        GameObject player;
+
+        player = Instantiate(playerPrefab, new Vector3(4 + id, 6), Quaternion.identity);
+        GameHelper.Players.Add(player);
+
+        playerData = player.GetComponent<PlayerDataComponent>();
+        playerData.id = id;
+
+        _playerDataList.Add(playerData);
     }
 
     // Update is called once per frame
     private void Update()
     {
-		lightAtmoAnimator.SetBool("bStateHasChanged", false);
+        int trashTotal = _playerDataList.Sum(x => x.trashCount);
+
+        lightAtmoAnimator.SetBool("bStateHasChanged", false);
 
         UpdateCopGauge();
 
         if (data.copGauge >= 100 && !data.gameOver)
         {
             data.gameOver = true;
-			lightAtmoAnimator.SetInteger("StateNeighborGauge", 4);
-			lightAtmoAnimator.SetBool("bStateHasChanged", true);
-			_audioSrcs[0].Play();
+            lightAtmoAnimator.SetInteger("StateNeighborGauge", 4);
+            lightAtmoAnimator.SetBool("bStateHasChanged", true);
+            _audioSrcs[0].Play();
 
             OnGameOver?.Invoke();
 
@@ -124,14 +139,14 @@ public class GameManager : MonoBehaviour
             data.timeScale = data.timeScale.Wrap(0, 1);
         }
 
-        if (_playerData.trashCount >= _playerData.trashLimit)
+        if (trashTotal >= data.trashLimit)
         {
             trashImage.sprite = trashImages[trashImages.Length - 1];
         }
         else
         {
             trashImage.sprite =
-                trashImages[(_playerData.trashCount * (trashImages.Length - 1)) / _playerData.trashLimit];
+                trashImages[(trashTotal * (trashImages.Length - 1)) / data.trashLimit];
         }
 
         // Update score

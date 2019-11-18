@@ -22,9 +22,10 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
 
     public event Action<GameObject, NPCComponent> OnFall;
 
-    private PlayerDataComponent _playerData;
+    private List<PlayerDataComponent> _playerDataList;
     private NPCAIController _controller;
     private SpriteRenderer _spriteRenderer;
+    private PlayerDataComponent _playerGrabbing;
 
     public void Use(GameObject sender)
     {
@@ -32,6 +33,10 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
 
     public bool Take(GameObject sender)
     {
+        if (_data.grabbed)
+            return false;
+
+        _playerGrabbing = sender.GetComponent<PlayerDataComponent>();
         _data.grabbed = true;
 
         transform.parent = sender.transform.GetChild(0).transform;
@@ -53,18 +58,21 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
     public bool Drop(GameObject sender)
     {
         _data.grabbed = false;
+
         transform.parent = null;
         transform.localRotation = Quaternion.identity;
 
-        if (_playerData.closeWindows.Any() && _data.npcState == NPCState.Drunk)
+        if (_playerGrabbing.closeWindows.Any() && _data.npcState == NPCState.Drunk)
         {
             _data.falling = true;
             OnFall?.Invoke(gameObject, this);
-            transform.position += _playerData.closeWindows.First().transform.up * 2;
+            transform.position += _playerGrabbing.closeWindows.First().transform.up * 2;
             GameHelper.GameManager.data.score += 100;
 
             return true;
         }
+
+        _playerGrabbing = null;
 
         _collider.enabled = true;
         _body.isKinematic = false;
@@ -93,7 +101,9 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
         _data.drunkType = Utils.Random<DrunkType>();
         _data.npcState = NPCState.NeedDrinking;
 
-        _playerData = GameHelper.Player.GetComponent<PlayerDataComponent>();
+        _playerDataList = GameHelper.Players
+            .Select(x => x.GetComponent<PlayerDataComponent>())
+            .ToList();
         _controller = GetComponent<NPCAIController>();
         _spriteRenderer = spriteGameObject.GetComponent<SpriteRenderer>();
 

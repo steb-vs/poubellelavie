@@ -24,6 +24,8 @@ public class GameDataComponent : MonoBehaviour
 
     public float timeScale;
 
+    public int trashLimit;
+
     public GameDataComponent()
     {
         decrCopGaugeOverTime = 10.0f;
@@ -35,6 +37,7 @@ public class GameDataComponent : MonoBehaviour
         gameOver = false;
         paused = false;
         npcSoundPlayingCount = 0;
+        trashLimit = 10;
         timeScale = 1;
     }
 }
