@@ -69,6 +69,8 @@ public class GameManager : MonoBehaviour
     // When instiated, this object is stored in the GameHelper
     private void Awake()
     {
+        data = GetComponent<GameDataComponent>();
+
         GameHelper.GameManager = this;
         GameHelper.Players = new List<GameObject>();
         _playerDataList = new List<PlayerDataComponent>();
@@ -80,13 +82,13 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        data = GetComponent<GameDataComponent>();
         _audioSrcs = GetComponents<AudioSource>();
     }
 
     private void CreatePlayer(int id)
     {
         PlayerDataComponent playerData;
+        SpriteRenderer playerRenderer;
         GameObject player;
 
         player = Instantiate(playerPrefab, new Vector3(4 + id, 6), Quaternion.identity);
@@ -94,6 +96,9 @@ public class GameManager : MonoBehaviour
 
         playerData = player.GetComponent<PlayerDataComponent>();
         playerData.id = id;
+
+        playerRenderer = player.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        playerRenderer.color = data.playerTints[(id - 1) % data.playerTints.Length];
 
         _playerDataList.Add(playerData);
     }

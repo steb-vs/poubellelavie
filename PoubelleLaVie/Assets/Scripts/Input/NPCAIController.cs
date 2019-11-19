@@ -201,19 +201,22 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
 
     private void GotToDestinationFine()
     {
-        _idleTimer = _data.npcState == NPCState.Fine ? 2F : 1.5F; // Make the drinking action a little bit longer
         _numberDrinksPending--;
-        _idleTimer = UnityEngine.Random.Range(1.0f, 5.0f);
 
         if (_numberDrinksPending == 0)
+        {
             _data.npcState = NPCState.Drunk;
-
-        _idleMode = true;
+        }
+        else
+        {
+            _idleTimer = UnityEngine.Random.Range(0.8f, 2.0f);
+            _idleMode = true;
+        }
     }
 
     private void GotToDestinationDrunk()
     {
-        _idleTimer = UnityEngine.Random.Range(0.2f, _data.drunkType != DrunkType.Puker ? 3.0f : 0.8f);
+        _idleTimer = UnityEngine.Random.Range(0.2f, _data.drunkType == DrunkType.Puker ? 2.0f : 0.8f);
         _idleMode = true;
     }
 

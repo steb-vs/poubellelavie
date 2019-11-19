@@ -178,10 +178,10 @@ public class NPCComponent : HumanComponent<NPCDataComponent>, IUsable
             updateAnimation = true;
         }
 
+        _animator.speed = 1.0f;
+
         if (_data.npcState == NPCState.Drunk)
         {
-            _animator.speed = 1.0f;
-
             if (_data.drunkType == DrunkType.Dancer)
                 _spriteRenderer.color = _data.dancerColor;
             else if (_data.drunkType == DrunkType.Lover)

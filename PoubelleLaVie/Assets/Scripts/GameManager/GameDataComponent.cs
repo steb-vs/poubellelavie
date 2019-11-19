@@ -26,6 +26,8 @@ public class GameDataComponent : MonoBehaviour
 
     public int trashLimit;
 
+    public Color[] playerTints;
+
     public GameDataComponent()
     {
         decrCopGaugeOverTime = 10.0f;
@@ -39,5 +41,11 @@ public class GameDataComponent : MonoBehaviour
         npcSoundPlayingCount = 0;
         trashLimit = 10;
         timeScale = 1;
+        playerTints = new[]
+        {
+            Color.white,
+            new Color(0.25f, 0, 1),
+            Color.yellow
+        };
     }
 }

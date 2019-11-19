@@ -32,6 +32,10 @@ public static class InputHelper
     /// </summary>
     public const string PAUSE = "Pause";
 
+    public const string SELECT = "Select";
+
+    public const string BACK = "Back";
+
     public static bool GetUserActionDown<TEnum>(Dictionary<TEnum, string> bindings, TEnum action, int id)
         where TEnum : System.Enum
     {

@@ -13,7 +13,7 @@ public static class GameHelper
     {
         Settings = new GameSettings
         {
-            playerCount = 2
+            playerCount = 1
         };
     }
 }
