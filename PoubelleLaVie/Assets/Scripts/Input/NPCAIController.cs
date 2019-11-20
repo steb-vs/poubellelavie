@@ -176,13 +176,13 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
         if (_nextDiff.magnitude < 0.2f)
         {
             // Yes, make the current walkable again...
-            if (_data.tile != null)
-                _data.tile.walkable = true;
+            //if (_data.tile != null)
+            //    _data.tile.walkable = true;
 
             // ...and update it with the reached one
             _data.tile = _nextTile;
             // No more walkable
-            _data.tile.walkable = false;
+            //_data.tile.walkable = false;
 
             // Tell that we need the next tile
             _nextTile = null;
@@ -196,7 +196,7 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
         _vertical = _nextDiff.normalized.y;
 
         // "Book" the next tile while we don't reach it
-        _nextTile.walkable = false;
+        //_nextTile.walkable = false;
     }
 
     private void GotToDestinationFine()
