@@ -5168,7 +5168,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 167.85
+  m_fontSize: 168.3
   m_fontSizeBase: 126
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -7841,8 +7841,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalAxis: 1_Horizontal
-  m_VerticalAxis: 1_Vertical
+  m_HorizontalAxis: 1_Horizontal_Keyboard
+  m_VerticalAxis: 1_Vertical_Keyboard
   m_SubmitButton: Submit
   m_CancelButton: Cancel
   m_InputActionsPerSecond: 10

@@ -20,7 +20,7 @@ public static class InputHelper
     /// <summary>
     /// Take or drop.
     /// </summary>
-    public const string TAKE_N_DROP = "Take / Drop";
+    public const string TAKE_N_DROP = "Take_Drop";
 
     /// <summary>
     /// Use.
@@ -36,6 +36,11 @@ public static class InputHelper
 
     public const string BACK = "Back";
 
+    public static string GetActionName(int id, string inputName, bool fromController)
+    {
+        return (id != -1 ? $"{id}_" : "") + inputName + (fromController ? "_Controller" : "_Keyboard");
+    }
+
     public static bool GetUserActionDown<TEnum>(Dictionary<TEnum, string> bindings, TEnum action, int id)
         where TEnum : System.Enum
     {
@@ -44,7 +49,10 @@ public static class InputHelper
         if (!bindings.TryGetValue(action, out inputName))
             return false;
 
-        return Input.GetButtonDown((id != -1 ? $"{id}_" : "") + inputName);
+        if (Input.GetButtonDown(GetActionName(id, inputName, false)))
+            return true;
+
+        return Input.GetButtonDown(GetActionName(id, inputName, true));
     }
 
     public static bool GetUserActionUp<TEnum>(Dictionary<TEnum, string> bindings, TEnum action, int id)
@@ -55,17 +63,26 @@ public static class InputHelper
         if (!bindings.TryGetValue(action, out inputName))
             return false;
 
-        return Input.GetButtonUp((id != -1 ? $"{id}_" : "") + inputName);
+        if (Input.GetButtonUp(GetActionName(id, inputName, false)))
+            return true;
+
+        return Input.GetButtonUp(GetActionName(id, inputName, true));
     }
 
     public static float GetUserActionValue<TEnum>(Dictionary<TEnum, string> bindings, TEnum action, int id)
         where TEnum : System.Enum
     {
         string inputName;
+        float result;
 
         if (!bindings.TryGetValue(action, out inputName))
             return 0.0f;
 
-        return Input.GetAxis((id != -1 ? $"{id}_" : "") + inputName);
+        result = Input.GetAxis(GetActionName(id, inputName, false));
+
+        if (result != 0.0f)
+            return result;
+
+        return Input.GetAxis(GetActionName(id, inputName, true));
     }
 }
