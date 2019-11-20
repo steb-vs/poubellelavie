@@ -11,23 +11,23 @@ public class BackgroundMusicManager : MonoBehaviour
     private int clipIndex = 1;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _audioSrc = GetComponent<AudioSource>();
 
         _audioSrc.clip = musicParts[0];
         _audioSrc.Play();
 
-        GameHelper.GM.OnGameOver += GameOverAction;
+        GameHelper.GameManager.OnGameOver += GameOverAction;
     }
 
     private void GameOverAction()
     {
-        _audioSrc.volume = 0.5f;
+        _audioSrc.volume = 0.25f;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if(!_audioSrc.isPlaying)
         {

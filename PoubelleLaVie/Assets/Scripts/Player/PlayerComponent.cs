@@ -6,71 +6,88 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerComponent : MonoBehaviour
+public class PlayerComponent : HumanComponent<PlayerDataComponent>
 {
-    public GameObject playerSprite;
-    [HideInInspector] public Window closeWindow = null;
-    [HideInInspector] public int grabbedObjects = 0;
-    public int maxGrabbedObjects = 10;
-
-    public delegate void TrashThrownHandler(GameObject obj, PlayerComponent playerComponent, int garbageCount);
+    public delegate void TrashThrownHandler(GameObject obj, PlayerComponent playerComponent, int trashCount);
     public delegate void UsableHandler(GameObject obj, PlayerComponent playerComponent, IUsable usable);
 
-    public event TrashThrownHandler OnTrashTrown;
+    public event TrashThrownHandler OnTrashThrown;
     public event UsableHandler OnObjectTaken;
     public event UsableHandler OnObjectDropped;
 
-    public PlayerData Data { get; private set; }
-    public ISpeedModifier SpeedModObj { get; private set; }
-
-    private Rigidbody2D _body;
-    private Animator _animator;
     private HashSet<IUsable> _closeObjects;
     private IUsable _carriedObject;
+    private IController<PlayerAction> _controller;
 
-    /// <summary>
-    /// Sets the player data.
-    /// </summary>
-    /// <param name="data"></param>
-    public void SetData(PlayerData data)
+    protected override void Start()
     {
-        Data = data;
-        transform.position = data.Position;
-    }
+        PlayerUserController _userController;
 
-    private void Start()
-    {
-        _body = GetComponent<Rigidbody2D>();
-        _animator = playerSprite.GetComponent<Animator>();
-        Data = PlayerData.Default;
+        base.Start();
+
+        _data = GetComponent<PlayerDataComponent>();
+        _controller = GetComponent<IController<PlayerAction>>();
         _closeObjects = new HashSet<IUsable>();
+        _userController = _controller as PlayerUserController;
 
-        if (GameHelper.GM != null)
-        {
-            GameHelper.GM.player = this.gameObject;
-            GameHelper.GM.playerComponent = this;
-        }
+        if (_userController != null)
+            _userController.id = _data.id;
     }
 
-    private void FixedUpdate()
+    protected override string ResolveAnimationName()
     {
-        ReadInput();
-        Move();
+        return _data.actionState.ToString() + _data.moveState.ToString();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (GameHelper.GameManager.data.gameOver)
+            return;
+
+        ProcessActions();
+    }
+
+    protected override void Move(ref bool updateAnimation)
+    {
+        // Update the action state
+        if (_carriedObject != null)
+        {
+            if (_carriedObject.IsHeavy)
+            {
+                _data.speed = _data.defaultSpeed * 0.6f * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
+                _data.actionState = PlayerActionState.Grabbing;
+            }
+            else
+            {
+                _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
+                _data.actionState = PlayerActionState.Holding;
+            }
+        }
+        else
+        {
+            _data.actionState = PlayerActionState.Default;
+            _data.speed = _data.defaultSpeed * (_data.speedModifierObject != null ? _data.speedModifierObject.SpeedModifier : 1);
+        }
+
+        base.Move(ref updateAnimation);
+
+        // Update the animator parameters
+        if (_animator.GetInteger(PlayerHelper.ANIMATOR_ACTION_STATE_PARAM_NAME) != (int)_data.actionState)
+        {
+            _animator.SetInteger(PlayerHelper.ANIMATOR_ACTION_STATE_PARAM_NAME, (int)_data.actionState);
+            updateAnimation = true;
+        }
     }
 
     /// <summary>
     /// Processes the user input.
     /// </summary>
-    private void ReadInput()
+    private void ProcessActions()
     {
-        // Get the character direction
-        Data.Direction = new Vector2(
-            Input.GetAxis(InputHelper.HORIZONTAL),
-            Input.GetAxis(InputHelper.VERTICAL)
-        );
-
         // Handle take / drop action
-        if(Input.GetButtonDown(InputHelper.TAKE_N_DROP))
+        if(_controller.GetActionDown(PlayerAction.TakeDrop))
         {
             // If we are holding an object
             if (_carriedObject != null)
@@ -82,15 +99,18 @@ public class PlayerComponent : MonoBehaviour
                     _carriedObject = null;
             }
             
-            else if (grabbedObjects > 0 && closeWindow != null)
+            else if (_data.trashCount > 0 && _data.closeWindows.Any())
             {
-                OnTrashTrown?.Invoke(gameObject, this, grabbedObjects);
+                OnTrashThrown?.Invoke(gameObject, this, _data.trashCount);
 
-                grabbedObjects = 0;
-                var t = GameObject.Instantiate(GameHelper.GM.thrownTrash, transform.position +
-                                                                          closeWindow.transform.up * 2,
+                _data.trashCount = 0;
+
+                GameObject t = Instantiate(
+                    GameHelper.GameManager.thrownTrash,
+                    transform.position + _data.closeWindows.First().transform.up * 2,
                     Quaternion.identity);
-                GameObject.Destroy(t, 1);
+
+                Destroy(t, 1);
             }
 
             // Else, get a new object if any available
@@ -99,7 +119,8 @@ public class PlayerComponent : MonoBehaviour
                 // Find the closest object to the player
                 _carriedObject = _closeObjects
                     .Select(x => new { Obj = x, Distance = (x.Position - transform.position).magnitude })
-                    .OrderBy(x => x.Distance)
+                    .OrderBy(x => x.Obj.Priority)
+                    .ThenBy(x => x.Distance)
                     .First().Obj;
 
                 OnObjectTaken?.Invoke(gameObject, this, _carriedObject);
@@ -110,7 +131,7 @@ public class PlayerComponent : MonoBehaviour
         }
 
         // Handle use action
-        if (Input.GetButtonDown(InputHelper.USE) && _carriedObject != null)
+        if (_controller.GetActionDown(PlayerAction.Use) && _carriedObject != null)
             _carriedObject.Use(gameObject);
     }
 
@@ -146,10 +167,10 @@ public class PlayerComponent : MonoBehaviour
             return;
 
         // Only update speed mod if the new speed mod is lesser than the current
-        if (SpeedModObj != null && SpeedModObj.SpeedModifier < speedModObj.SpeedModifier)
+        if (_data.speedModifierObject != null && _data.speedModifierObject.SpeedModifier < speedModObj.SpeedModifier)
             return;
 
-        SpeedModObj = speedModObj;
+        _data.speedModifierObject = speedModObj;
     }
 
     private void RestoreSpeedMod(GameObject obj)
@@ -160,15 +181,21 @@ public class PlayerComponent : MonoBehaviour
             return;
         
         // Skip if the speed mod object is not the same as the current
-        if (SpeedModObj != speedModObj)
+        if (_data.speedModifierObject != speedModObj)
             return;
 
-        SpeedModObj = null;
+        _data.speedModifierObject = null;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision) => RegisterUsableObject(collision.gameObject);
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        RegisterUsableObject(collision.gameObject);
+    }
 
-    private void OnCollisionExit2D(Collision2D collision) => UnregisterUsableObject(collision.gameObject);
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        UnregisterUsableObject(collision.gameObject);
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -180,69 +207,5 @@ public class PlayerComponent : MonoBehaviour
     {
         UnregisterUsableObject(collision.gameObject);
         RestoreSpeedMod(collision.gameObject);
-    }
-
-    /// <summary>
-    /// Moves the player with the current data.
-    /// </summary>
-    private void Move()
-    {
-        bool updateAnimation = false;
-
-        // Update the action state
-        if (_carriedObject != null)
-        {
-            if (_carriedObject.IsHeavy)
-            {
-                Data.Speed = Data.DefaultSpeed * 0.6f * (SpeedModObj != null ? SpeedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
-                Data.ActionState = PlayerActionState.Grabbing;
-            }
-            else
-            {
-                Data.Speed = Data.DefaultSpeed * (SpeedModObj != null ? SpeedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
-                Data.ActionState = PlayerActionState.Holding;
-            }
-        }
-        else
-        {
-            Data.ActionState = PlayerActionState.Default;
-            Data.Speed = Data.DefaultSpeed * (SpeedModObj != null ? SpeedModObj.SpeedModifier : 1) * GameHelper.GM.timeScale;
-        }
-
-        // Add force to the rigid body
-        _body.AddForce(Data.Direction * Data.Speed);
-
-        if(Data.Direction.magnitude > 0.01f)
-            playerSprite.transform.localRotation = Quaternion.FromToRotation(Vector2.up, Data.Direction.normalized);
-
-        // Update the move state
-        if (_body.velocity.magnitude > 0.1f)
-            Data.MoveState = PlayerMoveState.Run;
-        else
-            Data.MoveState = PlayerMoveState.Idle;
-
-        // Update the animator parameters
-        if (_animator.GetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME) != (int)Data.ActionState)
-        {
-            _animator.SetInteger(PlayerHelper.ANIMATOR_ACTION_PARAM_NAME, (int)Data.ActionState);
-            updateAnimation = true;
-        }
-
-        if (_animator.GetInteger(PlayerHelper.ANIMATOR_MOVE_PARAM_NAME) != (int)Data.MoveState)
-        {
-            _animator.SetInteger(PlayerHelper.ANIMATOR_MOVE_PARAM_NAME, (int)Data.MoveState);
-            updateAnimation = true;
-        }
-
-        if(updateAnimation)
-        {
-            string newAnimationName = Data.ActionState.ToString() + Data.MoveState.ToString();
-            _animator.StopPlayback();
-            _animator.Play(newAnimationName);
-        }
-
-        _animator.speed = 0.25f + (_body.velocity.magnitude / 6.0f);
-
-        Data.Position = transform.position;
     }
 }
