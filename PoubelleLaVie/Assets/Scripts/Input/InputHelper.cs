@@ -32,7 +32,11 @@ public static class InputHelper
     /// </summary>
     public const string PAUSE = "Pause";
 
-    public static bool GetUserActionDown<TEnum>(Dictionary<TEnum, string> bindings, TEnum action)
+    public const string SELECT = "Select";
+
+    public const string BACK = "Back";
+
+    public static bool GetUserActionDown<TEnum>(Dictionary<TEnum, string> bindings, TEnum action, int id)
         where TEnum : System.Enum
     {
         string inputName;
@@ -40,10 +44,10 @@ public static class InputHelper
         if (!bindings.TryGetValue(action, out inputName))
             return false;
 
-        return Input.GetButtonDown(inputName);
+        return Input.GetButtonDown((id != -1 ? $"{id}_" : "") + inputName);
     }
 
-    public static bool GetUserActionUp<TEnum>(Dictionary<TEnum, string> bindings, TEnum action)
+    public static bool GetUserActionUp<TEnum>(Dictionary<TEnum, string> bindings, TEnum action, int id)
         where TEnum : System.Enum
     {
         string inputName;
@@ -51,10 +55,10 @@ public static class InputHelper
         if (!bindings.TryGetValue(action, out inputName))
             return false;
 
-        return Input.GetButtonUp(inputName);
+        return Input.GetButtonUp((id != -1 ? $"{id}_" : "") + inputName);
     }
 
-    public static float GetUserActionValue<TEnum>(Dictionary<TEnum, string> bindings, TEnum action)
+    public static float GetUserActionValue<TEnum>(Dictionary<TEnum, string> bindings, TEnum action, int id)
         where TEnum : System.Enum
     {
         string inputName;
@@ -62,6 +66,6 @@ public static class InputHelper
         if (!bindings.TryGetValue(action, out inputName))
             return 0.0f;
 
-        return Input.GetAxis(inputName);
+        return Input.GetAxis((id != -1 ? $"{id}_" : "") + inputName);
     }
 }

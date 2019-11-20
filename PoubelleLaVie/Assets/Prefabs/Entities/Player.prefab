@@ -284,14 +284,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db53dfd63db2d7844afd8c5c3c1c92ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultSpeed: 150
-  speed: 150
+  defaultSpeed: 200
+  speed: 200
   direction: {x: 1, y: 0}
   position: {x: 0, y: 0}
   moveState: 0
   actionState: 0
   trashCount: 0
-  trashLimit: 10
+  id: -1
 --- !u!114 &7735977099687035144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,6 +304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1360a86add6fd764dabba83f5bec385d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: -1
 --- !u!114 &2411725499568119819
 MonoBehaviour:
   m_ObjectHideFlags: 0

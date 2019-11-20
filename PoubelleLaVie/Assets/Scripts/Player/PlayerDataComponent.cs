@@ -15,9 +15,9 @@ public class PlayerDataComponent : HumanDataComponent
 
     public int trashCount;
 
-    public int trashLimit;
-
     public HashSet<WindowComponent> closeWindows;
+
+    public int id;
 
     public PlayerDataComponent() : base()
     {
@@ -25,7 +25,7 @@ public class PlayerDataComponent : HumanDataComponent
         usableObject = null;
         speedModifierObject = null;
         trashCount = 0;
-        trashLimit = 10;
         closeWindows = new HashSet<WindowComponent>();
+        id = -1;
     }
 }

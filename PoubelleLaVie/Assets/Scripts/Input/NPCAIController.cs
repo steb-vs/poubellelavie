@@ -201,19 +201,22 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
 
     private void GotToDestinationFine()
     {
-        _idleTimer = _data.npcState == NPCState.Fine ? 2F : 1.5F; // Make the drinking action a little bit longer
         _numberDrinksPending--;
-        _idleTimer = UnityEngine.Random.Range(1.0f, 5.0f);
 
         if (_numberDrinksPending == 0)
+        {
             _data.npcState = NPCState.Drunk;
-
-        _idleMode = true;
+        }
+        else
+        {
+            _idleTimer = UnityEngine.Random.Range(0.8f, 2.0f);
+            _idleMode = true;
+        }
     }
 
     private void GotToDestinationDrunk()
     {
-        _idleTimer = UnityEngine.Random.Range(0.2f, _data.drunkType != DrunkType.Puker ? 3.0f : 0.8f);
+        _idleTimer = UnityEngine.Random.Range(0.2f, _data.drunkType == DrunkType.Puker ? 2.0f : 0.8f);
         _idleMode = true;
     }
 
@@ -226,10 +229,13 @@ public class NPCAIController : Controller<HumanAction>, IController<NPCAction>
 
     private void GoToPlayer()
     {
-        var playerPos = GameHelper.Player.transform.position;
+        var player = GameHelper.Players
+            .Select(x => new { Player = x, Distance = (transform.position - x.transform.position).magnitude })
+            .OrderBy(x => x.Distance)
+            .First().Player;
         _path = PathfinderHelper.Pathfinder.GetPath2(
             new Vector2Int((int)transform.position.x, (int)transform.position.y),
-            new Vector2Int((int)playerPos.x, (int)playerPos.y));
+            new Vector2Int((int)player.transform.position.x, (int)player.transform.position.y));
     }
 
     private void GetRandomDestination(int min, int max)

@@ -18,32 +18,32 @@ public class PlayerUserController : Controller<HumanAction>, IController<PlayerA
 
     public override bool GetActionDown(HumanAction action)
     {
-        return InputHelper.GetUserActionDown(HUMAN_BINDINGS, action);
+        return InputHelper.GetUserActionDown(HUMAN_BINDINGS, action, id);
     }
 
     public bool GetActionDown(PlayerAction action)
     {
-        return InputHelper.GetUserActionDown(PLAYER_BINDINGS, action);
+        return InputHelper.GetUserActionDown(PLAYER_BINDINGS, action, id);
     }
 
     public override bool GetActionUp(HumanAction action)
     {
-        return InputHelper.GetUserActionUp(HUMAN_BINDINGS, action);
+        return InputHelper.GetUserActionUp(HUMAN_BINDINGS, action, id);
     }
 
     public bool GetActionUp(PlayerAction action)
     {
-        return InputHelper.GetUserActionUp(PLAYER_BINDINGS, action);
+        return InputHelper.GetUserActionUp(PLAYER_BINDINGS, action, id);
     }
 
     public override float GetActionValue(HumanAction action)
     {
-        return InputHelper.GetUserActionValue(HUMAN_BINDINGS, action);
+        return InputHelper.GetUserActionValue(HUMAN_BINDINGS, action, id);
     }
 
     public float GetActionValue(PlayerAction action)
     {
-        return InputHelper.GetUserActionValue(PLAYER_BINDINGS, action);
+        return InputHelper.GetUserActionValue(PLAYER_BINDINGS, action, id);
     }
 
     public override void UpdateAI()

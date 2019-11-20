@@ -21,11 +21,17 @@ public class PlayerComponent : HumanComponent<PlayerDataComponent>
 
     protected override void Start()
     {
+        PlayerUserController _userController;
+
         base.Start();
 
         _data = GetComponent<PlayerDataComponent>();
         _controller = GetComponent<IController<PlayerAction>>();
         _closeObjects = new HashSet<IUsable>();
+        _userController = _controller as PlayerUserController;
+
+        if (_userController != null)
+            _userController.id = _data.id;
     }
 
     protected override string ResolveAnimationName()

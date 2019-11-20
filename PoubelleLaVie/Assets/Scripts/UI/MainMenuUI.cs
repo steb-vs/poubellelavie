@@ -13,13 +13,16 @@ public class MainMenuUI : MonoBehaviour
     private List<string> _choicesSave;
 
     public int index = 0;
-    public string controller = "Horizontal";
 
     public Image fadeToBlackPanel;
+
+    private IController<UIAction> _controller;
 
     // Start is called before the first frame update
     void Start()
     {
+        _controller = GetComponent<IController<UIAction>>();
+
         _choices = new List<TextMeshProUGUI>();
         _choicesSave = new List<string>();
         for (int i = 0; i < container.transform.childCount; ++i)
@@ -32,9 +35,7 @@ public class MainMenuUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float axis = Input.GetAxis(controller);
-        if (controller == InputHelper.VERTICAL)
-            axis = -axis;
+        float axis = -_controller.GetActionValue(UIAction.Vertical);
 
         if (axis > 0.1f && _tricked == false)
         {
@@ -59,9 +60,7 @@ public class MainMenuUI : MonoBehaviour
 
         _choices[index].text = $"> {_choicesSave[index]}";
 
-        if ((Input.GetButtonUp(InputHelper.TAKE_N_DROP) ||
-            Input.GetKeyDown(KeyCode.Return)) &&
-            fading == false)
+        if (_controller.GetActionUp(UIAction.Select) && fading == false)
         {
             switch (index)
             {
@@ -70,9 +69,15 @@ public class MainMenuUI : MonoBehaviour
                     break;
                 case 1:
                     fading = true;
+                    GameHelper.Settings.playerCount = 1;
                     StartCoroutine(fadeToBlack());
                     break;
                 case 2:
+                    fading = true;
+                    GameHelper.Settings.playerCount = 2;
+                    StartCoroutine(fadeToBlack());
+                    break;
+                case 3:
                     Application.Quit();
                     break;
             }

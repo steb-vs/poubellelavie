@@ -342,9 +342,14 @@ MonoBehaviour:
   paused: 0
   npcSoundPlayingCount: 0
   maxNpcSounds: 1
-  decrCopGaugeOverTime: 10
-  incrCopGaugeOverTime: 10
+  decrCopGaugeOverTime: 8
+  incrCopGaugeOverTime: 5
   timeScale: 1
+  trashLimit: 10
+  playerTints:
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0.25, g: 0, b: 1, a: 1}
+  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!114 &5005652659992764758
 MonoBehaviour:
   m_ObjectHideFlags: 0

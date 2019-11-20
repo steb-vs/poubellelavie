@@ -27,7 +27,7 @@ public class PukeComponent : Garbage, ISpeedModifier, IUsable
         if (data == null)
             return false;
 
-        if (data.trashCount <= data.trashLimit)
+        if (data.trashCount <= GameHelper.GameManager.data.trashLimit)
         {
             worldTile.walkable = true;
             Destroy(gameObject);
