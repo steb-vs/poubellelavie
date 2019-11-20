@@ -123,6 +123,7 @@ public class GameManager : MonoBehaviour
 
             // End game
             data.timeScale = 0;
+            canvasGameOver.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Game Over";
             canvasGameOver.SetActive(true);
             canvasUI.SetActive(false);
             endScore.text = "Score: " + (int)data.score;
@@ -130,10 +131,25 @@ public class GameManager : MonoBehaviour
         }
 
         // Setting / Unsetting pause ?
-        if (Input.GetButtonDown(InputHelper.PAUSE))
+        if (Input.GetButtonDown(InputHelper.GetActionName(1, InputHelper.PAUSE, false)) || Input.GetButtonDown(InputHelper.GetActionName(1, InputHelper.PAUSE, true)))
+        {
             data.paused = !data.paused;
 
-        if(data.paused && data.timeScale > 0)
+            if(data.paused)
+            {
+                canvasGameOver.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Paused";
+                canvasGameOver.SetActive(true);
+                canvasUI.SetActive(false);
+                endScore.text = string.Empty;
+            }
+            else
+            {
+                canvasGameOver.SetActive(false);
+                canvasUI.SetActive(true);
+            }
+        }
+
+        if (data.paused && data.timeScale > 0)
         {
             data.timeScale -= Time.deltaTime;
             data.timeScale = data.timeScale.Wrap(0, 1);
